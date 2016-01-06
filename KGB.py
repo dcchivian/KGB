@@ -1,57 +1,26 @@
-"""
-## KGB Genome Browser (KGB)
-## 
-##  An IPython/Jupyter Notebook genome browser that enables comparative
-##  browsing and searching of genome contig assemblies, with additional
-##  support for
-##
-##  * domain structure visualization
-##  * gene homology
-##  * phylogenetic trees
-##
-## Copyright 2015,2016 Dylan Chivian
-##
-##  Initial Author: Dylan Chivian (DCChivian@lbl.gov)
-##  $Revision: 0.1 $
-##  $Date: 2015/01/01 00:00:00 $
-##  $Author: dylan $
-##
-"""
+##########################################################################################            
+# KGB user input vars  (Preferably implement as separate upstream cell)
+##########################################################################################            
 
-# Init system
-#
-#import numpy as np # comes with pylab
-from __future__ import print_function
-from __future__ import division
-#import sys  # for io and exit
-from os import walk  # for dir reading
-from os import path  # for file existence check
-import json
-import csv
-#from math import pi  # get with pylab
-#from math import sqrt  # get with pylab
-from math import acos
-from Bio import Phylo
-from Bio import SeqIO
-#import re
-#%pylab notebook
-%pylab
-#matplotlib.use('nbagg')
-import matplotlib.transforms as mtransforms
-import matplotlib.patheffects as path_effects
-from matplotlib.patches import Rectangle
-from matplotlib.patches import Ellipse
-from matplotlib.patches import Arc
-from matplotlib.patches import FancyBboxPatch
-#from matplotlib.lines import Line2D
+#ref='ReferenceGenomeAnnotations/kb|g.3899'
+#ref='ReferenceGenomeAnnotations/kb|g.2624'
+#ref='ReferenceGenomeAnnotations/kb|g.2424'
 
-#from ipywidgets import interact, interactive, fixed
-#from ipywidgets import interact
-#import ipywidgets as widgets
+#GenomeSet_names = ['ReferenceGenomeAnnotations/kb|g.2424']
+GenomeSet_names = ["GW456", "GW460"]
+ContigSet_names = []
+OrthologSet_locusTags = []
 
+#ContigSet_names = ["GW456.scaffold_130", "GW456.scaffold_437", "GW456.scaffold_206", "GW456.scaffold_1786", "GW460.scaffold_49", "GW460.scaffold_575"]
+#OrthologSet_locusTags = ["GW456_SEED_annot.CDS.1", "GW456_SEED_annot.CDS.233", "GW456_SEED_annot.CDS.128", "GW456_SEED_annot.CDS.112", "GW460_SEED_annot.CDS.186", "GW460_SEED_annot.CDS.299"]
 
-# Input variables
-#
+#ContigSet_names = ["Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C"]
+#OrthologSet_locusTags = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
+#ContigSet_names = ["Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C", "Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C"]
+#OrthologSet_locusTags = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216", "GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
+#ContigSet_names = ["Gsulf", "DvulH"]
+#ContigSet_names = ["Gsulf", "DvulH"]
+#OrthologSet_locusTags = ["GSU2863", "DVU2928"]
 
 #Search_Terms = []
 Search_Terms = ['pil or conj or mobil or partition or t-dna or vir or plasmid',
@@ -67,20 +36,6 @@ Search_Terms = ['pil or conj or mobil or partition or t-dna or vir or plasmid',
 #                'fucI',
 #                'sulfate adenylyl transferase']
 
-GenomeSet_names = ["GW456", "GW460"]
-ContigSet_names = []
-OrthologSet_locusTags = []
-
-#ContigSet_names = ["GW456.scaffold_130", "GW456.scaffold_437", "GW456.scaffold_206", "GW456.scaffold_1786", "GW460.scaffold_49", "GW460.scaffold_575"]
-#OrthologSet_locusTags = ["GW456_SEED_annot.CDS.1", "GW456_SEED_annot.CDS.233", "GW456_SEED_annot.CDS.128", "GW456_SEED_annot.CDS.112", "GW460_SEED_annot.CDS.186", "GW460_SEED_annot.CDS.299"]
-
-#ContigSet_names = ["Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C"]
-#OrthologSet_locusTags = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
-#ContigSet_names = ["Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C", "Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C"]
-#OrthologSet_locusTags = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216", "GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
-#ContigSet_names = ["Gsulf", "DvulH"]
-#ContigSet_names = ["Gsulf", "DvulH"]
-#OrthologSet_locusTags = ["GSU2863", "DVU2928"]
 
 PrimaryAnchor_leafId = "GW456.scaffold_130"
 PrimaryAnchor_locusTag = "GW456_SEED_annot.CDS.1"
@@ -98,24 +53,93 @@ tree_data_format = 'newick'
 genome_data_format = "Genbank"
 domain_data_format = "KBase_domains"
 
-# build ContigSet_names from files
-if genome_data_format == "Genbank":
-    for genome_id in GenomeSet_names:
-        genome_data_dir = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/scaffolds'
-        files = []
-        for (dirpath, dirnames, filenames) in walk(genome_data_dir):
-            files.extend(filenames)
-            break
-        for file in files:
-            if ".gbk" in file:
-                scaffold_id = file[0:file.index(".gbk")]
-                contig_id = genome_id+'.'+scaffold_id
-                ContigSet_names.append(contig_id)
+
+##########################################################################################            
+# KGB
+########################################################################################## 
+"""
+## KGB Genome Browser (KGB)                                                  
+##                                                                              
+##  An IPython/Jupyter Notebook genome browser that enables comparative         
+##  browsing and searching of genome contig assemblies, with additional         
+##  support for                                                                 
+##                                                                              
+##  * domain structure visualization                                            
+##  * gene homology                                                             
+##  * phylogenetic trees                                                        
+##                                                                              
+## Copyright 2015,2016 Dylan Chivian  
+##
+##  Initial Author: Dylan Chivian (DCChivian@lbl.gov)
+##  $Revision: 0.1 $
+##  $Date: 2015/01/01 00:00:00 $
+##  $Author: dylan $
+##
+"""
+
+########################################################################################## 
+# INIT
+########################################################################################## 
+
+#KBase_backend = True
+KBase_backend = False
+
+# Extra Init for KBase
+#
+if KBase_backend:
+    import os
+    import doekbase.data_api
+    from doekbase.data_api.annotation.genome_annotation.api import GenomeAnnotationAPI
+    #from doekbase.data_api.taxonomy.taxon.api import TaxonAPI
+    #from doekbase.data_api.sequence.assembly.api import AssemblyAPI
+    #from doekbase.data_api.core import ObjectAPI
+    
+    # Standard setup for accessing Data API
+    services = {"workspace_service_url": "https://ci.kbase.us/services/ws/",
+                "shock_service_url": "https://ci.kbase.us/services/shock-api/"}
+    token = os.environ["KB_AUTH_TOKEN"]
+    
+# Init for just non-KBase use
+#
+if not KBase_backend:
+    from Bio import SeqIO
+
+# Init for both
+#
+#import numpy as np # comes with pylab
+from __future__ import print_function
+from __future__ import division
+import sys  # for io and exit
+from os import walk  # for dir reading
+from os import path  # for file existence check
+import json
+import csv
+#from math import pi  # get with pylab
+#from math import sqrt  # get with pylab
+from math import acos
+from Bio import Phylo
+#import re
+%pylab notebook
+#%pylab
+#matplotlib.use('nbagg')
+import matplotlib.transforms as mtransforms
+import matplotlib.patheffects as path_effects
+from matplotlib.patches import Rectangle
+from matplotlib.patches import Ellipse
+from matplotlib.patches import Arc
+from matplotlib.patches import FancyBboxPatch
+#from matplotlib.lines import Line2D
+
+#from ipywidgets import interact, interactive, fixed
+#from ipywidgets import interact
+#import ipywidgets as widgets
 
 
+
+           
 # Init variables / objects
 #
-tool_title = "Flexible Genome Browser"
+tool_title = "KGB Genome Browser"
 
 #color_namespace_names_disp = ['Annot', 'EC', 'COG', 'Pfam', 'Domains', 'Local']
 #color_namespace_names = ['annot', 'ec', 'cog', 'pfam', 'domains', 'local']
@@ -136,6 +160,35 @@ if tree_data_file != None:
     mode_names_disp.append('Tree')
     mode_names.append('tree')
 
+
+# Build ContigSet_names from files or from KBase object
+#
+if KBase_backend:
+    for genome_id in GenomeSet_names:
+        ga = GenomeAnnotationAPI(services, token=token, ref=genome_id)
+        ass = ga.get_assembly()
+        #print (ass)
+        for scaffold_id in ass.get_contig_ids():
+            contig_id = genome_id+'+CONTIG:'+scaffold_id
+            ContigSet_names.append(contig_id)
+            
+elif genome_data_format == "Genbank":
+    for genome_id in GenomeSet_names:
+        genome_data_dir = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/scaffolds'
+        files = []
+        for (dirpath, dirnames, filenames) in walk(genome_data_dir):
+            files.extend(filenames)
+            break
+        for file in files:
+            if ".gbk" in file:
+                scaffold_id = file[0:file.index(".gbk")]
+                contig_id = genome_id+'.'+scaffold_id
+                ContigSet_names.append(contig_id)
+
+else:
+    print ("unknown genome_data_format: '"+genome_data_format+"'")
+    sys.exit()
+        
 
 # Configuration
 #
@@ -178,7 +231,6 @@ DOMHIT_EVALUE_I                           = 2
 DOMHIT_BITSCORE_I                         = 3
 DOMHIT_ALNPERC_I                          = 4 
 DOMHIT_DOMFAM_I                           = 5
-
 
 
 # Caches and State
@@ -717,7 +769,58 @@ def getFeatureSlices (ContigSet_names, \
     Feature_slices = []
     
     if genomebrowser_mode != "genome":
-        if genome_data_format == "Genbank":
+
+        if KBase_backend:        
+            feature_fields_oi = ['feature_type', \
+                                 'feature_function', \
+                                 'feature_aliases', \
+                                 #'feature_dna_sequence', \
+                                 'feature_locations']
+            LOC_CTG_I = 0
+            LOC_BEG_I = 1
+            LOC_STR_I = 2
+            LOC_LEN_I = 3
+
+            ga = GenomeAnnotationAPI(services, token=token, ref=ref)
+            ass = ga.get_assembly()
+            #print (ass)
+            for contig_id in ass.get_contig_ids():
+                #print ('contig_id: '+contig_id)
+                features = []
+                feature_ids = []
+                feature_slice_ids_by_type = ga.get_feature_ids(filters=[{'contig_id':contig_id, 'strand':'?', 'start':10, 'length':1000}])
+                for f_type in feature_slice_ids_by_type['by_type']:
+                    #print ("%s"%f_type)
+                    #for f_id in feature_slice_ids_container_by_type['by_type'][f_type]:
+                    #    print (f_id)
+                    feature_ids.extend(feature_slice_ids_by_type['by_type'][f_type])
+                    features = ga.get_features(feature_id_list=feature_ids)
+                    count = 0
+                    for fid in features.keys():
+                        if fid != 'kb|g.2424.peg.1977' and fid != 'kb|g.2424.peg.2076':
+                            continue
+
+                        #count += 1
+                        #if count > 10:
+                        #    break
+                        #print ("%s"%f)
+                        #for k in features[fid]:
+                        #for k in feature_fields_oi:
+                        #    print ("%s\t%s\t%s\t%s" %(contig_id, fid, k, features[fid][k]))
+                        ctg_id = features[fid]['feature_locations'][0][LOC_CTG_I]
+                        if ctg_id != contig_id:  # deal with malfunctioning filter
+                            continue
+                        strand = features[fid]['feature_locations'][0][LOC_STR_I]
+                        f_len = features[fid]['feature_locations'][0][LOC_LEN_I]
+                        if strand == '+':
+                            beg = features[fid]['feature_locations'][0][LOC_BEG_I]
+                            end = beg + f_len - 1
+                        else:
+                            end = features[fid]['feature_locations'][0][LOC_BEG_I]
+                            beg = end - f_len + 1
+                        print ("%s\t%s\t%s\t%s\t%s\t%s"%(contig_id, ctg_id, fid, beg, end, strand))
+        
+        elif genome_data_format == "Genbank":
             for i,genome_name in enumerate(ContigSet_names):
                 if i >= max_rows:
                     break
@@ -1006,7 +1109,58 @@ def getFeatureSlices (ContigSet_names, \
 
     # genomebrowser_mode == "genome"
     else:  
-        if genome_data_format == "Genbank":
+
+        if KBase_backend:
+            feature_fields_oi = ['feature_type', \
+                                 'feature_function', \
+                                 'feature_aliases', \
+                                 #'feature_dna_sequence', \
+                                 'feature_locations']
+            LOC_CTG_I = 0
+            LOC_BEG_I = 1
+            LOC_STR_I = 2
+            LOC_LEN_I = 3
+
+            ga = GenomeAnnotationAPI(services, token=token, ref=ref)
+            ass = ga.get_assembly()
+            #print (ass)
+            for contig_id in ass.get_contig_ids():
+                #print ('contig_id: '+contig_id)
+                features = []
+                feature_ids = []
+                feature_slice_ids_by_type = ga.get_feature_ids(filters=[{'contig_id':contig_id, 'strand':'?', 'start':10, 'length':1000}])
+                for f_type in feature_slice_ids_by_type['by_type']:
+                    #print ("%s"%f_type)
+                    #for f_id in feature_slice_ids_container_by_type['by_type'][f_type]:
+                    #    print (f_id)
+                    feature_ids.extend(feature_slice_ids_by_type['by_type'][f_type])
+                    features = ga.get_features(feature_id_list=feature_ids)
+                    count = 0
+                    for fid in features.keys():
+                        if fid != 'kb|g.2424.peg.1977' and fid != 'kb|g.2424.peg.2076':
+                            continue
+
+                        #count += 1
+                        #if count > 10:
+                        #    break
+                        #print ("%s"%f)
+                        #for k in features[fid]:
+                        #for k in feature_fields_oi:
+                        #    print ("%s\t%s\t%s\t%s" %(contig_id, fid, k, features[fid][k]))
+                        ctg_id = features[fid]['feature_locations'][0][LOC_CTG_I]
+                        if ctg_id != contig_id:  # deal with malfunctioning filter
+                            continue
+                        strand = features[fid]['feature_locations'][0][LOC_STR_I]
+                        f_len = features[fid]['feature_locations'][0][LOC_LEN_I]
+                        if strand == '+':
+                            beg = features[fid]['feature_locations'][0][LOC_BEG_I]
+                            end = beg + f_len - 1
+                        else:
+                            end = features[fid]['feature_locations'][0][LOC_BEG_I]
+                            beg = end - f_len + 1
+                        print ("%s\t%s\t%s\t%s\t%s\t%s"%(contig_id, ctg_id, fid, beg, end, strand))
+
+        elif genome_data_format == "Genbank":
             #for i in range (0,total_rows):
             for i in range (0,Global_State['genome_mode_n_rows']):
                 genome_name = ContigSet_names[0]
@@ -1279,7 +1433,6 @@ def getFeatureSlices (ContigSet_names, \
         else:
             print ("unknown data format for Genomes")
             
-
     return Feature_slices
 
 
@@ -3301,5 +3454,3 @@ update_mode_panel (ax_top_left)
 # Draw control panel (currently, must occur after primary genome read in update_genomebrowser_panel)
 #
 update_control_panel (ax_top_center)
-
-
