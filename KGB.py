@@ -59,7 +59,8 @@ domain_data_format = "KBase_domains"
 
 ##########################################################################################            
 # KGB
-########################################################################################## 
+##########################################################################################
+
 """
 ## KGB Genome Browser (KGB)                                                  
 ##                                                                              
@@ -70,6 +71,8 @@ domain_data_format = "KBase_domains"
 ##  * domain structure visualization                                            
 ##  * gene homology                                                             
 ##  * phylogenetic trees                                                        
+##
+## source code available at http://github.com/dcchivian/KGB
 ##                                                                              
 ## Copyright 2015,2016 Dylan Chivian  
 ##
@@ -122,8 +125,8 @@ import csv
 from math import acos
 from Bio import Phylo
 #import re
-%pylab notebook
-#%pylab
+#%pylab notebook
+%pylab
 #matplotlib.use('nbagg')
 import matplotlib.transforms as mtransforms
 import matplotlib.patheffects as path_effects
@@ -194,44 +197,46 @@ else:
 # Configuration
 #
 num_genomes = len(ContigSet_names)
-#def_genome_mode_n_rows = 5
 def_genome_mode_n_rows = 7
 max_rows = 100
 #max_rows = 10  # DEBUG
 if max_rows < def_genome_mode_n_rows:
     max_rows = def_genome_mode_n_rows
+if def_genome_mode_n_rows%2 == 0:
+    def_genome_mode_n_rows += 1
+    
 def_popup_zorder = 100
 def_genomebrowser_window_bp_width = 1000
 def_genomebrowser_zoom_tics = 7
 def_genomebrowser_zoom = 4  # zoom values are [0..zoom_tics] -> window width = is def_genomebrowser_window_bp_width * 2**i
 def_genomebrowser_xshift = 0
-#def_genomebrowser_mode = "tree"
-#def_genomebrowser_mode = "homologs"
-def_genomebrowser_mode = "genome"
+genomebrowser_window_bp_width = def_genomebrowser_window_bp_width * 2**def_genomebrowser_zoom
+
 #def_genomebrowser_mode = "contigs"
+def_genomebrowser_mode = "genome"
+#def_genomebrowser_mode = "homologs"
+#def_genomebrowser_mode = "tree"
 def_genomebrowser_color_namespace = "annot"
 #def_genomebrowser_color_namespace = "domains"
 genomebrowser_mode = def_genomebrowser_mode
-genomebrowser_window_bp_width = def_genomebrowser_window_bp_width * 2**def_genomebrowser_zoom
+
 genomebrowser_color_namespace = def_genomebrowser_color_namespace
-if def_genome_mode_n_rows%2 == 0:
-    def_genome_mode_n_rows += 1
+
 KBASE_DOMAINHIT_GENE_ID_I        = 0
-#KBASE_DOMAINHIT_GENE_BEG_I       = 1
-#KBASE_DOMAINHIT_GENE_END_I       = 2
-#KBASE_DOMAINHIT_GENE_STRAND_I    = 3
+#KBASE_DOMAINHIT_GENE_BEG_I       = 1  # not used
+#KBASE_DOMAINHIT_GENE_END_I       = 2  # not used
+#KBASE_DOMAINHIT_GENE_STRAND_I    = 3  # not used
 KBASE_DOMAINHIT_GENE_HITS_DICT_I = 4
-#KBASE_DOMAINHIT_GENE_HITS_DICT_BEG_J      = 0
-#KBASE_DOMAINHIT_GENE_HITS_DICT_END_J      = 1
-#KBASE_DOMAINHIT_GENE_HITS_DICT_EVALUE_J   = 2
-#KBASE_DOMAINHIT_GENE_HITS_DICT_BITSCORE_J = 3
-#KBASE_DOMAINHIT_GENE_HITS_DICT_ALNPERC_J  = 4
-DOMHIT_BEG_I                              = 0
-DOMHIT_END_I                              = 1
-DOMHIT_EVALUE_I                           = 2
-DOMHIT_BITSCORE_I                         = 3
-DOMHIT_ALNPERC_I                          = 4 
-DOMHIT_DOMFAM_I                           = 5
+DOMHIT_BEG_I      = 0
+DOMHIT_END_I      = 1
+DOMHIT_EVALUE_I   = 2
+DOMHIT_BITSCORE_I = 3
+DOMHIT_ALNPERC_I  = 4 
+DOMHIT_DOMFAM_I   = 5
+KB_LOC_CTG_I = 0
+KB_LOC_BEG_I = 1
+KB_LOC_STR_I = 2
+KB_LOC_LEN_I = 3
 
 
 # Caches and State
@@ -462,9 +467,127 @@ def compute_GC (dna_seq):
     return GC_cnt / seq_len
 
 
-# Features
+# KBase feature structure
 #
-def build_feature_rec_genbank (f, f_type='CDS', source_species='', contig_i=0, fwd_dna_seq=None):
+def build_feature_rec_kbase (f, f_type='CDS', source_species='', contig_i=0, dna_seq=None):
+    feature_rec = {}
+    
+    id_delim = '.'
+        
+    # IDs and names
+    name = f['feature_id']
+    name_split = name.split(id_delim)
+    name = id_delim.join(name_split[2:])
+
+    locus_tag = f['feature_id']
+    aliases = []
+    for alias in f['feature_aliases'].keys():
+        locus_tag = alias  # fix this to match regexp \D+_?\d+ (but not IPR*), and stop assignment
+        aliases.append(alias)
+
+    feature_ID = f['feature_id']
+    
+    # coords
+    strand = f['feature_locations'][0][KB_LOC_STR_I]
+    f_len = f['feature_locations'][0][KB_LOC_LEN_I]
+    if strand == '+':
+        beg = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
+        end = beg + f_len - 1
+    else:
+        end = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
+        beg = end - f_len + 1    
+    if end < beg:
+        print ("WARNING: reversed gene: %s: %s (%d-%d)"%(source_species, locus_tag, beg, end))
+        tmp_pos = end
+        end = beg
+        beg = tmp_pos
+
+    # annotation
+    annotation = f['feature_function']
+    EC_in_annotation = ''
+    in_paren = False
+    last_good_char = 0
+    close_paren_pos = 0
+    for i,c in enumerate(annotation[::-1]):
+        if in_paren == False and c != ' ' and c != ')':
+            break
+        if in_paren == False and c != ' ' and c == ')':
+            in_paren = True
+            close_paren_pos = i
+        if in_paren and c == '(':
+            last_good_char = i+1
+            break
+    if last_good_char > 0:
+        candidate_EC = annotation[-1-last_good_char+2:-1-close_paren_pos]
+        if candidate_EC[0:2] == 'EC':
+            #print (name + " EC: '" + candidate_EC +"'")  # DEBUG
+            EC_in_annotation = candidate_EC[3:]
+
+        annotation = annotation[0:-1-last_good_char]
+    annotation = annotation.strip()
+    annotation = annotation.lstrip()
+
+    # add domain hits to annotation
+    try:
+        domain_hits = Global_Domains[contig_i][feature_ID]
+        domfam_seen = {}
+        if annotation != "":
+            annotation += "\n"
+        for domhit in domain_hits:  # already reverse sorted by bitscore
+            domfam = domhit[DOMHIT_DOMFAM_I]
+            try:
+                seen = domfam_seen[domfam]
+                continue
+            except:
+                domfam_seen[domfam] = True
+                if domfam[0:3] == 'COG' or domfam[0:2] == 'PF' or domfam[0:4] == 'TIGR':
+                    if domfam[0:2] == 'PF':
+                        dom_namespace = 'PF'
+                        [domfam, ver] = domfam.split('.')
+                    elif domfam[0:3] == 'COG':
+                        dom_namespace = 'COG'
+                    elif domfam[0:4] == 'TIGR':
+                        dom_namespace = 'TIGR'
+                    line_break = "\n"
+                    if annotation == "":
+                        line_break = ""
+                    try:
+                        domfam_desc = ": "+domain_family_desc[dom_namespace][domfam]
+                    except:
+                        domfam_desc = ""
+                    annotation += line_break+domfam+domfam_desc
+    except:
+        domain_hits = []
+                
+    # pull out E.C.    
+    EC_number = ''
+    if EC_in_annotation != '':
+        EC_number = EC_in_annotation
+    else:
+        if f_type == "CDS" and 'EC_number' in f.qualifiers:
+            EC_number = f.qualifiers['EC_number'][0]
+
+    # create feature_rec
+    feature_rec = {"source_species": source_species, \
+                   "name": name, \
+                   "locus_tag": locus_tag, \
+                   "ID": feature_ID, # will probably need to make more unique \
+                   "aliases": aliases, \
+                   "type": f_type, \
+                   "beg_pos": beg, \
+                   "end_pos": end, \
+                   "strand": strand, \
+                   "annot": annotation, \
+                   "EC_number": EC_number, \
+                   "dna_seq": dna_seq
+                  }                         
+
+    return feature_rec
+
+
+# Genbank feature structure
+#
+def build_feature_rec_genbank (f, f_type='CDS', source_species='', contig_i=0, dna_seq=None):
     feature_rec = {}
     
     id_delim = '.'
@@ -496,6 +619,12 @@ def build_feature_rec_genbank (f, f_type='CDS', source_species='', contig_i=0, f
     locus_tag_split = locus_tag.split(id_delim)
     locus_tag = id_delim.join(locus_tag_split[1:])
     
+    # capture aliases
+    aliases = []
+    if "db_xref" in f.qualifiers:
+        for alias in f.qualifiers['db_xref']:
+            aliases.append(alias)
+        
     # For now, feature ID will be locus_tag
     feature_ID = locus_tag
     
@@ -585,13 +714,14 @@ def build_feature_rec_genbank (f, f_type='CDS', source_species='', contig_i=0, f
                    "name": name, \
                    "locus_tag": locus_tag, \
                    "ID": feature_ID, # will probably need to make more unique \
+                   "aliases": aliases, \
                    "type": f_type, \
                    "beg_pos": beg, \
                    "end_pos": end, \
                    "strand": strand, \
                    "annot": annotation, \
                    "EC_number": EC_number, \
-                   "fwd_dna_seq": fwd_dna_seq
+                   "dna_seq": dna_seq
                   }                         
     
     #if feature_rec['name'] == "DVU2932" or feature_rec['name'] == "Daud0298":
@@ -1020,7 +1150,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                         else:
                             Features_seen.add(pos_key)                        
                         fwd_dna_seq = Global_Genbank_Genomes[i].seq[f.location.start:f.location.end-1]  # BioPython shifts start by -1 but not end?
-                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR', source_species=source, contig_i=i, fwd_dna_seq=fwd_dna_seq)
+                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR', source_species=source, contig_i=i, dna_seq=fwd_dna_seq)
 
                         # check if a search hit
                         if not search_done[i]:
@@ -1048,7 +1178,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                         else:
                             Features_seen.add(pos_key)
                         fwd_dna_seq = Global_Genbank_Genomes[i].seq[f.location.start:f.location.end-1]  # BioPython shifts start by -1 but not end?
-                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR spacer', source_species=source, contig_i=i, fwd_dna_seq=fwd_dna_seq)
+                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR spacer', source_species=source, contig_i=i, dna_seq=fwd_dna_seq)
 
                         # check if a search hit
                         if not search_done[i]:
@@ -1345,7 +1475,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                         else:
                             Features_seen.add(pos_key)
                         fwd_dna_seq = Global_Genbank_Genomes[0].seq[f.location.start:f.location.end-1]  # BioPython shifts start by -1 but not end?
-                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR', source_species=source, contig_i=0, fwd_dna_seq=fwd_dna_seq)
+                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR', source_species=source, contig_i=0, dna_seq=fwd_dna_seq)
 
                         # check if a search hit
                         if not search_done[0]:
@@ -1373,7 +1503,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                         else:
                             Features_seen.add(pos_key)
                         fwd_dna_seq = Global_Genbank_Genomes[0].seq[f.location.start:f.location.end-1]  # BioPython shifts start by -1 but not end?
-                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR spacer', source_species=source, contig_i=0, fwd_dna_seq=fwd_dna_seq)
+                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR spacer', source_species=source, contig_i=0, dna_seq=fwd_dna_seq)
 
                         # check if a search hit
                         if not search_done[0]:
@@ -1450,6 +1580,7 @@ def getFeatureSlicesGenbank (ContigSet_names, \
     Feature_slices = []
     
     if genomebrowser_mode != "genome":
+    
         if genome_data_format == "Genbank":
             for i,genome_name in enumerate(ContigSet_names):
                 if i >= max_rows:
@@ -1649,7 +1780,7 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                         else:
                             Features_seen.add(pos_key)                        
                         fwd_dna_seq = Global_Genbank_Genomes[i].seq[f.location.start:f.location.end-1]  # BioPython shifts start by -1 but not end?
-                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR', source_species=source, contig_i=i, fwd_dna_seq=fwd_dna_seq)
+                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR', source_species=source, contig_i=i, dna_seq=fwd_dna_seq)
 
                         # check if a search hit
                         if not search_done[i]:
@@ -1677,7 +1808,7 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                         else:
                             Features_seen.add(pos_key)
                         fwd_dna_seq = Global_Genbank_Genomes[i].seq[f.location.start:f.location.end-1]  # BioPython shifts start by -1 but not end?
-                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR spacer', source_species=source, contig_i=i, fwd_dna_seq=fwd_dna_seq)
+                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR spacer', source_species=source, contig_i=i, dna_seq=fwd_dna_seq)
 
                         # check if a search hit
                         if not search_done[i]:
@@ -1924,7 +2055,7 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                         else:
                             Features_seen.add(pos_key)
                         fwd_dna_seq = Global_Genbank_Genomes[0].seq[f.location.start:f.location.end-1]  # BioPython shifts start by -1 but not end?
-                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR', source_species=source, contig_i=0, fwd_dna_seq=fwd_dna_seq)
+                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR', source_species=source, contig_i=0, dna_seq=fwd_dna_seq)
 
                         # check if a search hit
                         if not search_done[0]:
@@ -1952,7 +2083,7 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                         else:
                             Features_seen.add(pos_key)
                         fwd_dna_seq = Global_Genbank_Genomes[0].seq[f.location.start:f.location.end-1]  # BioPython shifts start by -1 but not end?
-                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR spacer', source_species=source, contig_i=0, fwd_dna_seq=fwd_dna_seq)
+                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR spacer', source_species=source, contig_i=0, dna_seq=fwd_dna_seq)
 
                         # check if a search hit
                         if not search_done[0]:
@@ -2625,12 +2756,12 @@ def draw_feature_element (ax, \
         
     elif feature['type'] == "CRISPR":
         feature_element_color = "black"        
-        if feature['fwd_dna_seq'] in seq_repeat:
-            feature_element_color = color_names[sum([ord(c) for c in feature['fwd_dna_seq']]) % len(color_names)]           
+        if feature['dna_seq'] in seq_repeat:
+            feature_element_color = color_names[sum([ord(c) for c in feature['dna_seq']]) % len(color_names)]           
     elif feature['type'] == "CRISPR spacer":
         feature_element_color = "lightgray"
-        if feature['fwd_dna_seq'] in seq_repeat:
-            feature_element_color = color_names[sum([ord(c) for c in feature['fwd_dna_seq']]) % len(color_names)]
+        if feature['dna_seq'] in seq_repeat:
+            feature_element_color = color_names[sum([ord(c) for c in feature['dna_seq']]) % len(color_names)]
             
     elif feature['type'] == "CDS":
 
@@ -3837,11 +3968,11 @@ def draw_genomebrowser_panel (ax, \
                                 annot_seen.add(domfam)
                             
                 elif (Feature_slices[i][j]['type'] == "CRISPR" or Feature_slices[i][j]['type'] == "CRISPR spacer") \
-                    and 'fwd_dna_seq' in Feature_slices[i][j]:
-                    if Feature_slices[i][j]['fwd_dna_seq'] in seq_seen:
-                        seq_repeat.add(Feature_slices[i][j]['fwd_dna_seq'])
+                    and 'dna_seq' in Feature_slices[i][j]:
+                    if Feature_slices[i][j]['dna_seq'] in seq_seen:
+                        seq_repeat.add(Feature_slices[i][j]['dna_seq'])
                     else:
-                        seq_seen.add(Feature_slices[i][j]['fwd_dna_seq'])
+                        seq_seen.add(Feature_slices[i][j]['dna_seq'])
                         
 
         # Draw feature elements
