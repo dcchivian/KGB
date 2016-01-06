@@ -43,11 +43,14 @@ PrimaryAnchor_locusTag = "GW456_SEED_annot.CDS.1"
 genome_data_base_path = "./data/plasmid_contigs"
 genome_data_extra_subpath = "_old"
 #genome_data_extra_subpath = "_circular_2KbpMIN"
-domain_data_base_path = "./data/plasmid_contigs"
+#domain_data_base_path = "./data/plasmid_contigs"
+domain_data_base_path = None
 domain_family_desc_base_path = "./data/domain_desc"
 
-tree_data_base_path = './data'
-tree_data_file = 'rpoB_tree-names.newick'
+#tree_data_base_path = './data'
+#tree_data_file = 'rpoB_tree-names.newick'
+tree_data_base_path = None
+tree_data_file = None
 tree_data_format = 'newick'
 
 genome_data_format = "Genbank"
@@ -134,8 +137,6 @@ from matplotlib.patches import FancyBboxPatch
 #from ipywidgets import interact
 #import ipywidgets as widgets
 
-
-
            
 # Init variables / objects
 #
@@ -143,8 +144,8 @@ tool_title = "KGB Genome Browser"
 
 #color_namespace_names_disp = ['Annot', 'EC', 'COG', 'Pfam', 'Domains', 'Local']
 #color_namespace_names = ['annot', 'ec', 'cog', 'pfam', 'domains', 'local']
-color_namespace_names_disp = ['Annot']
-color_namespace_names = ['annot']
+color_namespace_names_disp = ['Annot', 'EC']
+color_namespace_names = ['annot', 'ec']
 if domain_data_base_path != None:
     color_namespace_names_disp.extend(['COG', 'Pfam', 'Domains'])
     color_namespace_names.extend(['cog', 'pfam', 'domains'])
@@ -208,8 +209,8 @@ def_genomebrowser_xshift = 0
 #def_genomebrowser_mode = "homologs"
 def_genomebrowser_mode = "genome"
 #def_genomebrowser_mode = "contigs"
-#def_genomebrowser_color_namespace = "annot"
-def_genomebrowser_color_namespace = "domains"
+def_genomebrowser_color_namespace = "annot"
+#def_genomebrowser_color_namespace = "domains"
 genomebrowser_mode = def_genomebrowser_mode
 genomebrowser_window_bp_width = def_genomebrowser_window_bp_width * 2**def_genomebrowser_zoom
 genomebrowser_color_namespace = def_genomebrowser_color_namespace
@@ -3454,3 +3455,5 @@ update_mode_panel (ax_top_left)
 # Draw control panel (currently, must occur after primary genome read in update_genomebrowser_panel)
 #
 update_control_panel (ax_top_center)
+
+
