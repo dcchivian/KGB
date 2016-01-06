@@ -1,5 +1,5 @@
 """
-## Killer Genome Browser (KGB)
+## KGB Genome Browser (KGB)
 ## 
 ##  An IPython/Jupyter Notebook genome browser that enables comparative
 ##  browsing and searching of genome contig assemblies, with additional
