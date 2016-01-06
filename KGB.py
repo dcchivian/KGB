@@ -1,6 +1,6 @@
-##########################################################################################            
+###############################################################################
 # KGB user input vars  (Preferably implement as separate upstream cell)
-##########################################################################################            
+###############################################################################        
 
 #ref='ReferenceGenomeAnnotations/kb|g.3899'
 #ref='ReferenceGenomeAnnotations/kb|g.2624'
@@ -56,10 +56,9 @@ tree_data_format = 'newick'
 genome_data_format = "Genbank"
 domain_data_format = "KBase_domains"
 
-
-##########################################################################################            
+###############################################################################
 # KGB
-##########################################################################################
+###############################################################################
 
 """
 ## KGB Genome Browser (KGB)                                                  
@@ -82,10 +81,9 @@ domain_data_format = "KBase_domains"
 ##  $Author: dylan $
 ##
 """
-
-########################################################################################## 
+###############################################################################
 # INIT
-########################################################################################## 
+###############################################################################
 
 KBase_backend = True
 #KBase_backend = False
@@ -167,13 +165,14 @@ if tree_data_file != None:
 
 # Build ContigSet_names from files or from KBase object
 #
+genome_contig_id_delim = '+CONTIG:'
 if KBase_backend:
     for genome_id in GenomeSet_names:
         ga = GenomeAnnotationAPI(services, token=token, ref=genome_id)
         ass = ga.get_assembly()
         #print (ass)
         for scaffold_id in ass.get_contig_ids():
-            contig_id = genome_id+'+CONTIG:'+scaffold_id
+            contig_id = genome_id+genome_contig_id_delim+scaffold_id
             ContigSet_names.append(contig_id)
             print (contig_id)  # DEBUG
             
@@ -446,11 +445,9 @@ color_names = [
     #'yellowgreen'
     ]
 
-                
-##############################################################################################################
+###############################################################################
 # Subs
-##############################################################################################################
-
+###############################################################################
 
 # Utilities
 #
@@ -482,7 +479,8 @@ def build_feature_rec_kbase (f, f_type='CDS', source_species='', contig_i=0, dna
     locus_tag = f['feature_id']
     aliases = []
     for alias in f['feature_aliases'].keys():
-        locus_tag = alias  # fix this to match regexp \D+_?\d+ (but not IPR*), and stop assignment
+        if locus_tag == f['feature_id'] and 'IPR' not in alias:
+            locus_tag = alias  # fix this to match regexp \D+_?\d+ (but not IPR*), and stop assignment
         aliases.append(alias)
 
     feature_ID = f['feature_id']
@@ -775,43 +773,58 @@ def search_term_match (feature_rec):
     for i,term in enumerate(Search_Terms):
         term_uc = term.upper()  # FIX: should sanitize search terms once at beginning
         term_match.append(False)
-        for k in ['name', 'locus_tag', 'ID', 'annot', 'EC_number']:
-
-            #print ("CHECKING %s %s %s %s"%(term,k,feature_rec['name'], feature_rec[k]))  # DEBUG
-            try:
-                info_uc = feature_rec[k].upper()
-            except:
-                continue
+                    
+        for k in ['name', 'locus_tag', 'ID', 'aliases', 'annot', 'EC_number']:
+            info_uc_list = []
+            
+            if k == 'aliases':
+                try:
+                    for f in feature_rec[k]:
+                        info_uc_list.append(f[k].upper())
+                except:
+                    continue                
+            else:
+                #print ("CHECKING %s %s %s %s"%(term,k,feature_rec['name'], feature_rec[k]))  # DEBUG
+                try:
+                    info_uc_list = [feature_rec[k].upper()]
+                except:
+                    continue
                 
             search_words = term_uc.split(" ")  # FIX: should sanitize search terms once at beginning
             logical = 'AND'
             if " OR " in term_uc:
                 logical = 'OR'
-                
+
             this_info_match = False
-            if logical == 'AND':
-                this_info_match = True
-                for word in search_words:
-                    #if word == 'AND' or word == 'OR':
-                    if word == 'AND' or word == 'OR' or word == '':  # FIX: should sanitize search terms once at beginning
-                        continue
-                    if word not in info_uc:
-                        this_info_match = False
-                        break
-            if logical == 'OR':
-                this_info_match = False
-                for word in search_words:
-                    #if word == 'AND' or word == 'OR':
-                    if word == 'AND' or word == 'OR' or word == '':  # FIX: should sanitize search terms once at beginning
-                        continue
-                    if word in info_uc:
-                        this_info_match = True
-                        break
-                        
+
+            for info_uc in info_uc_list:
+                if logical == 'AND':
+                    this_info_match = True
+                    for word in search_words:
+                        #if word == 'AND' or word == 'OR':
+                        if word == 'AND' or word == 'OR' or word == '':  # FIX: should sanitize search terms once at beginning
+                            continue
+                        if word not in info_uc:
+                            this_info_match = False
+                            break
+                if logical == 'OR':
+                    this_info_match = False
+                    for word in search_words:
+                        #if word == 'AND' or word == 'OR':
+                        if word == 'AND' or word == 'OR' or word == '':  # FIX: should sanitize search terms once at beginning
+                            continue
+                        if word in info_uc:
+                            this_info_match = True
+                            break
+
+                if this_info_match:
+                    term_match[i] = True
+                    break
+
             if this_info_match:
                 term_match[i] = True
                 break
-                
+                    
     return term_match
     
 
@@ -894,87 +907,62 @@ def getDomainHits (ContigSet_names, \
 def getFeatureSlicesKBase (ContigSet_names, \
                       OrthologSet_locusTags, \
                       genomebrowser_mode="contigs", \
-                      genome_data_format="Genbank", \
+                      genome_data_format="KBase", \
                       window_size=10000, \
                       genomebrowser_xshift=0):
+
     Feature_slices = []
     
     if genomebrowser_mode != "genome":
 
-        if KBase_backend:        
+        if KBase_backend:  
+            
             feature_fields_oi = ['feature_type', \
                                  'feature_function', \
                                  'feature_aliases', \
-                                 #'feature_dna_sequence', \
+                                 'feature_dna_sequence', \
                                  'feature_locations']
-            LOC_CTG_I = 0
-            LOC_BEG_I = 1
-            LOC_STR_I = 2
-            LOC_LEN_I = 3
 
             ga = GenomeAnnotationAPI(services, token=token, ref=ref)
             ass = ga.get_assembly()
             #print (ass)
+            
             for contig_id in ass.get_contig_ids():
                 #print ('contig_id: '+contig_id)
                 features = []
-                feature_ids = []
-                feature_slice_ids_by_type = ga.get_feature_ids(filters=[{'contig_id':contig_id, 'strand':'?', 'start':10, 'length':1000}])
-                for f_type in feature_slice_ids_by_type['by_type']:
-                    #print ("%s"%f_type)
-                    #for f_id in feature_slice_ids_container_by_type['by_type'][f_type]:
-                    #    print (f_id)
-                    feature_ids.extend(feature_slice_ids_by_type['by_type'][f_type])
-                    features = ga.get_features(feature_id_list=feature_ids)
-                    count = 0
-                    for fid in features.keys():
-                        if fid != 'kb|g.2424.peg.1977' and fid != 'kb|g.2424.peg.2076':
-                            continue
+                feature_slice_ids_list = []
+                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':contig_id, 'strand':'?', 'start':10, 'length':10000}]})
+                #"by_region": dict<str contig_id, dict<str strand, dict<string range, list<string feature_id>>>>
 
-                        #count += 1
-                        #if count > 10:
-                        #    break
-                        #print ("%s"%f)
-                        #for k in features[fid]:
-                        #for k in feature_fields_oi:
-                        #    print ("%s\t%s\t%s\t%s" %(contig_id, fid, k, features[fid][k]))
-                        ctg_id = features[fid]['feature_locations'][0][LOC_CTG_I]
-                        if ctg_id != contig_id:  # deal with malfunctioning filter
-                            continue
-                        strand = features[fid]['feature_locations'][0][LOC_STR_I]
-                        f_len = features[fid]['feature_locations'][0][LOC_LEN_I]
-                        if strand == '+':
-                            beg = features[fid]['feature_locations'][0][LOC_BEG_I]
-                            end = beg + f_len - 1
-                        else:
-                            end = features[fid]['feature_locations'][0][LOC_BEG_I]
-                            beg = end - f_len + 1
-                        print ("%s\t%s\t%s\t%s\t%s\t%s"%(contig_id, ctg_id, fid, beg, end, strand))
-        
-        elif genome_data_format == "Genbank":
+                for ctg_id in feature_slice_ids['by_region'].keys():
+                    for strand in feature_slice_ids['by_region'][ctg_id].keys():
+                        for range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
+                            #print ("%s\t%s\t%s"%(ctg_id, strand, range))
+                            feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][range])
+
+                features = ga.get_features(feature_id_list=feature_slice_ids_list)
+                count = 0
+                for fid in features.keys():
+
+                    strand = features[fid]['feature_locations'][0][LOC_STR_I]
+                    f_len = features[fid]['feature_locations'][0][LOC_LEN_I]
+                    if strand == '+':
+                        beg = features[fid]['feature_locations'][0][LOC_BEG_I]
+                        end = beg + f_len - 1
+                    else:
+                        end = features[fid]['feature_locations'][0][LOC_BEG_I]
+                        beg = end - f_len + 1
+                    print ("%s\t%s\t%s\t%s\t%s\t%s"%(contig_id, ctg_id, fid, beg, end, strand))
+
             for i,genome_name in enumerate(ContigSet_names):
                 if i >= max_rows:
                     break
-                    
-                try:
-                    t = Global_Genbank_Genomes[i]
-                except:
-                    (genome_id,scaffold_id) = genome_name.split(".")
-                    #print ("reading " + genome_name + " ...")
-                    #genome_data_path = 'data/'+genome_name+'.gbk'
-                    genome_data_path = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/scaffolds'+'/'+scaffold_id+'.gbk'
-                    print ("%d "%i+'reading '+genome_data_path)
-                    Global_Genbank_Genomes.append (SeqIO.read(genome_data_path, 'genbank'))
-                    #print ("%d"%len(Global_Genbank_Genomes))
-                    #contig_seq = Global_Genbank_Genomes[i].seq
-                    #print (contig_seq[-100:])
-                    #print ("%d"%len(contig_seq))
-                
-#                try:
-#                    feature_cache = Global_Features[i]
-#                except:
-#                    Global_Features[i] = {}
-                    
+
+                (genome_id,scaffold_id) = genome_name.split(genome_contig_id_delim)
+
+                ga = GenomeAnnotationAPI(services, token=token, ref=genome_id)
+                ass = ga.get_assembly()
+            
                 Feature_slice = []
                 Features_seen = set()
                 source = ""
@@ -992,20 +980,19 @@ def getFeatureSlicesKBase (ContigSet_names, \
 
                 # Get genome length
                 #if Global_State['PrimaryContig_len'] == 0 and i == 0:
+                contig_lens = ass.get_contig_lengths()
                 if i == 0:
-                    Global_State['PrimaryContig_len'] = len(Global_Genbank_Genomes[i].seq)
-                    Global_State['PrimaryContig_GCavg'] = compute_GC (Global_Genbank_Genomes[i].seq)
+                    contig_GCs  = ass.get_contig_GC_content(contig_id_list=[scaffold_id])
+                    Global_State['PrimaryContig_len'] = contig_lens[scaffold_id]                    
+                    Global_State['PrimaryContig_GCavg'] = contig_GCs (Global_Genbank_Genomes[i].seq)
                     Global_State['Contig_lens'] = []
                     Global_State['pivot_pos_list'] = []
                     #print ("%d"%Global_State['PrimaryContig_len'])
-                Global_State['Contig_lens'].append(len(Global_Genbank_Genomes[i].seq))
+                Global_State['Contig_lens'].append(contig_lens[scaffold_id])
                 
                 # Find ortholog feature and put in first position
                 contig_mode_xshift = 0
-                for f in Global_Genbank_Genomes[i].features:                        
-                    if f.type == "source":
-                        source = f.qualifiers['organism'][0]
-                        break
+                source = 'E. missingii'
                         
                 try:
                     this_ortholog_locustag = OrthologSet_locusTags[i]
@@ -1016,22 +1003,38 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 if Global_State['genomebrowser_mode'] == 'contigs' \
                     or OrthologSet_locusTags[i] == '':
                         
-                    for f in Global_Genbank_Genomes[i].features:                        
-                        pivot_feature_rec = None
-                        lowest_beg = 10000000000
-                        #if f.type == "CDS" and "locus_tag" in f.qualifiers:                    
-#                        if (f.type == "CDS" and "gene" in f.qualifiers):
-                        if (f.type == "CDS" and "gene" in f.qualifiers) \
-                            or f.type == 'rRNA' \
-                            or f.type == 'tRNA' \
-                            or (f.type == 'gene' and "comment" in f.qualifiers and f.qualifiers['comment'][0] == "CRISPR") \
-                            or (f.type == 'gene' and "comment" in f.qualifiers and f.qualifiers['comment'][0] == "CRISPR spacer") \
-                            or (f.type == 'gene' and "pseudo" in f.qualifiers):
+                    slice_beg = 1
+                    slice_end = 20000
+                    features = []
+                    feature_slice_ids_list = []
+                    feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':contig_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+                    #"by_region": dict<str contig_id, dict<str strand, dict<string range, list<string feature_id>>>>
+                    for ctg_id in feature_slice_ids['by_region'].keys():
+                        for strand in feature_slice_ids['by_region'][ctg_id].keys():
+                            for range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
+                                #print ("%s\t%s\t%s"%(ctg_id, strand, range))
+                                feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][range])
+                    features = ga.get_features(feature_id_list=feature_slice_ids_list)
+                    
+                    pivot_feature_rec = None
+                    lowest_beg = 10000000000
 
-                            if f.location.start < lowest_beg:
-                                lowest_beg = f.location.start
-                                pivot_feature_rec = build_feature_rec_genbank(f, f_type=f.type, source_species=source, contig_i=i)
-                                
+                    for fid in features.keys():
+                        strand = features[fid]['feature_locations'][0][KB_LOC_STR_I]
+                        f_len = features[fid]['feature_locations'][0][KB_LOC_LEN_I]
+                        if strand == '+':
+                            beg = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
+                            end = beg + f_len - 1
+                        else:
+                            end = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
+                            beg = end - f_len + 1
+                        #print ("%s\t%s\t%s\t%s\t%s\t%s"%(contig_id, ctg_id, fid, beg, end, strand))
+
+                        if beg < lowest_beg:
+                            lowest_beg = beg
+                            type=features[fid]['feature_type']
+                            pivot_feature_rec = build_feature_rec_kbase(features[fid], f_type=type, source_species=source, contig_i=i)
+
                     Feature_slice.append(pivot_feature_rec)
                     pivot_pos = 0.5 * (pivot_feature_rec['beg_pos']+pivot_feature_rec['end_pos'])
                     Global_State['pivot_pos_list'].append(pivot_pos)
@@ -1041,7 +1044,8 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     if Global_State['genomebrowser_mode'] == 'contigs':                    
                         contig_mode_xshift = 0.5*window_size - 0.5*(pivot_feature_rec['end_pos']-pivot_feature_rec['beg_pos'])
                             
-                else:             
+                else:
+#HERE
                     for f in Global_Genbank_Genomes[i].features:        
                         
                         #if f.type == "CDS" and "locus_tag" in f.qualifiers:                    
@@ -4105,12 +4109,11 @@ def update_genomebrowser_panel (ax):
                               genomebrowser_xshift = Global_State['genomebrowser_xshift'], \
                               genomebrowser_mode = Global_State['genomebrowser_mode'])
     pyplot.show()
+    
 
-
-###############################################################################################################                
+###############################################################################                
 # Main
-###############################################################################################################
-
+###############################################################################
 
 # Instatiate fig_FGB
 #   
@@ -4174,4 +4177,6 @@ update_mode_panel (ax_top_left)
 #
 update_control_panel (ax_top_center)
 
-
+###############################################################################
+# End KGB
+###############################################################################
