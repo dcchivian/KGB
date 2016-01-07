@@ -90,6 +90,8 @@ KBase_backend = True
 # Extra Init for KBase
 #
 if KBase_backend:
+    %pylab notebook
+    #matplotlib.use('nbagg')
     import os
     import doekbase.data_api
     from doekbase.data_api.annotation.genome_annotation.api import GenomeAnnotationAPI
@@ -105,6 +107,7 @@ if KBase_backend:
 # Init for just non-KBase use
 #
 if not KBase_backend:
+    %pylab notebook
     from Bio import SeqIO
 
 # Init for both
@@ -122,8 +125,6 @@ import csv
 from math import acos
 from Bio import Phylo
 #import re
-#%pylab notebook
-%pylab
 #matplotlib.use('nbagg')
 import matplotlib.transforms as mtransforms
 import matplotlib.patheffects as path_effects
@@ -161,10 +162,26 @@ if tree_data_file != None:
     mode_names_disp.append('Tree')
     mode_names.append('tree')
 
+    
+# Caches
+#
+search_results = []
+search_done = []
+Contig_order = []
+Contig_order_lookup = {}
+Global_KBase_Genomes = {}
+Global_KBase_Assemblies = {}
+Global_Genbank_Genomes = []
+#Global_Features = []
+domain_family_desc = {}
+Global_Domains = []
+
 
 # Build ContigSet_names from files or from KBase object
 #
-genome_contig_id_delim = '+CONTIG:'
+genome_contig_id_delim = '.'
+if KBase_backend:
+    genome_contig_id_delim = '+CONTIG:'
 if KBase_backend:
     for genome_id in GenomeSet_names:
         Global_KBase_Genomes[genome_id] = ga = GenomeAnnotationAPI(services, token=token, ref=genome_id)
@@ -174,7 +191,7 @@ if KBase_backend:
         for scaffold_id in ass.get_contig_ids():
             contig_id = genome_id+genome_contig_id_delim+scaffold_id
             ContigSet_names.append(contig_id)
-            #print (contig_id)  # DEBUG
+            print (contig_id)  # DEBUG
             
 elif genome_data_format == "Genbank":
     for genome_id in GenomeSet_names:
@@ -186,7 +203,7 @@ elif genome_data_format == "Genbank":
         for file in files:
             if ".gbk" in file:
                 scaffold_id = file[0:file.index(".gbk")]
-                contig_id = genome_id+'.'+scaffold_id
+                contig_id = genome_id+genome_contig_id_delim+scaffold_id
                 ContigSet_names.append(contig_id)
 else:
     print ("unknown genome_data_format: '"+genome_data_format+"'")
@@ -238,18 +255,8 @@ KB_LOC_STR_I = 2
 KB_LOC_LEN_I = 3
 
 
-# Caches and State
+# State
 #
-search_results = []
-search_done = []
-Contig_order = []
-Contig_order_lookup = {}
-Global_KBase_Genomes = {}
-Global_KBase_Assemblies = {}
-Global_Genbank_Genomes = []
-#Global_Features = []
-domain_family_desc = {}
-Global_Domains = []
 Global_State = { \
                 "ContigSet_names":                   ContigSet_names, \
                 "OrthologSet_locusTags":             OrthologSet_locusTags, \
@@ -491,10 +498,10 @@ def build_feature_rec_kbase (f, f_type='CDS', source_species='', contig_i=0, dna
     strand = f['feature_locations'][0][KB_LOC_STR_I]
     f_len = f['feature_locations'][0][KB_LOC_LEN_I]
     if strand == '+':
-        beg = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
+        beg = f['feature_locations'][0][KB_LOC_BEG_I]
         end = beg + f_len - 1
     else:
-        end = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
+        end = f['feature_locations'][0][KB_LOC_BEG_I]
         beg = end - f_len + 1    
     if end < beg:
         print ("WARNING: reversed gene: %s: %s (%d-%d)"%(source_species, locus_tag, beg, end))
@@ -563,9 +570,6 @@ def build_feature_rec_kbase (f, f_type='CDS', source_species='', contig_i=0, dna
     EC_number = ''
     if EC_in_annotation != '':
         EC_number = EC_in_annotation
-    else:
-        if f_type == "CDS" and 'EC_number' in f.qualifiers:
-            EC_number = f.qualifiers['EC_number'][0]
 
     # create feature_rec
     feature_rec = {"source_species": source_species, \
@@ -947,7 +951,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 #if Global_State['PrimaryContig_len'] == 0 and i == 0:
                 contig_lens = ass.get_contig_lengths()
                 if i == 0:
-                    contig_GCs  = ass.get_contig_GC_content(contig_id_list=[scaffold_id])
+                    contig_GCs  = ass.get_contig_gc_content(contig_id_list=[scaffold_id])
                     Global_State['PrimaryContig_len'] = contig_lens[scaffold_id]                    
                     Global_State['PrimaryContig_GCavg'] = contig_GCs[scaffold_id]
                     Global_State['Contig_lens'] = []
@@ -1131,7 +1135,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 #if Global_State['PrimaryContig_len'] == 0 and i == 0:
                 contig_lens = ass.get_contig_lengths()
                 if Global_State['PrimaryContig_len'] == 0 and i == 0:
-                    contig_GCs  = ass.get_contig_GC_content(contig_id_list=[scaffold_id])
+                    contig_GCs  = ass.get_contig_gc_content(contig_id_list=[scaffold_id])
                     Global_State['PrimaryContig_len'] = contig_lens[scaffold_id]                    
                     Global_State['PrimaryContig_GCavg'] = contig_GCs[scaffold_id]
                     #print ("%d"%Global_State['PrimaryContig_len'])
@@ -3802,7 +3806,7 @@ def update_genomebrowser_panel (ax):
     Contig_order = []
     Contig_order_lookup = {}
     for i,genome_name in enumerate(ContigSet_names):
-        (genome_id,scaffold_id) = genome_name.split(".")        
+        (genome_id,scaffold_id) = genome_name.split(genome_contig_id_delim)        
         try:
             col = Contig_order_lookup['genome_id']
         except:
