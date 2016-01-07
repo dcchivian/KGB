@@ -186,12 +186,9 @@ if KBase_backend:
     for genome_id in GenomeSet_names:
         Global_KBase_Genomes[genome_id] = ga = GenomeAnnotationAPI(services, token=token, ref=genome_id)
         Global_KBase_Assemblies[genome_id] = ass = ga.get_assembly()
-        
-        #print (ass)
         for scaffold_id in ass.get_contig_ids():
             contig_id = genome_id+genome_contig_id_delim+scaffold_id
             ContigSet_names.append(contig_id)
-            print (contig_id)  # DEBUG
             
 elif genome_data_format == "Genbank":
     for genome_id in GenomeSet_names:
@@ -975,7 +972,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     or OrthologSet_locusTags[i] == '':
                         
                     slice_beg = 1
-                    slice_end = 20000
+                    slice_end = 100000
                     features = []
                     feature_slice_ids_list = []
                     feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
@@ -983,7 +980,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     for ctg_id in feature_slice_ids['by_region'].keys():
                         for strand in feature_slice_ids['by_region'][ctg_id].keys():
                             for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
-                                #print ("%s\t%s\t%s"%(ctg_id, strand, range))
+                                #print ("%s\t%s\t%s"%(ctg_id, strand, range))  # A
                                 feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                     features = ga.get_features(feature_id_list=feature_slice_ids_list)
                     
@@ -1033,6 +1030,11 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 #
                 slice_beg = pivot_pos + genomebrowser_xshift + contig_mode_xshift - 0.5*window_size
                 slice_end = pivot_pos + genomebrowser_xshift + contig_mode_xshift + 0.5*window_size
+                if slice_end < 1:
+                    Feature_slices.append([Feature_slice[0]])
+                    continue                 
+                if slice_beg < 1:
+                    slice_beg = 1
                 features = []
                 feature_slice_ids_list = []
                 feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
@@ -1040,8 +1042,11 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 for ctg_id in feature_slice_ids['by_region'].keys():
                     for strand in feature_slice_ids['by_region'][ctg_id].keys():
                         for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
-                            #print ("%s\t%s\t%s"%(ctg_id, strand, range))
+                            #print ("%s\t%s\t%s"%(ctg_id, strand, range)) # B
                             feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
+                if len(feature_slice_ids_list) == 0:
+                    Feature_slices.append([Feature_slice[0]])
+                    continue  
                 features = ga.get_features(feature_id_list=feature_slice_ids_list)
                 
                 for fid in features.keys():
@@ -1053,14 +1058,19 @@ def getFeatureSlicesKBase (ContigSet_names, \
                             
                 # Check features against Search Terms
                 #
+                slice_beg = 1
+                slice_end = 10000000000
                 features = []
                 feature_slice_ids_list = []
-                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?'}]})
+                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
                 for ctg_id in feature_slice_ids['by_region'].keys():
                     for strand in feature_slice_ids['by_region'][ctg_id].keys():
                         for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
-                            #print ("%s\t%s\t%s"%(ctg_id, strand, range))
+                            #print ("%s\t%s\t%s"%(ctg_id, strand, range)) # C
                             feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
+                if len(feature_slice_ids_list) == 0:
+                    Feature_slices.append([Feature_slice[0]])
+                    continue  
                 features = ga.get_features(feature_id_list=feature_slice_ids_list)    
            
                 for fid in features.keys():
@@ -1072,7 +1082,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     else:
                         end = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
                         beg = end - f_len + 1                
-                    pos_key = "%d,%d,%d"%(strand,beg,end)
+                    pos_key = "%s,%d,%d"%(strand,beg,end)
                     if pos_key in Features_seen:
                         continue
                     else:
@@ -1160,7 +1170,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     
                     if OrthologSet_locusTags[0] == '':
                         slice_beg = 1
-                        slice_end = 20000
+                        slice_end = 100000
                         features = []
                         feature_slice_ids_list = []
                         feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
@@ -1168,7 +1178,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                         for ctg_id in feature_slice_ids['by_region'].keys():
                             for strand in feature_slice_ids['by_region'][ctg_id].keys():
                                 for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
-                                    #print ("%s\t%s\t%s"%(ctg_id, strand, range))
+                                    #print ("%s\t%s\t%s"%(ctg_id, strand, range)) # D
                                     feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                         features = ga.get_features(feature_id_list=feature_slice_ids_list)
 
@@ -1213,8 +1223,17 @@ def getFeatureSlicesKBase (ContigSet_names, \
                         
                 # Add in additional features within window.  Note: we want the duplicate ortholog feature
                 #
-                slice_beg = pivot_pos + genomebrowser_xshift + track_xshift - 0.5*window_size
-                slice_end = pivot_pos + genomebrowser_xshift + track_xshift + 0.5*window_size
+                slice_beg = int(round(pivot_pos + genomebrowser_xshift + track_xshift - 0.5*window_size))
+                slice_end = int(round(pivot_pos + genomebrowser_xshift + track_xshift + 0.5*window_size))
+                # DEBUG: temporary fix, but should make track_xshift correct for empty OrthologSet_locusTag
+                if slice_end < 1:
+                    Feature_slices.append([Feature_slice[0]])
+                    continue  
+                elif slice_beg < 1:
+                    slice_beg = 1
+                #print ("BEG: "+str(slice_beg))
+                #print ("END: "+str(slice_end))  # HERE
+                #print ("%s\t%s\t%s\t%s"%(pivot_pos, genomebrowser_xshift, track_xshift, 0.5*window_size))
                 features = []
                 feature_slice_ids_list = []
                 feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
@@ -1222,8 +1241,11 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 for ctg_id in feature_slice_ids['by_region'].keys():
                     for strand in feature_slice_ids['by_region'][ctg_id].keys():
                         for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
-                            #print ("%s\t%s\t%s"%(ctg_id, strand, range))
+                            #print ("%s\t%s\t%s"%(ctg_id, strand, f_range)) # E
                             feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
+                if len(feature_slice_ids_list) == 0:
+                    Feature_slices.append([Feature_slice[0]])
+                    continue                    
                 features = ga.get_features(feature_id_list=feature_slice_ids_list)
                 
                 for fid in features.keys():
@@ -1235,14 +1257,19 @@ def getFeatureSlicesKBase (ContigSet_names, \
                             
                 # Check features against Search Terms
                 #
+                slice_beg = 1
+                slice_end = 100000000000
                 features = []
                 feature_slice_ids_list = []
-                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?'}]})
+                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
                 for ctg_id in feature_slice_ids['by_region'].keys():
                     for strand in feature_slice_ids['by_region'][ctg_id].keys():
                         for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
-                            #print ("%s\t%s\t%s"%(ctg_id, strand, range))
+                            #print ("%s\t%s\t%s"%(ctg_id, strand, range)) # F
                             feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
+                if len(feature_slice_ids_list) == 0:
+                    Feature_slices.append([Feature_slice[0]])
+                    continue
                 features = ga.get_features(feature_id_list=feature_slice_ids_list)    
            
                 for fid in features.keys():
@@ -1254,7 +1281,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     else:
                         end = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
                         beg = end - f_len + 1                
-                    pos_key = "%d,%d,%d"%(strand,beg,end)
+                    pos_key = "%s,%d,%d"%(strand,beg,end)
                     if pos_key in Features_seen:
                         continue
                     else:
@@ -3835,7 +3862,7 @@ def update_genomebrowser_panel (ax):
 # Main
 ###############################################################################
 
-# Instatiate fig_FGB
+# Instantiate fig_FGB
 #   
 #fig_FGB.suptitle("Flexible Genome Browser", fontsize=22)
 fig_FGB = pyplot.figure(1, (figure_width, top_nav_height + figure_height_scaling*(total_rows+1)))
