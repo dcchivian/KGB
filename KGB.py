@@ -59,7 +59,6 @@ domain_data_format = "KBase_domains"
 ###############################################################################
 # KGB
 ###############################################################################
-
 """
 ## KGB Genome Browser (KGB)                                                  
 ##                                                                              
@@ -94,8 +93,8 @@ if KBase_backend:
     import os
     import doekbase.data_api
     from doekbase.data_api.annotation.genome_annotation.api import GenomeAnnotationAPI
+    from doekbase.data_api.sequence.assembly.api import AssemblyAPI
     #from doekbase.data_api.taxonomy.taxon.api import TaxonAPI
-    #from doekbase.data_api.sequence.assembly.api import AssemblyAPI
     #from doekbase.data_api.core import ObjectAPI
     
     # Standard setup for accessing Data API
@@ -168,13 +167,14 @@ if tree_data_file != None:
 genome_contig_id_delim = '+CONTIG:'
 if KBase_backend:
     for genome_id in GenomeSet_names:
-        ga = GenomeAnnotationAPI(services, token=token, ref=genome_id)
-        ass = ga.get_assembly()
+        Global_KBase_Genomes[genome_id] = ga = GenomeAnnotationAPI(services, token=token, ref=genome_id)
+        Global_KBase_Assemblies[genome_id] = ass = ga.get_assembly()
+        
         #print (ass)
         for scaffold_id in ass.get_contig_ids():
             contig_id = genome_id+genome_contig_id_delim+scaffold_id
             ContigSet_names.append(contig_id)
-            print (contig_id)  # DEBUG
+            #print (contig_id)  # DEBUG
             
 elif genome_data_format == "Genbank":
     for genome_id in GenomeSet_names:
@@ -244,6 +244,8 @@ search_results = []
 search_done = []
 Contig_order = []
 Contig_order_lookup = {}
+Global_KBase_Genomes = {}
+Global_KBase_Assemblies = {}
 Global_Genbank_Genomes = []
 #Global_Features = []
 domain_family_desc = {}
@@ -917,51 +919,14 @@ def getFeatureSlicesKBase (ContigSet_names, \
 
         if KBase_backend:  
             
-            feature_fields_oi = ['feature_type', \
-                                 'feature_function', \
-                                 'feature_aliases', \
-                                 'feature_dna_sequence', \
-                                 'feature_locations']
-
-            ga = GenomeAnnotationAPI(services, token=token, ref=ref)
-            ass = ga.get_assembly()
-            #print (ass)
-            
-            for contig_id in ass.get_contig_ids():
-                #print ('contig_id: '+contig_id)
-                features = []
-                feature_slice_ids_list = []
-                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':contig_id, 'strand':'?', 'start':10, 'length':10000}]})
-                #"by_region": dict<str contig_id, dict<str strand, dict<string range, list<string feature_id>>>>
-
-                for ctg_id in feature_slice_ids['by_region'].keys():
-                    for strand in feature_slice_ids['by_region'][ctg_id].keys():
-                        for range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
-                            #print ("%s\t%s\t%s"%(ctg_id, strand, range))
-                            feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][range])
-
-                features = ga.get_features(feature_id_list=feature_slice_ids_list)
-                count = 0
-                for fid in features.keys():
-
-                    strand = features[fid]['feature_locations'][0][LOC_STR_I]
-                    f_len = features[fid]['feature_locations'][0][LOC_LEN_I]
-                    if strand == '+':
-                        beg = features[fid]['feature_locations'][0][LOC_BEG_I]
-                        end = beg + f_len - 1
-                    else:
-                        end = features[fid]['feature_locations'][0][LOC_BEG_I]
-                        beg = end - f_len + 1
-                    print ("%s\t%s\t%s\t%s\t%s\t%s"%(contig_id, ctg_id, fid, beg, end, strand))
-
             for i,genome_name in enumerate(ContigSet_names):
                 if i >= max_rows:
                     break
 
                 (genome_id,scaffold_id) = genome_name.split(genome_contig_id_delim)
 
-                ga = GenomeAnnotationAPI(services, token=token, ref=genome_id)
-                ass = ga.get_assembly()
+                ga = Global_KBase_Genomes[genome_id]
+                ass = Global_KBase_Assemblies[genome_id]
             
                 Feature_slice = []
                 Features_seen = set()
@@ -984,15 +949,17 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 if i == 0:
                     contig_GCs  = ass.get_contig_GC_content(contig_id_list=[scaffold_id])
                     Global_State['PrimaryContig_len'] = contig_lens[scaffold_id]                    
-                    Global_State['PrimaryContig_GCavg'] = contig_GCs (Global_Genbank_Genomes[i].seq)
+                    Global_State['PrimaryContig_GCavg'] = contig_GCs[scaffold_id]
                     Global_State['Contig_lens'] = []
                     Global_State['pivot_pos_list'] = []
                     #print ("%d"%Global_State['PrimaryContig_len'])
                 Global_State['Contig_lens'].append(contig_lens[scaffold_id])
                 
+
                 # Find ortholog feature and put in first position
+                #
                 contig_mode_xshift = 0
-                source = 'E. missingii'
+                source = 'E. missingii'  # FIX THIS
                         
                 try:
                     this_ortholog_locustag = OrthologSet_locusTags[i]
@@ -1007,13 +974,13 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     slice_end = 20000
                     features = []
                     feature_slice_ids_list = []
-                    feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':contig_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+                    feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
                     #"by_region": dict<str contig_id, dict<str strand, dict<string range, list<string feature_id>>>>
                     for ctg_id in feature_slice_ids['by_region'].keys():
                         for strand in feature_slice_ids['by_region'][ctg_id].keys():
-                            for range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
+                            for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
                                 #print ("%s\t%s\t%s"%(ctg_id, strand, range))
-                                feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][range])
+                                feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                     features = ga.get_features(feature_id_list=feature_slice_ids_list)
                     
                     pivot_feature_rec = None
@@ -1032,8 +999,8 @@ def getFeatureSlicesKBase (ContigSet_names, \
 
                         if beg < lowest_beg:
                             lowest_beg = beg
-                            type=features[fid]['feature_type']
-                            pivot_feature_rec = build_feature_rec_kbase(features[fid], f_type=type, source_species=source, contig_i=i)
+                            f_type=features[fid]['feature_type']
+                            pivot_feature_rec = build_feature_rec_kbase(features[fid], f_type=f_type, source_species=source, contig_i=i)
 
                     Feature_slice.append(pivot_feature_rec)
                     pivot_pos = 0.5 * (pivot_feature_rec['beg_pos']+pivot_feature_rec['end_pos'])
@@ -1044,191 +1011,82 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     if Global_State['genomebrowser_mode'] == 'contigs':                    
                         contig_mode_xshift = 0.5*window_size - 0.5*(pivot_feature_rec['end_pos']-pivot_feature_rec['beg_pos'])
                             
-                else:
-#HERE
-                    for f in Global_Genbank_Genomes[i].features:        
-                        
-                        #if f.type == "CDS" and "locus_tag" in f.qualifiers:                    
-                        if f.type == "CDS" and "gene" in f.qualifiers:  # should it permit non-CDS anchor?             
-                            
-                            #elif f.qualifiers['locus_tag'][0] == OrthologSet_locusTags[i]:
-                            if f.qualifiers['gene'][0] == OrthologSet_locusTags[i]:  
-                                pivot_feature_rec = build_feature_rec_genbank(f, f_type='CDS', source_species=source, contig_i=i)
-                                Feature_slice.append(pivot_feature_rec)
-                                pivot_pos = 0.5 * (pivot_feature_rec['beg_pos']+pivot_feature_rec['end_pos'])
-                                Global_State['pivot_pos_list'].append(pivot_pos)
-                                if i == 0:
-                                    Global_State['PrimaryAnchor_pivot_pos'] = pivot_pos
-                                break
+                else:  # genomebrowser_mode != 'contigs' and != 'genome', so use OrthologSet_locusTags
+                    fid = OrthologSet_locusTags[i]
+                    features = ga.get_features(feature_id_list=[fid])
+                    f = features[fid]
+                    f_type = f['feature_type']
+                    
+                    pivot_feature_rec = build_feature_rec_kbase(f, f_type=f_type, source_species=source, contig_i=i)
+                    Feature_slice.append(pivot_feature_rec)
+                    pivot_pos = 0.5 * (pivot_feature_rec['beg_pos']+pivot_feature_rec['end_pos'])
+                    Global_State['pivot_pos_list'].append(pivot_pos)
+                    if i == 0:
+                        Global_State['PrimaryAnchor_pivot_pos'] = pivot_pos
+
                         
                 # Add in additional features within window.  Note: we want the duplicate ortholog feature
-                for f in Global_Genbank_Genomes[i].features:
-                    
-                    if f.type == "CDS":
-                        pos_key = "%d,%d,%d"%(f.location.strand,f.location.start+1,f.location.end)
-                        if pos_key in Features_seen:
-                            continue
-                        else:
-                            Features_seen.add(pos_key)
-                        # fast enough for now to build recs for all features, but might want to only do for window
-                        feature_rec = build_feature_rec_genbank(f, f_type='CDS', source_species=source, contig_i=i)
+                #
+                slice_beg = pivot_pos + genomebrowser_xshift + contig_mode_xshift - 0.5*window_size
+                slice_end = pivot_pos + genomebrowser_xshift + contig_mode_xshift + 0.5*window_size
+                features = []
+                feature_slice_ids_list = []
+                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+                #"by_region": dict<str contig_id, dict<str strand, dict<string range, list<string feature_id>>>>
+                for ctg_id in feature_slice_ids['by_region'].keys():
+                    for strand in feature_slice_ids['by_region'][ctg_id].keys():
+                        for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
+                            #print ("%s\t%s\t%s"%(ctg_id, strand, range))
+                            feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
+                features = ga.get_features(feature_id_list=feature_slice_ids_list)
+                
+                for fid in features.keys():
+                    f_type = features[fid]['feature_type']
+                    dna_seq = features[fid]['feature_dna_sequence']
+                    feature_rec = build_feature_rec_kbase(features[fid], f_type=f_type, source_species=source, contig_i=i, dna_seq=dna_seq)
+                    Feature_slice.append(feature_rec)                        
 
-                        # check if a search hit
-                        if not search_done[i]:
-                            for j,match_flag in enumerate(search_term_match(feature_rec)):
-                                if match_flag:
-                                    try:
-                                        term_hit_in_genome = search_results[i][j][0]
-                                    except:
-                                        search_results[i][j] = []
-                                    search_results[i][j].append({'beg_pos': feature_rec['beg_pos'],
-                                                                 'end_pos': feature_rec['end_pos'],
-                                                                 'name': feature_rec['name'],
-                                                                 'annot': feature_rec['annot']
-                                                                })
-
-                        # add feature to slice if in viewable window
-                        if feature_rec['end_pos'] >= pivot_pos + genomebrowser_xshift + contig_mode_xshift - 0.5*window_size and \
-                            feature_rec['beg_pos'] <= pivot_pos + genomebrowser_xshift + contig_mode_xshift + 0.5*window_size:
-
-                            Feature_slice.append(feature_rec)
                             
-                    elif f.type == "rRNA":
-                        pos_key = "%d,%d,%d"%(f.location.strand,f.location.start+1,f.location.end)
-                        if pos_key in Features_seen:
-                            continue
-                        else:
-                            Features_seen.add(pos_key)
-                        feature_rec = build_feature_rec_genbank(f, f_type='rRNA', source_species=source, contig_i=i)
+                # Check features against Search Terms
+                #
+                features = []
+                feature_slice_ids_list = []
+                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?'}]})
+                for ctg_id in feature_slice_ids['by_region'].keys():
+                    for strand in feature_slice_ids['by_region'][ctg_id].keys():
+                        for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
+                            #print ("%s\t%s\t%s"%(ctg_id, strand, range))
+                            feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
+                features = ga.get_features(feature_id_list=feature_slice_ids_list)    
+           
+                for fid in features.keys():
+                    strand = features[fid]['feature_locations'][0][KB_LOC_STR_I]
+                    f_len = features[fid]['feature_locations'][0][KB_LOC_LEN_I]
+                    if strand == '+':
+                        beg = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
+                        end = beg + f_len - 1
+                    else:
+                        end = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
+                        beg = end - f_len + 1                
+                    pos_key = "%d,%d,%d"%(strand,beg,end)
+                    if pos_key in Features_seen:
+                        continue
+                    else:
+                        Features_seen.add(pos_key)                    
 
-                        # check if a search hit
-                        if not search_done[i]:
-                            for j,match_flag in enumerate(search_term_match(feature_rec)):
-                                if match_flag:
-                                    try:
-                                        term_hit_in_genome = search_results[i][j][0]
-                                    except:
-                                        search_results[i][j] = []
-                                    search_results[i][j].append({'beg_pos': feature_rec['beg_pos'],
-                                                                 'end_pos': feature_rec['end_pos'],
-                                                                 'name': feature_rec['name'],
-                                                                 'annot': feature_rec['annot']
-                                                                })
-                                    
-                        if feature_rec['end_pos'] >= pivot_pos + genomebrowser_xshift + contig_mode_xshift - 0.5*window_size and \
-                            feature_rec['beg_pos'] <= pivot_pos + genomebrowser_xshift + contig_mode_xshift + 0.5*window_size:
-
-                            Feature_slice.append(feature_rec)
-
-                    elif f.type == "tRNA":
-                        pos_key = "%d,%d,%d"%(f.location.strand,f.location.start+1,f.location.end)
-                        if pos_key in Features_seen:
-                            continue
-                        else:
-                            Features_seen.add(pos_key)                        
-                        feature_rec = build_feature_rec_genbank(f, f_type='tRNA', source_species=source, contig_i=i)
-
-                        # check if a search hit
-                        if not search_done[i]:
-                            for j,match_flag in enumerate(search_term_match(feature_rec)):
-                                if match_flag:
-                                    try:
-                                        term_hit_in_genome = search_results[i][j][0]
-                                    except:
-                                        search_results[i][j] = []
-                                    search_results[i][j].append({'beg_pos': feature_rec['beg_pos'],
-                                                                 'end_pos': feature_rec['end_pos'],
-                                                                 'name': feature_rec['name'],
-                                                                 'annot': feature_rec['annot']
-                                                                })
-                        
-                        if feature_rec['end_pos'] >= pivot_pos + genomebrowser_xshift + contig_mode_xshift - 0.5*window_size and \
-                            feature_rec['beg_pos'] <= pivot_pos + genomebrowser_xshift + contig_mode_xshift + 0.5*window_size:
-
-                            Feature_slice.append(feature_rec)
-                            
-                    elif f.type == 'gene' and "comment" in f.qualifiers and f.qualifiers['comment'][0] == "CRISPR":
-                        pos_key = "%d,%d,%d"%(f.location.strand,f.location.start+1,f.location.end)
-                        if pos_key in Features_seen:
-                            continue
-                        else:
-                            Features_seen.add(pos_key)                        
-                        fwd_dna_seq = Global_Genbank_Genomes[i].seq[f.location.start:f.location.end-1]  # BioPython shifts start by -1 but not end?
-                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR', source_species=source, contig_i=i, dna_seq=fwd_dna_seq)
-
-                        # check if a search hit
-                        if not search_done[i]:
-                            for j,match_flag in enumerate(search_term_match(feature_rec)):
-                                if match_flag:
-                                    try:
-                                        term_hit_in_genome = search_results[i][j][0]
-                                    except:
-                                        search_results[i][j] = []
-                                    search_results[i][j].append({'beg_pos': feature_rec['beg_pos'],
-                                                                 'end_pos': feature_rec['end_pos'],
-                                                                 'name': feature_rec['name'],
-                                                                 'annot': feature_rec['annot']
-                                                                })
-                        
-                        if feature_rec['end_pos'] >= pivot_pos + genomebrowser_xshift + contig_mode_xshift - 0.5*window_size and \
-                            feature_rec['beg_pos'] <= pivot_pos + genomebrowser_xshift + contig_mode_xshift + 0.5*window_size:
-
-                            Feature_slice.append(feature_rec)
-                            
-                    elif f.type == 'gene' and "comment" in f.qualifiers and f.qualifiers['comment'][0] == "CRISPR spacer":
-                        pos_key = "%d,%d,%d"%(f.location.strand,f.location.start+1,f.location.end)
-                        if pos_key in Features_seen:
-                            continue
-                        else:
-                            Features_seen.add(pos_key)
-                        fwd_dna_seq = Global_Genbank_Genomes[i].seq[f.location.start:f.location.end-1]  # BioPython shifts start by -1 but not end?
-                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR spacer', source_species=source, contig_i=i, dna_seq=fwd_dna_seq)
-
-                        # check if a search hit
-                        if not search_done[i]:
-                            for j,match_flag in enumerate(search_term_match(feature_rec)):
-                                if match_flag:
-                                    try:
-                                        term_hit_in_genome = search_results[i][j][0]
-                                    except:
-                                        search_results[i][j] = []
-                                    search_results[i][j].append({'beg_pos': feature_rec['beg_pos'],
-                                                                 'end_pos': feature_rec['end_pos'],
-                                                                 'name': feature_rec['name'],
-                                                                 'annot': feature_rec['annot']
-                                                                })
-                        
-                        if feature_rec['end_pos'] >= pivot_pos + genomebrowser_xshift + contig_mode_xshift - 0.5*window_size and \
-                            feature_rec['beg_pos'] <= pivot_pos + genomebrowser_xshift + contig_mode_xshift + 0.5*window_size:
-
-                            Feature_slice.append(feature_rec)
-                            
-                    elif f.type == 'gene' and "pseudo" in f.qualifiers:
-                        pos_key = "%d,%d,%d"%(f.location.strand,f.location.start+1,f.location.end)
-                        if pos_key in Features_seen:
-                            continue
-                        else:
-                            Features_seen.add(pos_key)                        
-                        feature_rec = build_feature_rec_genbank(f, f_type='pseudogene', source_species=source, contig_i=i)
-
-                        # check if a search hit
-                        if not search_done[i]:
-                            for j,match_flag in enumerate(search_term_match(feature_rec)):
-                                if match_flag:
-                                    try:
-                                        term_hit_in_genome = search_results[i][j][0]
-                                    except:
-                                        search_results[i][j] = []
-                                    search_results[i][j].append({'beg_pos': feature_rec['beg_pos'],
-                                                                 'end_pos': feature_rec['end_pos'],
-                                                                 'name': feature_rec['name'],
-                                                                 'annot': feature_rec['annot']
-                                                                })
-                        
-                        if feature_rec['end_pos'] >= pivot_pos + genomebrowser_xshift + contig_mode_xshift - 0.5*window_size and \
-                            feature_rec['beg_pos'] <= pivot_pos + genomebrowser_xshift + contig_mode_xshift + 0.5*window_size:
-
-                            Feature_slice.append(feature_rec)
+                    # check if a search hit
+                    if not search_done[i]:
+                        for j,match_flag in enumerate(search_term_match(feature_rec)):
+                            if match_flag:
+                                try:
+                                    term_hit_in_genome = search_results[i][j][0]
+                                except:
+                                    search_results[i][j] = []
+                                search_results[i][j].append({'beg_pos': feature_rec['beg_pos'],
+                                                             'end_pos': feature_rec['end_pos'],
+                                                             'name': feature_rec['name'],
+                                                             'annot': feature_rec['annot']
+                                                            })
 
                 # sort results by position, store contig slice, and mark search as done on this contig
                 #
@@ -1240,83 +1098,25 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 search_done[i] = True   
 
         else:
-            print ("unknown data format for Genomes")
+            print ("must use KBase_backend")
 
     # genomebrowser_mode == "genome"
     else:  
+        if KBase_backend:  
 
-        if KBase_backend:
-            feature_fields_oi = ['feature_type', \
-                                 'feature_function', \
-                                 'feature_aliases', \
-                                 #'feature_dna_sequence', \
-                                 'feature_locations']
-            LOC_CTG_I = 0
-            LOC_BEG_I = 1
-            LOC_STR_I = 2
-            LOC_LEN_I = 3
-
-            ga = GenomeAnnotationAPI(services, token=token, ref=ref)
-            ass = ga.get_assembly()
-            #print (ass)
-            for contig_id in ass.get_contig_ids():
-                #print ('contig_id: '+contig_id)
-                features = []
-                feature_ids = []
-                feature_slice_ids_by_type = ga.get_feature_ids(filters=[{'contig_id':contig_id, 'strand':'?', 'start':10, 'length':1000}])
-                for f_type in feature_slice_ids_by_type['by_type']:
-                    #print ("%s"%f_type)
-                    #for f_id in feature_slice_ids_container_by_type['by_type'][f_type]:
-                    #    print (f_id)
-                    feature_ids.extend(feature_slice_ids_by_type['by_type'][f_type])
-                    features = ga.get_features(feature_id_list=feature_ids)
-                    count = 0
-                    for fid in features.keys():
-                        if fid != 'kb|g.2424.peg.1977' and fid != 'kb|g.2424.peg.2076':
-                            continue
-
-                        #count += 1
-                        #if count > 10:
-                        #    break
-                        #print ("%s"%f)
-                        #for k in features[fid]:
-                        #for k in feature_fields_oi:
-                        #    print ("%s\t%s\t%s\t%s" %(contig_id, fid, k, features[fid][k]))
-                        ctg_id = features[fid]['feature_locations'][0][LOC_CTG_I]
-                        if ctg_id != contig_id:  # deal with malfunctioning filter
-                            continue
-                        strand = features[fid]['feature_locations'][0][LOC_STR_I]
-                        f_len = features[fid]['feature_locations'][0][LOC_LEN_I]
-                        if strand == '+':
-                            beg = features[fid]['feature_locations'][0][LOC_BEG_I]
-                            end = beg + f_len - 1
-                        else:
-                            end = features[fid]['feature_locations'][0][LOC_BEG_I]
-                            beg = end - f_len + 1
-                        print ("%s\t%s\t%s\t%s\t%s\t%s"%(contig_id, ctg_id, fid, beg, end, strand))
-
-        elif genome_data_format == "Genbank":
-            #for i in range (0,total_rows):
             for i in range (0,Global_State['genome_mode_n_rows']):
                 genome_name = ContigSet_names[0]
-                try:
-                    t=Global_Genbank_Genomes[0]
-                except:
-                    (genome_id,scaffold_id) = genome_name.split(".")
-                    #print ("reading " + genome_name + " ...")
-                    #genome_data_path = 'data/'+genome_name+'.gbk'
-                    genome_data_path = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/scaffolds/'+scaffold_id+'.gbk'
-                    print ("%d "%i+'reading '+genome_data_path)
-                    Global_Genbank_Genomes.append (SeqIO.read(genome_data_path, 'genbank'))
-                    
+                (genome_id,scaffold_id) = genome_name.split(genome_contig_id_delim)
+
+                ga = Global_KBase_Genomes[genome_id]
+                ass = Global_KBase_Assemblies[genome_id]
+            
                 Feature_slice = []
                 Features_seen = set()
                 source = ""
                 pivot_pos = 0.0
-                #track_xshift = window_size * (i - (total_rows-1)/2)  # e.g. total_rows=7 -> -3,-2,-1,0,1,2,3
-                track_xshift = window_size * (i - (Global_State['genome_mode_n_rows']-1)/2)  # e.g. n_rows=7 -> -3,-2,-1,0,1,2,3
-                #print ("%d %f"%(i,track_xshift))
-
+                track_xshift = window_size * (i - (Global_State['genome_mode_n_rows']-1)/2)  # e.g. n_rows=7 -> -3,-2,-1,0,1,2,3                
+                
                 try:
                     this_search_done = search_done[0]
                 except:
@@ -1325,237 +1125,151 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     search_results.append([])
                     search_results[0] = []
                     for j,term in enumerate(Search_Terms):
-                        search_results[0].append([])                
-                
+                        search_results[0].append([])
+
                 # Get genome length
+                #if Global_State['PrimaryContig_len'] == 0 and i == 0:
+                contig_lens = ass.get_contig_lengths()
                 if Global_State['PrimaryContig_len'] == 0 and i == 0:
-                    Global_State['PrimaryContig_len'] = len(Global_Genbank_Genomes[i].seq)
-                    Global_State['PrimaryContig_GCavg'] = compute_GC (Global_Genbank_Genomes[i].seq)
+                    contig_GCs  = ass.get_contig_GC_content(contig_id_list=[scaffold_id])
+                    Global_State['PrimaryContig_len'] = contig_lens[scaffold_id]                    
+                    Global_State['PrimaryContig_GCavg'] = contig_GCs[scaffold_id]
                     #print ("%d"%Global_State['PrimaryContig_len'])
-                    Global_State['Contig_lens'].append(len(Global_Genbank_Genomes[i].seq))
+                    Global_State['Contig_lens'].append(contig_lens[scaffold_id])
+                
 
                 # Find ortholog feature and put in first position
+                #
                 if i == 0:
                     try:
                         this_ortholog_locustag = OrthologSet_locusTags[0]
                     except:
                         OrthologSet_locusTags.append('')
-                        Global_State['OrthologSet_locusTags'].append('')              
-                
+                        Global_State['OrthologSet_locusTags'].append('')
+
                 if i > 0:
                     pivot_feature_rec = Feature_slices[0][0]  # use homolog feature from first contig only
                     pivot_pos = 0.5 * (pivot_feature_rec['beg_pos']+pivot_feature_rec['end_pos'])
                     Feature_slice.append(pivot_feature_rec)
                 else:
-                    for f in Global_Genbank_Genomes[0].features:  
-                        if f.type == "source":
-                            source = f.qualifiers['organism'][0]
-                            break
-                            
-                    if OrthologSet_locusTags[0] == '':      
-                        for f in Global_Genbank_Genomes[0].features:                        
-                            pivot_feature_rec = None
-                            lowest_beg = 10000000000
-                            #if f.type == "CDS" and "locus_tag" in f.qualifiers:                    
-    #                        if (f.type == "CDS" and "gene" in f.qualifiers):
-                            if (f.type == "CDS" and "gene" in f.qualifiers) \
-                                or f.type == 'rRNA' \
-                                or f.type == 'tRNA' \
-                                or (f.type == 'gene' and "comment" in f.qualifiers and f.qualifiers['comment'][0] == "CRISPR") \
-                                or (f.type == 'gene' and "comment" in f.qualifiers and f.qualifiers['comment'][0] == "CRISPR spacer") \
-                                or (f.type == 'gene' and "pseudo" in f.qualifiers):
+                    source = 'E. missingii'  # FIX THIS
+                    
+                    if OrthologSet_locusTags[0] == '':
+                        slice_beg = 1
+                        slice_end = 20000
+                        features = []
+                        feature_slice_ids_list = []
+                        feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+                        #"by_region": dict<str contig_id, dict<str strand, dict<string range, list<string feature_id>>>>
+                        for ctg_id in feature_slice_ids['by_region'].keys():
+                            for strand in feature_slice_ids['by_region'][ctg_id].keys():
+                                for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
+                                    #print ("%s\t%s\t%s"%(ctg_id, strand, range))
+                                    feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
+                        features = ga.get_features(feature_id_list=feature_slice_ids_list)
 
-                                if f.location.start < lowest_beg:
-                                    lowest_beg = f.location.start
-                                    pivot_feature_rec = build_feature_rec_genbank(f, f_type=f.type, source_species=source, contig_i=0)
+                        pivot_feature_rec = None
+                        lowest_beg = 10000000000
+
+                        for fid in features.keys():
+                            strand = features[fid]['feature_locations'][0][KB_LOC_STR_I]
+                            f_len = features[fid]['feature_locations'][0][KB_LOC_LEN_I]
+                            if strand == '+':
+                                beg = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
+                                end = beg + f_len - 1
+                            else:
+                                end = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
+                                beg = end - f_len + 1
+                            #print ("%s\t%s\t%s\t%s\t%s\t%s"%(contig_id, ctg_id, fid, beg, end, strand))
+
+                            if beg < lowest_beg:
+                                lowest_beg = beg
+                                f_type=features[fid]['feature_type']
+                                pivot_feature_rec = build_feature_rec_kbase(features[fid], f_type=f_type, source_species=source, contig_i=i)
 
                         Feature_slice.append(pivot_feature_rec)
                         pivot_pos = 0.5 * (pivot_feature_rec['beg_pos']+pivot_feature_rec['end_pos'])
                         Global_State['pivot_pos_list'].append(pivot_pos)
                         if i == 0:
-                            Global_State['PrimaryAnchor_pivot_pos'] = pivot_pos  
-                            
-                    else:
-                        for f in Global_Genbank_Genomes[0].features:  # should it permit non-CDS anchor?    
-                            #if f.type == "CDS" and "locus_tag" in f.qualifiers and f.qualifiers['locus_tag'][0] == OrthologSet_locusTags[i]:
-                            if f.type == "CDS" and "gene" in f.qualifiers:  
-                                if f.qualifiers['gene'][0] == OrthologSet_locusTags[i]:
-                                    pivot_feature_rec = build_feature_rec_genbank(f, f_type='CDS', source_species=source, contig_i=0)
-                                    Feature_slice.append(pivot_feature_rec)
-                                    pivot_pos = 0.5 * (pivot_feature_rec['beg_pos']+pivot_feature_rec['end_pos'])
-                                    if i == 0:
-                                        Global_State['PrimaryAnchor_pivot_pos'] = pivot_pos
-                                    break
+                            Global_State['PrimaryAnchor_pivot_pos'] = pivot_pos
+   
+                    else:  # OrthologSet_locusTags available
+                        fid = OrthologSet_locusTags[0]
+                        features = ga.get_features(feature_id_list=[fid])
+                        f = features[fid]
+                        f_type = f['feature_type']
+
+                        pivot_feature_rec = build_feature_rec_kbase(f, f_type=f_type, source_species=source, contig_i=0)
+                        Feature_slice.append(pivot_feature_rec)
+                        pivot_pos = 0.5 * (pivot_feature_rec['beg_pos']+pivot_feature_rec['end_pos'])
+                        Global_State['pivot_pos_list'].append(pivot_pos)
+                        if i == 0:
+                            Global_State['PrimaryAnchor_pivot_pos'] = pivot_pos
+
                         
                 # Add in additional features within window.  Note: we want the duplicate ortholog feature
-                for f in Global_Genbank_Genomes[0].features:
-                    if f.type == "CDS":  # we'll add other types later when we have icons for them
-                        pos_key = "%d,%d,%d"%(f.location.strand,f.location.start+1,f.location.end)
-                        if pos_key in Features_seen:
-                            continue
-                        else:
-                            Features_seen.add(pos_key)
-                        # fast enough for now to build recs for all features, but might want to only do for window
-                        feature_rec = build_feature_rec_genbank(f, f_type='CDS', source_species=source, contig_i=0)
-
-                        # check if a search hit
-                        if not search_done[0]:
-                            for j,match_flag in enumerate(search_term_match(feature_rec)):
-                                if match_flag:
-                                    try:
-                                        term_hit_in_genome = search_results[0][j][0]
-                                    except:
-                                        search_results[0][j] = []
-                                    search_results[0][j].append({'beg_pos': feature_rec['beg_pos'],
-                                                                 'end_pos': feature_rec['end_pos'],
-                                                                 'name': feature_rec['name'],
-                                                                 'annot': feature_rec['annot']
-                                                                })                        
-                        
-                        if feature_rec['end_pos'] >= pivot_pos + genomebrowser_xshift + track_xshift - 0.5*window_size and \
-                            feature_rec['beg_pos'] <= pivot_pos + genomebrowser_xshift + track_xshift + 0.5*window_size:
-
-                            #print ("%d %d %d"%(i, feature_rec['beg_pos'], feature_rec['end_pos']))
-                            Feature_slice.append(feature_rec)
-                            
-                    elif f.type == "rRNA":
-                        pos_key = "%d,%d,%d"%(f.location.strand,f.location.start+1,f.location.end)
-                        if pos_key in Features_seen:
-                            continue
-                        else:
-                            Features_seen.add(pos_key)
-                        feature_rec = build_feature_rec_genbank(f, f_type='rRNA', source_species=source, contig_i=0)
-
-                        # check if a search hit
-                        if not search_done[0]:
-                            for j,match_flag in enumerate(search_term_match(feature_rec)):
-                                if match_flag:
-                                    try:
-                                        term_hit_in_genome = search_results[0][j][0]
-                                    except:
-                                        search_results[0][j] = []
-                                    search_results[0][j].append({'beg_pos': feature_rec['beg_pos'],
-                                                                 'end_pos': feature_rec['end_pos'],
-                                                                 'name': feature_rec['name'],
-                                                                 'annot': feature_rec['annot']
-                                                                })                          
-                        
-                        if feature_rec['end_pos'] >= pivot_pos + genomebrowser_xshift + track_xshift - 0.5*window_size and \
-                            feature_rec['beg_pos'] <= pivot_pos + genomebrowser_xshift + track_xshift + 0.5*window_size:
-
-                            Feature_slice.append(feature_rec)
-
-                    elif f.type == "tRNA":
-                        pos_key = "%d,%d,%d"%(f.location.strand,f.location.start+1,f.location.end)
-                        if pos_key in Features_seen:
-                            continue
-                        else:
-                            Features_seen.add(pos_key)
-                        feature_rec = build_feature_rec_genbank(f, f_type='tRNA', source_species=source, contig_i=0)
-
-                        # check if a search hit
-                        if not search_done[0]:
-                            for j,match_flag in enumerate(search_term_match(feature_rec)):
-                                if match_flag:
-                                    try:
-                                        term_hit_in_genome = search_results[0][j][0]
-                                    except:
-                                        search_results[0][j] = []
-                                    search_results[0][j].append({'beg_pos': feature_rec['beg_pos'],
-                                                                 'end_pos': feature_rec['end_pos'],
-                                                                 'name': feature_rec['name'],
-                                                                 'annot': feature_rec['annot']
-                                                                })                          
-                        
-                        if feature_rec['end_pos'] >= pivot_pos + genomebrowser_xshift + track_xshift - 0.5*window_size and \
-                            feature_rec['beg_pos'] <= pivot_pos + genomebrowser_xshift + track_xshift + 0.5*window_size:
-
-                            Feature_slice.append(feature_rec)                    
-                            
-                    elif f.type == 'gene' and "comment" in f.qualifiers and f.qualifiers['comment'][0] == "CRISPR":
-                        pos_key = "%d,%d,%d"%(f.location.strand,f.location.start+1,f.location.end)
-                        if pos_key in Features_seen:
-                            continue
-                        else:
-                            Features_seen.add(pos_key)
-                        fwd_dna_seq = Global_Genbank_Genomes[0].seq[f.location.start:f.location.end-1]  # BioPython shifts start by -1 but not end?
-                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR', source_species=source, contig_i=0, dna_seq=fwd_dna_seq)
-
-                        # check if a search hit
-                        if not search_done[0]:
-                            for j,match_flag in enumerate(search_term_match(feature_rec)):
-                                if match_flag:
-                                    try:
-                                        term_hit_in_genome = search_results[0][j][0]
-                                    except:
-                                        search_results[0][j] = []
-                                    search_results[0][j].append({'beg_pos': feature_rec['beg_pos'],
-                                                                 'end_pos': feature_rec['end_pos'],
-                                                                 'name': feature_rec['name'],
-                                                                 'annot': feature_rec['annot']
-                                                                })                          
-                        
-                        if feature_rec['end_pos'] >= pivot_pos + genomebrowser_xshift + track_xshift - 0.5*window_size and \
-                            feature_rec['beg_pos'] <= pivot_pos + genomebrowser_xshift + track_xshift + 0.5*window_size:
-
-                            Feature_slice.append(feature_rec)
-                            
-                    elif f.type == 'gene' and "comment" in f.qualifiers and f.qualifiers['comment'][0] == "CRISPR spacer":
-                        pos_key = "%d,%d,%d"%(f.location.strand,f.location.start+1,f.location.end)
-                        if pos_key in Features_seen:
-                            continue
-                        else:
-                            Features_seen.add(pos_key)
-                        fwd_dna_seq = Global_Genbank_Genomes[0].seq[f.location.start:f.location.end-1]  # BioPython shifts start by -1 but not end?
-                        feature_rec = build_feature_rec_genbank(f, f_type='CRISPR spacer', source_species=source, contig_i=0, dna_seq=fwd_dna_seq)
-
-                        # check if a search hit
-                        if not search_done[0]:
-                            for j,match_flag in enumerate(search_term_match(feature_rec)):
-                                if match_flag:
-                                    try:
-                                        term_hit_in_genome = search_results[0][j][0]
-                                    except:
-                                        search_results[0][j] = []
-                                    search_results[0][j].append({'beg_pos': feature_rec['beg_pos'],
-                                                                 'end_pos': feature_rec['end_pos'],
-                                                                 'name': feature_rec['name'],
-                                                                 'annot': feature_rec['annot']
-                                                                })                          
-                        
-                        if feature_rec['end_pos'] >= pivot_pos + genomebrowser_xshift + track_xshift - 0.5*window_size and \
-                            feature_rec['beg_pos'] <= pivot_pos + genomebrowser_xshift + track_xshift + 0.5*window_size:
-
-                            Feature_slice.append(feature_rec)
-                            
-                    elif f.type == 'gene' and "pseudo" in f.qualifiers:
-                        pos_key = "%d,%d,%d"%(f.location.strand,f.location.start+1,f.location.end)
-                        if pos_key in Features_seen:
-                            continue
-                        else:
-                            Features_seen.add(pos_key)
-                        feature_rec = build_feature_rec_genbank(f, f_type='pseudogene', source_species=source, contig_i=0)
-
-                        # check if a search hit
-                        if not search_done[0]:
-                            for j,match_flag in enumerate(search_term_match(feature_rec)):
-                                if match_flag:
-                                    try:
-                                        term_hit_in_genome = search_results[0][j][0]
-                                    except:
-                                        search_results[0][j] = []
-                                    search_results[0][j].append({'beg_pos': feature_rec['beg_pos'],
-                                                                 'end_pos': feature_rec['end_pos'],
-                                                                 'name': feature_rec['name'],
-                                                                 'annot': feature_rec['annot']
-                                                                })                          
-                        
-                        if feature_rec['end_pos'] >= pivot_pos + genomebrowser_xshift + track_xshift - 0.5*window_size and \
-                            feature_rec['beg_pos'] <= pivot_pos + genomebrowser_xshift + track_xshift + 0.5*window_size:
-
-                            Feature_slice.append(feature_rec)
+                #
+                slice_beg = pivot_pos + genomebrowser_xshift + track_xshift - 0.5*window_size
+                slice_end = pivot_pos + genomebrowser_xshift + track_xshift + 0.5*window_size
+                features = []
+                feature_slice_ids_list = []
+                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+                #"by_region": dict<str contig_id, dict<str strand, dict<string range, list<string feature_id>>>>
+                for ctg_id in feature_slice_ids['by_region'].keys():
+                    for strand in feature_slice_ids['by_region'][ctg_id].keys():
+                        for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
+                            #print ("%s\t%s\t%s"%(ctg_id, strand, range))
+                            feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
+                features = ga.get_features(feature_id_list=feature_slice_ids_list)
+                
+                for fid in features.keys():
+                    f_type = features[fid]['feature_type']
+                    dna_seq = features[fid]['feature_dna_sequence']
+                    feature_rec = build_feature_rec_kbase(features[fid], f_type=f_type, source_species=source, contig_i=i, dna_seq=dna_seq)
+                    Feature_slice.append(feature_rec)                        
 
                             
+                # Check features against Search Terms
+                #
+                features = []
+                feature_slice_ids_list = []
+                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?'}]})
+                for ctg_id in feature_slice_ids['by_region'].keys():
+                    for strand in feature_slice_ids['by_region'][ctg_id].keys():
+                        for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
+                            #print ("%s\t%s\t%s"%(ctg_id, strand, range))
+                            feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
+                features = ga.get_features(feature_id_list=feature_slice_ids_list)    
+           
+                for fid in features.keys():
+                    strand = features[fid]['feature_locations'][0][KB_LOC_STR_I]
+                    f_len = features[fid]['feature_locations'][0][KB_LOC_LEN_I]
+                    if strand == '+':
+                        beg = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
+                        end = beg + f_len - 1
+                    else:
+                        end = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
+                        beg = end - f_len + 1                
+                    pos_key = "%d,%d,%d"%(strand,beg,end)
+                    if pos_key in Features_seen:
+                        continue
+                    else:
+                        Features_seen.add(pos_key)                    
+
+                    # check if a search hit
+                    if not search_done[0]:
+                        for j,match_flag in enumerate(search_term_match(feature_rec)):
+                            if match_flag:
+                                try:
+                                    term_hit_in_genome = search_results[0][j][0]
+                                except:
+                                    search_results[0][j] = []
+                                search_results[0][j].append({'beg_pos': feature_rec['beg_pos'],
+                                                             'end_pos': feature_rec['end_pos'],
+                                                             'name': feature_rec['name'],
+                                                             'annot': feature_rec['annot']
+                                                            })
+
                 # sort results by position, store contig slice, and mark search as done on this contig
                 #
                 Sorted_Feature_slice = [Feature_slice[0]]  # retain pivot
@@ -1563,10 +1277,11 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     Sorted_Feature_slice.append (f)
                     
                 Feature_slices.append(Sorted_Feature_slice)
-                search_done[0] = True
-                
+                search_done[0] = True   
+
         else:
-            print ("unknown data format for Genomes")
+            print ("must use KBase_backend")
+            
             
     return Feature_slices
 
@@ -1959,7 +1674,8 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                         for f in Global_Genbank_Genomes[0].features:  # should it permit non-CDS anchor?    
                             #if f.type == "CDS" and "locus_tag" in f.qualifiers and f.qualifiers['locus_tag'][0] == OrthologSet_locusTags[i]:
                             if f.type == "CDS" and "gene" in f.qualifiers:  
-                                if f.qualifiers['gene'][0] == OrthologSet_locusTags[i]:
+                                #if f.qualifiers['gene'][0] == OrthologSet_locusTags[i]:
+                                if f.qualifiers['gene'][0] == OrthologSet_locusTags[0]:
                                     pivot_feature_rec = build_feature_rec_genbank(f, f_type='CDS', source_species=source, contig_i=0)
                                     Feature_slice.append(pivot_feature_rec)
                                     pivot_pos = 0.5 * (pivot_feature_rec['beg_pos']+pivot_feature_rec['end_pos'])
