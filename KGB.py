@@ -3603,7 +3603,9 @@ def draw_sidenav_panel (ax, genomebrowser_mode):
         for GC_i in range(1,GC_steps-2):
             arc_end = 90 - 360 * (GC_i*GC_window_bp / Global_State['PrimaryContig_len'])
             arc_beg = 90 - 360 * ((GC_i+1)*GC_window_bp / Global_State['PrimaryContig_len'])
-            GC_in_window = compute_GC (Global_Genbank_Genomes[0].seq[(GC_i-1)*GC_window_bp:(GC_i+2)*GC_window_bp])
+            #GC_in_window = compute_GC (Global_Genbank_Genomes[0].seq[(GC_i-1)*GC_window_bp:(GC_i+2)*GC_window_bp])
+            # DEBUG
+            GC_in_window = 0.5
             GC_delta = GC_in_window - Global_State['PrimaryContig_GCavg']
             if (GC_delta > 0):
                 GC_color = "blue"
