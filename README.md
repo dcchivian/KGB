@@ -10,7 +10,7 @@
   * gene homology
   * phylogenetic trees
    
-
+<br><br>
 ![alt text](https://github.com/dcchivian/KGB/blob/master/img/KGB_screenshot.gif "KGB Screenshot")
 
 <br><br><br><br>
