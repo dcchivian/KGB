@@ -9,6 +9,10 @@
   * domain structure visualization
   * gene homology
   * phylogenetic trees
+   
+
+![alt text](https://github.com/dcchivian/KGB/blob/master/img/KGB_screenshot.gif "KGB Screenshot")
+
 
 ![alt text](https://avatars2.githubusercontent.com/u/1263946?v=3&s=84 "KBase") Designed to work with the DOE Systems Biology Knowledgebase (KBase)
 
