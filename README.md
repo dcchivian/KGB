@@ -10,8 +10,6 @@
   * gene homology
   * phylogenetic trees
 
-  Designed to work with the DOE Systems Biology Knowledgebase (KBase)
-
-![alt text](https://avatars2.githubusercontent.com/u/1263946?v=3&s=84 "KBase")
+![alt text](https://avatars2.githubusercontent.com/u/1263946?v=3&s=84 "KBase") Designed to work with the DOE Systems Biology Knowledgebase (KBase)
 
 Copyright 2015,2016 Dylan Chivian
