@@ -4075,7 +4075,8 @@ fig_FGB.tight_layout()  # left justify and space subplots reasonably.  Must foll
 # Load domain family descriptions
 #
 #domain_family_desc = read_domain_family_desc ()  # these need to be global (kludge)
-read_domain_family_desc ()  # these need to be global (kludge)
+if domain_family_desc_base_path != None:
+    read_domain_family_desc ()  # these need to be global (kludge)
 
 
 # Draw genome browser panel (must happen first to load Global_State)
