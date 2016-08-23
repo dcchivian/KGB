@@ -211,7 +211,7 @@ PrimaryAnchor_locusTag = None
 #
 if KBase_backend != None and KBase_backend:
     #%pylab notebook  # doesn't work within exec()
-    import matplotlib.pyplot as plt  # use this instead
+    import matplotlib.pyplot as pyplot  # use this instead
 
     #matplotlib.use('nbagg')
     import os
@@ -230,7 +230,7 @@ if KBase_backend != None and KBase_backend:
 #
 if KBase_backend == None or not KBase_backend:
     #%pylab notebook  # doesn't work within exec()
-    import matplotlib.pyplot as plt  # use this instead if in exec()
+    import matplotlib.pyplot as pyplot  # use this instead if in exec()
 
     from Bio import SeqIO
 
