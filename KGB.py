@@ -1,6 +1,8 @@
 ###############################################################################
 # KGB user input vars  (Preferably implement as separate upstream cell)
 ###############################################################################        
+from __future__ import print_function
+from __future__ import division
 
 
 # KBase user and reference genomes
@@ -227,8 +229,6 @@ if KBase_backend == None or not KBase_backend:
 # Init for both
 #
 #import numpy as np # comes with pylab
-from __future__ import print_function
-from __future__ import division
 import sys  # for io and exit
 from os import walk  # for dir reading
 from os import path  # for file and dir existence check
