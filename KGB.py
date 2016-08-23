@@ -1075,7 +1075,14 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 if i >= max_rows:
                     break
 
+                # DEBUG
+                print ("GENOME_NAME: '"+genome_name+"'\n")  # DEBUG
+
                 (genome_id,scaffold_id) = genome_name.split(genome_contig_id_delim)
+
+                # DEBUG
+                print ("GENOME_ID: '"+genome_id+"'\n")  # DEBUG
+                print ("SCAFFOLD_ID: '"+scaffold_id+"'\n")  # DEBUG
 
                 ga = Global_KBase_Genomes[genome_id]
                 ass = Global_KBase_Assemblies[genome_id]
@@ -1123,8 +1130,8 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     or OrthologSet_locusTags[i] == '':
                         
                     slice_beg = 1
-                    #slice_end = 100000
-                    slice_end = 1000  # DEBUG
+                    slice_end = 100000
+                    #slice_end = 1000  # DEBUG
                     features = []
                     feature_slice_ids_list = []
                     print ("SCAFFOLD_ID: '"+str(scaffold_id)+"'\n")  # DEBUG
@@ -1134,7 +1141,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
 #                    feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
 # DEBUG
                     print ("USING JUST + STRAND\n")  # DEBUG
-                    feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'+', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+                    feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
                     #"by_region": dict<str contig_id, dict<str strand, dict<string range, list<string feature_id>>>>
                     # DEBUG
                     for slice_k in feature_slice_ids.keys():
@@ -1144,6 +1151,9 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     print ("READING CONTIGS\n")  # DEBUG
                     for ctg_id in feature_slice_ids['by_region'].keys():
                         print ("CONTIG_ID: '"+str(ctg_id)+"\n")  # DEBUG
+                        if ctg_id != scaffold_id:
+                            print ("WTF?")  # DEBUG
+                            continue
                         for strand in feature_slice_ids['by_region'][ctg_id].keys():
                             print ("STRAND: '"+str(strand)+"\n")  # DEBUG
                             for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():
