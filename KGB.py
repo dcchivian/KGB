@@ -20,6 +20,8 @@ Search_Terms = []
 domain_data_format = "KBase_domains"
 domain_data_base_path = None
 tree_data_format = 'newick'
+tree_data_base_path = None
+tree_data_file = None
 PrimaryAnchor_leafId = None
 PrimaryAnchor_locusTag = None
 
