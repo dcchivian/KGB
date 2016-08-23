@@ -1128,9 +1128,13 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     feature_slice_ids_list = []
                     feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
                     #"by_region": dict<str contig_id, dict<str strand, dict<string range, list<string feature_id>>>>
+                    print ("READING CONTIGS\n")  # DEBUG
                     for ctg_id in feature_slice_ids['by_region'].keys():
+                        print ("CONTIG_ID: '"+str(ctg_id)+"\n")  # DEBUG
                         for strand in feature_slice_ids['by_region'][ctg_id].keys():
-                            for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
+                            print ("STRAND: '"+str(strand)+"\n")  # DEBUG
+                            for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():
+                                print ("F_RANGE: '"+str(f_range)+"\n")  # DEBUG
                                 #print ("%s\t%s\t%s"%(ctg_id, strand, range))  # A
                                 feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                     print ("A\n")  # DEBUG
