@@ -199,8 +199,8 @@ PrimaryAnchor_locusTag = None
 
 # Extra Init for KBase
 #
-%pylab notebook
 if KBase_backend != None and KBase_backend:
+    %pylab
     #matplotlib.use('nbagg')
     import os
     import doekbase.data_api
