@@ -4077,7 +4077,7 @@ fig_FGB.tight_layout()  # left justify and space subplots reasonably.  Must foll
 #
 #domain_family_desc = read_domain_family_desc ()  # these need to be global (kludge)
 if domain_family_desc_base_path != None:
-print ("HELLO\n")  # DEBUG
+print ("HELLO THERE\n")  # DEBUG
     read_domain_family_desc ()  # these need to be global (kludge)
 print ("HEYSERS\n")  # DEBUG
 
