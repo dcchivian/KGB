@@ -305,8 +305,6 @@ genome_contig_id_delim = '.'
 if KBase_backend:
     genome_contig_id_delim = '+CONTIG:'
 if KBase_backend:
-    print ("HI\n")
-    pass
     for ws_genome_id in GenomeSet_names:
         Global_KBase_Genomes[ws_genome_id] = ga = GenomeAnnotationAPI(services, token=token, ref=ws_genome_id)
         Global_KBase_Assemblies[ws_genome_id] = ass = ga.get_assembly()
@@ -337,6 +335,10 @@ elif genome_data_format == "Genbank":
 else:
     print ("unknown genome_data_format: '"+genome_data_format+"'")
     sys.exit(0)
+
+# DEBUG
+print ("HI\n")
+sys.exit(0)
 
 
 # Configuration
