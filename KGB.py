@@ -4,6 +4,10 @@
 from __future__ import print_function
 from __future__ import division
 
+# silence whining
+import requests
+requests.packages.urllib3.disable_warnings()
+
 
 # KBase user and reference genomes
 #
@@ -301,6 +305,8 @@ genome_contig_id_delim = '.'
 if KBase_backend:
     genome_contig_id_delim = '+CONTIG:'
 if KBase_backend:
+    print ("HI\n")
+    pass
     for ws_genome_id in GenomeSet_names:
         Global_KBase_Genomes[ws_genome_id] = ga = GenomeAnnotationAPI(services, token=token, ref=ws_genome_id)
         Global_KBase_Assemblies[ws_genome_id] = ass = ga.get_assembly()
