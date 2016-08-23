@@ -1111,7 +1111,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 # Find ortholog feature and put in first position
                 #
                 contig_mode_xshift = 0
-                source = 'E. missingii'  # FIX THIS
+                source = 'Is missingii'  # FIX THIS
                         
                 try:
                     this_ortholog_locustag = OrthologSet_locusTags[i]
@@ -1133,6 +1133,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                             for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
                                 #print ("%s\t%s\t%s"%(ctg_id, strand, range))  # A
                                 feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
+                    print ("A\n")  # DEBUG
                     features = ga.get_features(feature_id_list=feature_slice_ids_list)
                     
                     pivot_feature_rec = None
@@ -1165,6 +1166,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                             
                 else:  # genomebrowser_mode != 'contigs' and != 'genome', so use OrthologSet_locusTags
                     fid = OrthologSet_locusTags[i]
+                    print ("B\n")  # DEBUG
                     features = ga.get_features(feature_id_list=[fid])
                     f = features[fid]
                     f_type = f['feature_type']
@@ -1198,6 +1200,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 if len(feature_slice_ids_list) == 0:
                     Feature_slices.append([Feature_slice[0]])
                     continue  
+                print ("C\n")  # DEBUG
                 features = ga.get_features(feature_id_list=feature_slice_ids_list)
                 
                 for fid in features.keys():
@@ -1222,6 +1225,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 if len(feature_slice_ids_list) == 0:
                     Feature_slices.append([Feature_slice[0]])
                     continue  
+                print ("D\n")  # DEBUG
                 features = ga.get_features(feature_id_list=feature_slice_ids_list)    
            
                 for fid in features.keys():
@@ -1331,6 +1335,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                                 for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
                                     #print ("%s\t%s\t%s"%(ctg_id, strand, range)) # D
                                     feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
+                        print ("E\n")  # DEBUG
                         features = ga.get_features(feature_id_list=feature_slice_ids_list)
 
                         pivot_feature_rec = None
@@ -1360,6 +1365,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
    
                     else:  # OrthologSet_locusTags available
                         fid = OrthologSet_locusTags[0]
+                        print ("F\n")  # DEBUG
                         features = ga.get_features(feature_id_list=[fid])
                         f = features[fid]
                         f_type = f['feature_type']
@@ -1397,6 +1403,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 if len(feature_slice_ids_list) == 0:
                     Feature_slices.append([Feature_slice[0]])
                     continue                    
+                print ("G\n")  # DEBUG
                 features = ga.get_features(feature_id_list=feature_slice_ids_list)
                 
                 for fid in features.keys():
@@ -1421,6 +1428,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 if len(feature_slice_ids_list) == 0:
                     Feature_slices.append([Feature_slice[0]])
                     continue
+                print ("H\n")  # DEBUG
                 features = ga.get_features(feature_id_list=feature_slice_ids_list)    
            
                 for fid in features.keys():
