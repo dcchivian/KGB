@@ -301,10 +301,14 @@ Global_Domains = []
 
 # Build ContigSet_names from files or from KBase object
 #
+# DEBUG
+print ("HELLO\n")
 genome_contig_id_delim = '.'
 if KBase_backend != None and KBase_backend:
     genome_contig_id_delim = '+CONTIG:'
 if KBase_backend != None and KBase_backend:
+    # DEBUG
+    print ("HI\n")
     for ws_genome_id in GenomeSet_names:
         # DEBUG
         print ("HI "+str(ws_genome_id)+"\n")
