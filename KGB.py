@@ -311,10 +311,9 @@ Global_Domains = []
 # Build ContigSet_names from files or from KBase object
 #
 ContigSet_names = []
-genome_contig_id_delim = '.'
+genome_contig_id_delim = '/c:'
 if KBase_backend != None and KBase_backend:
-    genome_contig_id_delim = '/c'
-if KBase_backend != None and KBase_backend:
+    genome_contig_id_delim = '/c:'
     for ws_genome_id in GenomeSet_names:
         Global_KBase_Genomes[ws_genome_id] = ga = GenomeAnnotationAPI(services, token=token, ref=ws_genome_id)
         Global_KBase_Assemblies[ws_genome_id] = ass = ga.get_assembly()
@@ -1140,8 +1139,8 @@ def getFeatureSlicesKBase (ContigSet_names, \
 # RESTORE
 #                    feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
 # DEBUG
-                    print ("USING JUST + STRAND\n")  # DEBUG
-                    feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+                    #print ("USING JUST + STRAND\n")  # DEBUG
+                    feature_slice_ids = ga.get_feature_ids(group_by='region')
                     #"by_region": dict<str contig_id, dict<str strand, dict<string range, list<string feature_id>>>>
                     # DEBUG
                     for slice_k in feature_slice_ids.keys():
