@@ -212,7 +212,7 @@ if KBase_backend != None and KBase_backend:
     #%pylab notebook  # doesn't work within exec()
     import matplotlib.pyplot as pyplot  # use this instead
 
-    #matplotlib.use('nbagg')
+    matplotlib.use('nbagg')  # which agg to use?  getting DISPLAY error
     import os
     import doekbase.data_api
     from doekbase.data_api.annotation.genome_annotation.api import GenomeAnnotationAPI
@@ -319,7 +319,7 @@ if KBase_backend != None and KBase_backend:
             print ("badly formatted ws_genome_id")
             system.exit(-1)
         Species_name_by_genome_id[genome_id] = tax.get_scientific_name()
-        print ("READING GENOME: "+ws_genome_id+": "+Species_name_by_genome_id[genome_id]+"\n")  # DEBUG
+        #print ("Getting Contig IDs for Genome: "+ws_genome_id+": "+Species_name_by_genome_id[genome_id])  # DEBUG
         
         for scaffold_id in ass.get_contig_ids():
             contig_id = ws_genome_id+genome_contig_id_delim+scaffold_id
