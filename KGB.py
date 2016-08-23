@@ -1074,14 +1074,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 if i >= max_rows:
                     break
 
-                # DEBUG
-                print ("GENOME_NAME: '"+genome_name+"'\n")  # DEBUG
-
                 (genome_id,scaffold_id) = genome_name.split(genome_contig_id_delim)
-
-                # DEBUG
-                print ("GENOME_ID: '"+genome_id+"'\n")  # DEBUG
-                print ("SCAFFOLD_ID: '"+scaffold_id+"'\n")  # DEBUG
 
                 ga = Global_KBase_Genomes[genome_id]
                 ass = Global_KBase_Assemblies[genome_id]
