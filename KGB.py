@@ -219,7 +219,9 @@ if KBase_backend != None and KBase_backend:
 # Init for just non-KBase use
 #
 if KBase_backend == None or not KBase_backend:
-    %pylab notebook
+    #%pylab notebook  # doesn't work within exec()
+    import matplotlib.pyplot as plt  # use this instead if in exec()
+
     from Bio import SeqIO
 
 # Init for both
