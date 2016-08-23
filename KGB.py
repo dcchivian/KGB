@@ -23,6 +23,7 @@ OrthologSet_locusTags = []
 Search_Terms = []
 domain_data_format = "KBase_domains"
 domain_data_base_path = None
+domain_family_desc_base_path = None
 tree_data_format = 'newick'
 tree_data_base_path = None
 tree_data_file = None
@@ -4075,9 +4076,10 @@ fig_FGB.tight_layout()  # left justify and space subplots reasonably.  Must foll
 # Load domain family descriptions
 #
 #domain_family_desc = read_domain_family_desc ()  # these need to be global (kludge)
-print ("HELLO\n")  # DEBUG
 if domain_family_desc_base_path != None:
+print ("HELLO\n")  # DEBUG
     read_domain_family_desc ()  # these need to be global (kludge)
+print ("HEYSERS\n")  # DEBUG
 
 
 # Draw genome browser panel (must happen first to load Global_State)
