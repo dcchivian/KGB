@@ -1123,7 +1123,8 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     or OrthologSet_locusTags[i] == '':
                         
                     slice_beg = 1
-                    slice_end = 100000
+                    #slice_end = 100000
+                    slice_end = 1000  # DEBUG
                     features = []
                     feature_slice_ids_list = []
                     print ("SCAFFOLD_ID: '"+str(scaffold_id)+"'\n")  # DEBUG
