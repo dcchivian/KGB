@@ -307,7 +307,7 @@ if KBase_backend != None and KBase_backend:
 if KBase_backend != None and KBase_backend:
     for ws_genome_id in GenomeSet_names:
         # DEBUG
-        print ("HI 1\n")
+        print ("HI "+str(ws_genome_id)+"\n")
         Global_KBase_Genomes[ws_genome_id] = ga = GenomeAnnotationAPI(services, token=token, ref=ws_genome_id)
         # DEBUG
         print ("HI 2\n")
