@@ -321,7 +321,14 @@ if KBase_backend != None and KBase_backend:
         tax = ga.get_taxon()
         # DEBUG
         print ("HI 4\n")
-        [ws_id, genome_id] = ws_genome_id.split('/')
+        if ws_genome_id.count('/') == 3:
+            [ws_id, genome_id, ver] = ws_genome_id.split('/')
+        elif ws_genome_id.count('/') == 2:
+            [ws_id, genome_id] = ws_genome_id.split('/')
+            ver = 'auto'
+        else:
+            print ("badly formatted ws_genome_id")
+            system.exit(-1)
         # DEBUG
         print ("HI 5\n")
         Species_name_by_genome_id[genome_id] = tax.get_scientific_name()
