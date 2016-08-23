@@ -1160,9 +1160,13 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     lowest_beg = 10000000000
 
                     for fid in features.keys():
+
                         print ("fid:"+fid)  # DEBUG
                         for f_k in features[fid].keys():
                             print ("f_k: "+f_k)  # DEBUG
+                            if f_k == 'feature_locations':
+                                for loc in features[fid][f_k]:
+                                    print (loc) 
 
                         strand = features[fid]['feature_locations'][0][KB_LOC_STR_I]
                         # DEBUG
