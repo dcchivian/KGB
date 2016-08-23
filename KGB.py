@@ -18,6 +18,7 @@ GenomeSet_names = ['16750/7/1',
 OrthologSet_locusTags = []
 Search_Terms = []
 domain_data_format = "KBase_domains"
+domain_data_base_path = None
 tree_data_format = 'newick'
 PrimaryAnchor_leafId = None
 PrimaryAnchor_locusTag = None
@@ -985,7 +986,7 @@ def getDomainHits (ContigSet_names, \
         except:
             Global_Domains.append({})
 
-            if domain_data_format == "KBase_domains":
+            if domain_data_format == "KBase_domains" and domain_data_base_path != None:
                 
                 domain_data_path = domain_data_base_path+'/'+genome_id+domain_data_extra_subpath+'/'+genome_id+"_Domain_annot"+'.json'
                 print ("reading "+domain_data_path+" ...")
