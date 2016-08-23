@@ -2,15 +2,158 @@
 # KGB user input vars  (Preferably implement as separate upstream cell)
 ###############################################################################        
 
+
+# KBase user and reference genomes
+#
+KBase_backend = True
+GenomeSet_ref = None
+GenomeSet_names = ['16750/7/1',
+                   '16750/8/2',
+                   '16750/9/1',
+                   '16750/10/1',
+                   '16750/11/1'
+                   ]
+OrthologSet_locusTags = []
+Search_Terms = []
+domain_data_format = "KBase_domains"
+tree_data_format = 'newick'
+PrimaryAnchor_leafId = None
+PrimaryAnchor_locusTag = None
+
+
+# KBase genomes
+#
 #ref='ReferenceGenomeAnnotations/kb|g.3899'
 #ref='ReferenceGenomeAnnotations/kb|g.2624'
 #ref='ReferenceGenomeAnnotations/kb|g.2424'
+#GenomeSet_names = ['ReferenceGenomeAnnotations/kb|g.2424']
 
-GenomeSet_names = ['ReferenceGenomeAnnotations/kb|g.2424']
+
+# Plasmid Contigs
+#
 #GenomeSet_names = ["GW456", "GW460"]
-ContigSet_names = []
-OrthologSet_locusTags = []
+#ContigSet_names = []
+#OrthologSet_locusTags = []
+#PrimaryAnchor_leafId = "GW456.scaffold_130"
+#PrimaryAnchor_locusTag = "GW456_SEED_annot.CDS.1"
 
+#genome_annotation_system = 'KBase'
+#genome_data_format = "Genbank"
+#genome_data_base_path = "./data/plasmid_contigs"
+#genome_data_extra_subpath = "_old/scaffolds"
+##genome_data_extra_subpath = "_circular_2KbpMIN/scaffolds"
+#
+#domain_data_format = "KBase_domains"
+#domain_data_base_path = None
+#domain_data_base_path = "./data/plasmid_contigs"
+#domain_data_extra_subpath = "_old/domains"
+#domain_family_desc_base_path = "./data/domain_desc"
+
+#tree_data_format = 'newick'
+#tree_data_base_path = None
+#tree_data_file = None
+
+#Search_Terms = []
+#Search_Terms = ['pil or conj or mobil or partition or t-dna or vir or plasmid',
+#                'toxin'
+#                #'tra',
+#                #'rep'
+#               ]
+
+
+# KBase Genbank genomes
+#
+#GenomeSet_names = ["Desulforudis_audaxviator",
+#                   "Pelotomaculum_thermopropionicum",
+#                   "Desulfotomaculum_reducens",
+#                   "Bacillus_subtilis",
+#                   "Desulfovibrio_desulfuricans",
+#                   "Desulfovibrio_vulgaris",
+#                   "Geobacter_sulfurreducens",
+#                   "Escherichia_coli"]
+##                   "Desulforudis_audaxviator",
+##                   "Bacillus_subtilis",
+#                   #"Moorella_thermoacetica",
+#                   #"Thermoanaerobacter_tengcongensis",
+#
+#ContigSet_names = []
+#OrthologSet_locusTags = ["kb|g.1713.peg.340",
+#                         "kb|g.1713.peg.368",
+#                         "kb|g.1106.peg.1477",
+#                         "kb|g.996.peg.3228",
+#                         "kb|g.423.peg.584",
+#                         "kb|g.423.peg.176",
+#                         "kb|g.357.peg.1850",
+#                         "kb|g.3562.peg.757",
+#                         "kb|g.483.peg.109",
+#                         "kb|g.26833.CDS.2562"]
+#PrimaryAnchor_leafId = "Daudaxviator-Sat"
+#PrimaryAnchor_locusTag = "kb|g.1713.peg.340"
+#
+#genome_annotation_system = 'KBase'
+#genome_data_format = "Genbank"
+#genome_data_base_path = "./data/KBase_genome_contigs"
+#genome_data_extra_subpath = ""
+##genome_data_extra_subpath = "/scaffolds"
+#
+#domain_data_format = "KBase_domains"
+#domain_data_base_path = None
+#domain_data_base_path = "./data/KBase_genome_contigs"
+#domain_data_extra_subpath = ""
+##domain_data_extra_subpath = "/domains"
+#domain_family_desc_base_path = "./data/domain_desc"
+#
+#tree_data_format = 'newick'
+#tree_data_base_path = None
+#tree_data_file = None
+##tree_data_base_path = './data/trees'
+##tree_data_file = 'rpoB_tree-names.newick'
+#
+##Search_Terms = []
+#Search_Terms = ['dna-directed polymerase',
+#                '16S',
+#                'DNA and methyltransferase',
+#                '1.10.3.-',
+##                'polymerase or dna-directed',
+#                'fucI',
+#                'sulfate adenylyl transferase']
+
+
+# NCBI Genbank genomes
+#
+#GenomeSet_names = ["Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C"]
+#ContigSet_names = []
+#OrthologSet_locusTags = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
+#PrimaryAnchor_leafId = "Gsulf rpoB"
+#PrimaryAnchor_locusTag = "GSU2863"
+#
+#genome_annotation_system = 'NCBI'
+#genome_data_format = "Genbank"
+#genome_data_base_path = "./data/NCBI_genome_contigs"
+#genome_data_extra_subpath = "/scaffolds"
+#
+#domain_data_format = "KBase_domains"
+#domain_data_base_path = None
+##domain_data_base_path = "./data/genome_contigs"  # domain annotations not available for NCBI genomes
+##domain_data_extra_subpath = "/domains"
+#domain_family_desc_base_path = "./data/domain_desc"
+#
+#tree_data_format = 'newick'
+##tree_data_base_path = None
+##tree_data_file = None
+#tree_data_base_path = './data/trees'
+#tree_data_file = 'rpoB_tree-names.newick'
+#
+##Search_Terms = []
+#Search_Terms = ['dna-directed polymerase',
+#                '16S',
+#                'DNA and methyltransferase',
+#                '1.10.3.-',
+##                'polymerase or dna-directed',
+#                'fucI',
+#                'sulfate adenylyl transferase']
+
+# OLD
 #ContigSet_names = ["GW456.scaffold_130", "GW456.scaffold_437", "GW456.scaffold_206", "GW456.scaffold_1786", "GW460.scaffold_49", "GW460.scaffold_575"]
 #OrthologSet_locusTags = ["GW456_SEED_annot.CDS.1", "GW456_SEED_annot.CDS.233", "GW456_SEED_annot.CDS.128", "GW456_SEED_annot.CDS.112", "GW460_SEED_annot.CDS.186", "GW460_SEED_annot.CDS.299"]
 
@@ -22,39 +165,6 @@ OrthologSet_locusTags = []
 #ContigSet_names = ["Gsulf", "DvulH"]
 #OrthologSet_locusTags = ["GSU2863", "DVU2928"]
 
-#Search_Terms = []
-Search_Terms = ['pil or conj or mobil or partition or t-dna or vir or plasmid',
-                'toxin'
-                #'tra',
-                #'rep'
-               ]
-#Search_Terms = ['dna-directed polymerase',
-#                '16S',
-#                'DNA and methyltransferase',
-#                '1.10.3.-',
-#                'polymerase or dna-directed',
-#                'fucI',
-#                'sulfate adenylyl transferase']
-
-
-PrimaryAnchor_leafId = "GW456.scaffold_130"
-PrimaryAnchor_locusTag = "GW456_SEED_annot.CDS.1"
-
-genome_data_base_path = "./data/plasmid_contigs"
-genome_data_extra_subpath = "_old"
-#genome_data_extra_subpath = "_circular_2KbpMIN"
-#domain_data_base_path = "./data/plasmid_contigs"
-domain_data_base_path = None
-domain_family_desc_base_path = "./data/domain_desc"
-
-#tree_data_base_path = './data'
-#tree_data_file = 'rpoB_tree-names.newick'
-tree_data_base_path = None
-tree_data_file = None
-tree_data_format = 'newick'
-
-genome_data_format = "Genbank"
-domain_data_format = "KBase_domains"
 
 ###############################################################################
 # KGB
@@ -75,8 +185,8 @@ domain_data_format = "KBase_domains"
 ## Copyright 2015,2016 Dylan Chivian  
 ##
 ##  Initial Author: Dylan Chivian (DCChivian@lbl.gov)
-##  $Revision: 0.1 $
-##  $Date: 2015/01/01 00:00:00 $
+##  $Revision: 0.2 $
+##  $Date: 2016/08/22 00:00:00 $
 ##  $Author: dylan $
 ##
 """
@@ -84,12 +194,12 @@ domain_data_format = "KBase_domains"
 # INIT
 ###############################################################################
 
-KBase_backend = True
+#KBase_backend = True
 #KBase_backend = False
 
 # Extra Init for KBase
 #
-if KBase_backend:
+if KBase_backend != None and KBase_backend:
     %pylab notebook
     #matplotlib.use('nbagg')
     import os
@@ -100,13 +210,13 @@ if KBase_backend:
     #from doekbase.data_api.core import ObjectAPI
     
     # Standard setup for accessing Data API
-    services = {"workspace_service_url": "https://ci.kbase.us/services/ws/",
-                "shock_service_url": "https://ci.kbase.us/services/shock-api/"}
+    services = {"workspace_service_url": "https://kbase.us/services/ws/",
+                "shock_service_url": "https://kbase.us/services/shock-api/"}
     token = os.environ["KB_AUTH_TOKEN"]
     
 # Init for just non-KBase use
 #
-if not KBase_backend:
+if KBase_backend == None or not KBase_backend:
     %pylab notebook
     from Bio import SeqIO
 
@@ -117,7 +227,7 @@ from __future__ import print_function
 from __future__ import division
 import sys  # for io and exit
 from os import walk  # for dir reading
-from os import path  # for file existence check
+from os import path  # for file and dir existence check
 import json
 import csv
 #from math import pi  # get with pylab
@@ -158,7 +268,7 @@ mode_names = ['contigs', 'genome']
 if len(OrthologSet_locusTags) != 0:
     mode_names_disp.append('Homologs')
     mode_names.append('homologs')
-if tree_data_file != None:
+if tree_data_file != None and tree_data_file != '':
     mode_names_disp.append('Tree')
     mode_names.append('tree')
 
@@ -197,7 +307,10 @@ if KBase_backend:
             
 elif genome_data_format == "Genbank":
     for genome_id in GenomeSet_names:
-        genome_data_dir = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/scaffolds'
+        genome_data_dir = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath
+        if not path.exists(genome_data_dir):
+            print ("DIRNOTFOUND: "+genome_data_dir)
+            sys.exit(-1)
         files = []
         for (dirpath, dirnames, filenames) in walk(genome_data_dir):
             files.extend(filenames)
@@ -207,9 +320,10 @@ elif genome_data_format == "Genbank":
                 scaffold_id = file[0:file.index(".gbk")]
                 contig_id = genome_id+genome_contig_id_delim+scaffold_id
                 ContigSet_names.append(contig_id)
+                print("reading "+contig_id+" ...")
 else:
     print ("unknown genome_data_format: '"+genome_data_format+"'")
-    sys.exit()
+    sys.exit(0)
 
 
 # Configuration
@@ -230,8 +344,8 @@ def_genomebrowser_zoom = 4  # zoom values are [0..zoom_tics] -> window width = i
 def_genomebrowser_xshift = 0
 genomebrowser_window_bp_width = def_genomebrowser_window_bp_width * 2**def_genomebrowser_zoom
 
-#def_genomebrowser_mode = "contigs"
-def_genomebrowser_mode = "genome"
+def_genomebrowser_mode = "contigs"
+#def_genomebrowser_mode = "genome"
 #def_genomebrowser_mode = "homologs"
 #def_genomebrowser_mode = "tree"
 def_genomebrowser_color_namespace = "annot"
@@ -652,8 +766,10 @@ def build_feature_rec_genbank (f, f_type='CDS', source_species='', contig_i=0, d
     annotation = ''
     EC_in_annotation = ''
     if f_type == "CDS" or f_type == "rRNA" or f_type == "tRNA":    
-        #annotation = f.qualifiers['product'][0]
-        annotation = f.qualifiers['function'][0]
+        if genome_annotation_system == 'KBase':
+            annotation = f.qualifiers['function'][0]
+        else:
+            annotation = f.qualifiers['product'][0]
         in_paren = False
         last_good_char = 0
         close_paren_pos = 0
@@ -867,7 +983,7 @@ def getDomainHits (ContigSet_names, \
 
             if domain_data_format == "KBase_domains":
                 
-                domain_data_path = domain_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/domains'+'/'+genome_id+"_Domain_annot"+'.json'
+                domain_data_path = domain_data_base_path+'/'+genome_id+domain_data_extra_subpath+'/'+genome_id+"_Domain_annot"+'.json'
                 print ("reading "+domain_data_path+" ...")
                 with open(domain_data_path, 'r') as domain_file_handle:
                     kbase_domains = json.load(domain_file_handle)
@@ -1348,7 +1464,7 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                     (genome_id,scaffold_id) = genome_name.split(".")
                     #print ("reading " + genome_name + " ...")
                     #genome_data_path = 'data/'+genome_name+'.gbk'
-                    genome_data_path = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/scaffolds'+'/'+scaffold_id+'.gbk'
+                    genome_data_path = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/'+scaffold_id+'.gbk'
                     print ("%d "%i+'reading '+genome_data_path)
                     Global_Genbank_Genomes.append (SeqIO.read(genome_data_path, 'genbank'))
                     #print ("%d"%len(Global_Genbank_Genomes))
@@ -1407,7 +1523,8 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                         lowest_beg = 10000000000
                         #if f.type == "CDS" and "locus_tag" in f.qualifiers:                    
 #                        if (f.type == "CDS" and "gene" in f.qualifiers):
-                        if (f.type == "CDS" and "gene" in f.qualifiers) \
+                        if (genome_annotation_system == 'KBase' and f.type == "CDS" and "gene" in f.qualifiers) \
+                            or (genome_annotation_system != 'KBase' and f.type == "CDS" and "locus_tag" in f.qualifiers) \
                             or f.type == 'rRNA' \
                             or f.type == 'tRNA' \
                             or (f.type == 'gene' and "comment" in f.qualifiers and f.qualifiers['comment'][0] == "CRISPR") \
@@ -1431,10 +1548,12 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                     for f in Global_Genbank_Genomes[i].features:        
                         
                         #if f.type == "CDS" and "locus_tag" in f.qualifiers:                    
-                        if f.type == "CDS" and "gene" in f.qualifiers:  # should it permit non-CDS anchor?             
+                        if (genome_annotation_system == 'KBase' and f.type == "CDS" and "gene" in f.qualifiers) \
+                            or (genome_annotation_system != 'KBase' and f.type == "CDS" and "locus_tag" in f.qualifiers):  # should it permit non-CDS anchor?             
                             
                             #elif f.qualifiers['locus_tag'][0] == OrthologSet_locusTags[i]:
-                            if f.qualifiers['gene'][0] == OrthologSet_locusTags[i]:  
+                            if (genome_annotation_system == 'KBase' and f.qualifiers['gene'][0] == OrthologSet_locusTags[i]) \
+                                or (genome_annotation_system != 'KBase' and f.qualifiers['locus_tag'][0] == OrthologSet_locusTags[i]):  
                                 pivot_feature_rec = build_feature_rec_genbank(f, f_type='CDS', source_species=source, contig_i=i)
                                 Feature_slice.append(pivot_feature_rec)
                                 pivot_pos = 0.5 * (pivot_feature_rec['beg_pos']+pivot_feature_rec['end_pos'])
@@ -1637,7 +1756,7 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                     (genome_id,scaffold_id) = genome_name.split(".")
                     #print ("reading " + genome_name + " ...")
                     #genome_data_path = 'data/'+genome_name+'.gbk'
-                    genome_data_path = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/scaffolds/'+scaffold_id+'.gbk'
+                    genome_data_path = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/'+scaffold_id+'.gbk'
                     print ("%d "%i+'reading '+genome_data_path)
                     Global_Genbank_Genomes.append (SeqIO.read(genome_data_path, 'genbank'))
                     
@@ -1690,7 +1809,8 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                             lowest_beg = 10000000000
                             #if f.type == "CDS" and "locus_tag" in f.qualifiers:                    
     #                        if (f.type == "CDS" and "gene" in f.qualifiers):
-                            if (f.type == "CDS" and "gene" in f.qualifiers) \
+                            if (genome_annotation_system == 'KBase' and f.type == "CDS" and "gene" in f.qualifiers) \
+                                or (genome_annotation_system != 'KBase' and f.type == "CDS" and "locus_tag" in f.qualifiers) \
                                 or f.type == 'rRNA' \
                                 or f.type == 'tRNA' \
                                 or (f.type == 'gene' and "comment" in f.qualifiers and f.qualifiers['comment'][0] == "CRISPR") \
@@ -1710,9 +1830,11 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                     else:
                         for f in Global_Genbank_Genomes[0].features:  # should it permit non-CDS anchor?    
                             #if f.type == "CDS" and "locus_tag" in f.qualifiers and f.qualifiers['locus_tag'][0] == OrthologSet_locusTags[i]:
-                            if f.type == "CDS" and "gene" in f.qualifiers:  
+                            if (genome_annotation_system == 'KBase' and f.type == "CDS" and "gene" in f.qualifiers) \
+                                or (genome_annotation_system == 'KBase' and f.type == "CDS" and "locus_tag" in f.qualifiers):  
                                 #if f.qualifiers['gene'][0] == OrthologSet_locusTags[i]:
-                                if f.qualifiers['gene'][0] == OrthologSet_locusTags[0]:
+                                if (genome_annotation_system == 'KBase' and f.qualifiers['gene'][0] == OrthologSet_locusTags[0]) \
+                                    or (genome_annotation_system == 'KBase' and f.qualifiers['locus_tag'][0] == OrthologSet_locusTags[0]):
                                     pivot_feature_rec = build_feature_rec_genbank(f, f_type='CDS', source_species=source, contig_i=0)
                                     Feature_slice.append(pivot_feature_rec)
                                     pivot_pos = 0.5 * (pivot_feature_rec['beg_pos']+pivot_feature_rec['end_pos'])
