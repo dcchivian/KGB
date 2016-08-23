@@ -1149,18 +1149,19 @@ def getFeatureSlicesKBase (ContigSet_names, \
 
                     print ("READING CONTIGS\n")  # DEBUG
                     for ctg_id in feature_slice_ids['by_region'].keys():
-                        print ("CONTIG_ID: '"+str(ctg_id)+"\n")  # DEBUG
+                        print ("CONTIG_ID: '"+str(ctg_id)+"'\n")  # DEBUG
                         if ctg_id != scaffold_id:
                             print ("WTF?")  # DEBUG
                             continue
                         for strand in feature_slice_ids['by_region'][ctg_id].keys():
-                            print ("STRAND: '"+str(strand)+"\n")  # DEBUG
+                            print ("STRAND: '"+str(strand)+"'\n")  # DEBUG
                             for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():
-                                print ("F_RANGE: '"+str(f_range)+"\n")  # DEBUG
+                                print ("F_RANGE: '"+str(f_range)+"'\n")  # DEBUG
                                 #print ("%s\t%s\t%s"%(ctg_id, strand, range))  # A
                                 feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                     print ("A\n")  # DEBUG
                     features = ga.get_features(feature_id_list=feature_slice_ids_list)
+                    print ("A.1\n")
                     
                     pivot_feature_rec = None
                     lowest_beg = 10000000000
