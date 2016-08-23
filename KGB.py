@@ -12,6 +12,7 @@ requests.packages.urllib3.disable_warnings()
 # KBase user and reference genomes
 #
 KBase_backend = True
+genome_data_format = "KBase"
 GenomeSet_ref = None
 GenomeSet_names = ['16750/7/1',
                    '16750/8/2',
@@ -4077,9 +4078,7 @@ fig_FGB.tight_layout()  # left justify and space subplots reasonably.  Must foll
 #
 #domain_family_desc = read_domain_family_desc ()  # these need to be global (kludge)
 if domain_family_desc_base_path != None:
-    print ("HELLO THERE\n")  # DEBUG
     read_domain_family_desc ()  # these need to be global (kludge)
-    print ("HEYSERS\n")  # DEBUG
 
 
 # Draw genome browser panel (must happen first to load Global_State)
