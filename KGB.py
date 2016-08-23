@@ -19,7 +19,6 @@ GenomeSet_names = ['16750/7/1',
                    '16750/10/1',
                    '16750/11/1'
                    ]
-ContigSet_names = []
 OrthologSet_locusTags = []
 Search_Terms = []
 domain_data_format = "KBase_domains"
@@ -302,26 +301,15 @@ Global_Domains = []
 
 # Build ContigSet_names from files or from KBase object
 #
-# DEBUG
-print ("HELLO\n")
+ContigSet_names = []
 genome_contig_id_delim = '.'
 if KBase_backend != None and KBase_backend:
-    genome_contig_id_delim = '+CONTIG:'
+    genome_contig_id_delim = '/c'
 if KBase_backend != None and KBase_backend:
-    # DEBUG
-    print ("HI\n")
     for ws_genome_id in GenomeSet_names:
-        # DEBUG
-        print ("HI "+str(ws_genome_id)+"\n")
         Global_KBase_Genomes[ws_genome_id] = ga = GenomeAnnotationAPI(services, token=token, ref=ws_genome_id)
-        # DEBUG
-        print ("HI 2\n")
         Global_KBase_Assemblies[ws_genome_id] = ass = ga.get_assembly()
-        # DEBUG
-        print ("HI 3\n")
         tax = ga.get_taxon()
-        # DEBUG
-        print ("HI 4GLTE\n")
         if ws_genome_id.count('/') == 2:
             [ws_id, genome_id, ver] = ws_genome_id.split('/')
         elif ws_genome_id.count('/') == 1:
@@ -330,18 +318,11 @@ if KBase_backend != None and KBase_backend:
         else:
             print ("badly formatted ws_genome_id")
             system.exit(-1)
-        # DEBUG
-        print ("HI 5\n")
         Species_name_by_genome_id[genome_id] = tax.get_scientific_name()
-        # DEBUG
-        print ("HI 6\n")
+        print ("READING GENOME: "+ws_genome_id+": "+Species_name_by_genome_id[genome_id]+"\n")  # DEBUG
         
         for scaffold_id in ass.get_contig_ids():
-            # DEBUG
-            print ("HI 7\n")
             contig_id = ws_genome_id+genome_contig_id_delim+scaffold_id
-            # DEBUG
-            print ("HI 8\n")
             ContigSet_names.append(contig_id)
             
 elif genome_data_format == "Genbank":
