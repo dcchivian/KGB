@@ -211,9 +211,9 @@ PrimaryAnchor_locusTag = None
 if KBase_backend != None and KBase_backend:
     #%pylab notebook  # doesn't work within exec()
     import matplotlib as matplotlib  # use this instead
+    matplotlib.use('nbagg')  # which agg to use?  getting DISPLAY error
     import matplotlib.pyplot as pyplot  # use this instead
 
-    matplotlib.use('nbagg')  # which agg to use?  getting DISPLAY error
     import os
     import doekbase.data_api
     from doekbase.data_api.annotation.genome_annotation.api import GenomeAnnotationAPI
