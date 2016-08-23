@@ -1134,7 +1134,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     #"by_region": dict<str contig_id, dict<str strand, dict<string range, list<string feature_id>>>>
                     # DEBUG
                     for slice_k in feature_slice_ids.keys():
-                        print "SLICE_K: "+slice_k+"\n")  # DEBUG
+                        print ("SLICE_K: "+slice_k+"\n")  # DEBUG
 
 
                     print ("READING CONTIGS\n")  # DEBUG
