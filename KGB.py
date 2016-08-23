@@ -1151,7 +1151,6 @@ def getFeatureSlicesKBase (ContigSet_names, \
                                 #print ("%s\t%s\t%s"%(ctg_id, strand, range))  # A
                                 feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                     features = ga.get_features(feature_id_list=feature_slice_ids_list)
-                    print ("A.1\n")
                     
                     pivot_feature_rec = None
                     lowest_beg = 10000000000
@@ -1170,9 +1169,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                         #for locs in features[fid]['feature_locations']:
                         #    print ("%s\t%s\t%s"%(str(loc[0]), str(loc[1]), str(loc[2])))  # A
 
-                        print ("A.2\n")  # DEBUG
                         f_len = features[fid]['feature_locations'][0][KB_LOC_LEN_I]
-                        print ("A.3\n")  # DEBUG
                         if strand == '+':
                             beg = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
                             end = beg + f_len - 1
@@ -1180,8 +1177,6 @@ def getFeatureSlicesKBase (ContigSet_names, \
                             end = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
                             beg = end - f_len + 1
                         #print ("%s\t%s\t%s\t%s\t%s\t%s"%(contig_id, ctg_id, fid, beg, end, strand))
-
-                        print ("A.4\n")  # DEBUG
 
                         if beg < lowest_beg:
                             lowest_beg = beg
