@@ -320,7 +320,7 @@ if KBase_backend != None and KBase_backend:
         print ("HI 3\n")
         tax = ga.get_taxon()
         # DEBUG
-        print ("HI 4\n")
+        print ("HI 4GLTE\n")
         if ws_genome_id.count('/') == 3:
             [ws_id, genome_id, ver] = ws_genome_id.split('/')
         elif ws_genome_id.count('/') == 2:
