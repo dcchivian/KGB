@@ -393,10 +393,14 @@ DOMHIT_EVALUE_I   = 2
 DOMHIT_BITSCORE_I = 3
 DOMHIT_ALNPERC_I  = 4 
 DOMHIT_DOMFAM_I   = 5
-KB_LOC_CTG_I = 0
-KB_LOC_BEG_I = 1
-KB_LOC_STR_I = 2
-KB_LOC_LEN_I = 3
+#KB_LOC_CTG_I = 0
+#KB_LOC_BEG_I = 1
+#KB_LOC_STR_I = 2
+#KB_LOC_LEN_I = 3
+KB_LOC_CTG_I = 'contig_id'
+KB_LOC_BEG_I = 'start'
+KB_LOC_STR_I = 'strand'
+KB_LOC_LEN_I = 'length'
 
 
 # State
