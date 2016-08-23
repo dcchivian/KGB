@@ -19,6 +19,7 @@ GenomeSet_names = ['16750/7/1',
                    '16750/10/1',
                    '16750/11/1'
                    ]
+ContigSet_names = []
 OrthologSet_locusTags = []
 Search_Terms = []
 domain_data_format = "KBase_domains"
