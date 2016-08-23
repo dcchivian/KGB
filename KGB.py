@@ -337,7 +337,7 @@ else:
     sys.exit(0)
 
 # DEBUG
-print ("HI\n")
+print ("HI A\n")
 sys.exit(0)
 
 
