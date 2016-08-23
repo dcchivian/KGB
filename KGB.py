@@ -302,18 +302,34 @@ Global_Domains = []
 # Build ContigSet_names from files or from KBase object
 #
 genome_contig_id_delim = '.'
-if KBase_backend:
+if KBase_backend != None and KBase_backend:
     genome_contig_id_delim = '+CONTIG:'
-if KBase_backend:
+if KBase_backend != None and KBase_backend:
     for ws_genome_id in GenomeSet_names:
+        # DEBUG
+        print ("HI A\n")
         Global_KBase_Genomes[ws_genome_id] = ga = GenomeAnnotationAPI(services, token=token, ref=ws_genome_id)
+        # DEBUG
+        print ("HI A\n")
         Global_KBase_Assemblies[ws_genome_id] = ass = ga.get_assembly()
+        # DEBUG
+        print ("HI B\n")
         tax = ga.get_taxon()
+        # DEBUG
+        print ("HI C\n")
         [ws_id, genome_id] = ws_genome_id.split('/')
+        # DEBUG
+        print ("HI D\n")
         Species_name_by_genome_id[genome_id] = tax.get_scientific_name()
+        # DEBUG
+        print ("HI E\n")
         
         for scaffold_id in ass.get_contig_ids():
+            # DEBUG
+            print ("HI F\n")
             contig_id = ws_genome_id+genome_contig_id_delim+scaffold_id
+            # DEBUG
+            print ("HI G\n")
             ContigSet_names.append(contig_id)
             
 elif genome_data_format == "Genbank":
@@ -335,10 +351,6 @@ elif genome_data_format == "Genbank":
 else:
     print ("unknown genome_data_format: '"+genome_data_format+"'")
     sys.exit(0)
-
-# DEBUG
-print ("HI A\n")
-sys.exit(0)
 
 
 # Configuration
