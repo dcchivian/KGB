@@ -1151,7 +1151,6 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     for ctg_id in feature_slice_ids['by_region'].keys():
                         print ("CONTIG_ID: '"+str(ctg_id)+"'\n")  # DEBUG
                         if ctg_id != scaffold_id:
-                            print ("WTF?")  # DEBUG
                             continue
                         for strand in feature_slice_ids['by_region'][ctg_id].keys():
                             print ("STRAND: '"+str(strand)+"'\n")  # DEBUG
