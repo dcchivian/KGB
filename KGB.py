@@ -1142,8 +1142,8 @@ def getFeatureSlicesKBase (ContigSet_names, \
                         for strand in feature_slice_ids['by_region'][ctg_id].keys():
                             for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():
                                 #print ("%s\t%s\t%s"%(ctg_id, strand, f_range))  # A
-                                [beg,end] = [int(i) for i in f_range.split('-')]  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
-                                if beg > slice_end or end < slice_beg:
+                                [f_range_beg,f_range_end] = f_range.split('-')  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
+                                if int(f_range_beg) > slice_end or int(f_range_end) < slice_beg:
                                     continue
                                 feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                     features = ga.get_features(feature_id_list=feature_slice_ids_list)
@@ -1214,8 +1214,8 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     for strand in feature_slice_ids['by_region'][ctg_id].keys():
                         for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
                             #print ("%s\t%s\t%s"%(ctg_id, strand, f_range)) # B
-                            [beg,end] = [int(i) for i in f_range.split('-')]  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
-                            if beg > slice_end or end < slice_beg:
+                            [f_range_beg,f_range_end] = f_range.split('-')  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
+                            if int(f_range_beg) > slice_end or int(f_range_end) < slice_beg:
                                 continue
                             feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                 if len(feature_slice_ids_list) == 0:
@@ -1246,8 +1246,8 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     for strand in feature_slice_ids['by_region'][ctg_id].keys():
                         for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
                             #print ("%s\t%s\t%s"%(ctg_id, strand, f_range)) # C
-                            [beg,end] = [int(i) for i in f_range.split('-')]  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
-                            if beg > slice_end or end < slice_beg:
+                            [f_range_beg,f_range_end] = f_range.split('-')  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
+                            if int(f_range_beg) > slice_end or int(f_range_end) < slice_beg:
                                 continue
                             feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                 if len(feature_slice_ids_list) == 0:
@@ -1366,8 +1366,8 @@ def getFeatureSlicesKBase (ContigSet_names, \
                             for strand in feature_slice_ids['by_region'][ctg_id].keys():
                                 for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
                                     #print ("%s\t%s\t%s"%(ctg_id, strand, f_range)) # D
-                                    [beg,end] = [int(i) for i in f_range.split('-')]  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
-                                    if beg > slice_end or end < slice_beg:
+                                    [f_range_beg,f_range_end] = f_range.split('-')  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
+                                    if int(f_range_beg) > slice_end or int(f_range_end) < slice_beg:
                                         continue
                                     feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                         features = ga.get_features(feature_id_list=feature_slice_ids_list)
@@ -1435,8 +1435,8 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     for strand in feature_slice_ids['by_region'][ctg_id].keys():
                         for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
                             #print ("%s\t%s\t%s"%(ctg_id, strand, f_range)) # E
-                            [beg,end] = [int(i) for i in f_range.split('-')]  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
-                            if beg > slice_end or end < slice_beg:
+                            [f_range_beg,f_range_end] = f_range.split('-')  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
+                            if int(f_range_beg) > slice_end or int(f_range_end) < slice_beg:
                                 continue
                             feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                 if len(feature_slice_ids_list) == 0:
@@ -1467,8 +1467,8 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     for strand in feature_slice_ids['by_region'][ctg_id].keys():
                         for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
                             #print ("%s\t%s\t%s"%(ctg_id, strand, f_range)) # F
-                            [beg,end] = [int(i) for i in f_range.split('-')]  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
-                            if beg > slice_end or end < slice_beg:
+                            [f_range_beg,f_range_end] = f_range.split('-')  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
+                            if int(f_range_beg) > slice_end or int(f_range_end) < slice_beg:
                                 continue
                             feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                 if len(feature_slice_ids_list) == 0:
