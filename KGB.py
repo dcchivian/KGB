@@ -318,15 +318,16 @@ if KBase_backend != None and KBase_backend:
         Global_KBase_Genomes[ws_genome_id] = ga = GenomeAnnotationAPI(services, token=token, ref=ws_genome_id)
         Global_KBase_Assemblies[ws_genome_id] = ass = ga.get_assembly()
         tax = ga.get_taxon()
-        if ws_genome_id.count('/') == 2:
-            [ws_id, genome_id, ver] = ws_genome_id.split('/')
-        elif ws_genome_id.count('/') == 1:
-            [ws_id, genome_id] = ws_genome_id.split('/')
-            ver = 'auto'
-        else:
-            print ("badly formatted ws_genome_id")
-            system.exit(-1)
-        Species_name_by_genome_id[genome_id] = tax.get_scientific_name()
+#        if ws_genome_id.count('/') == 2:
+#            [ws_id, genome_id, ver] = ws_genome_id.split('/')
+#        elif ws_genome_id.count('/') == 1:
+#            [ws_id, genome_id] = ws_genome_id.split('/')
+#            ver = 'auto'
+#        else:
+#            print ("badly formatted ws_genome_id")
+#            system.exit(-1)
+#        Species_name_by_genome_id[genome_id] = tax.get_scientific_name()
+        Species_name_by_genome_id[ws_genome_id] = tax.get_scientific_name()
         #print ("Getting Contig IDs for Genome: "+ws_genome_id+": "+Species_name_by_genome_id[genome_id])  # DEBUG
         
         for scaffold_id in ass.get_contig_ids():
@@ -3298,8 +3299,9 @@ def draw_mode_panel (ax, genome_name, genomebrowser_mode, data_set_name):
     # Genome
     name_disp = genome_name
     if KBase_backend:
-        [ws_id, genome_contig_id] = genome_name.split('/')
-        [genome_id, contig_id] = genome_contig_id.split(genome_contig_id_delim)
+        #[ws_id, genome_contig_id] = genome_name.split('/')
+        #[genome_id, contig_id] = genome_contig_id.split(genome_contig_id_delim)
+        [genome_id, contig_id] = genome_name.split(genome_contig_id_delim)
         name_disp = Species_name_by_genome_id[genome_id]
     ax.text(0.30, 0.5, "Genome", verticalalignment="bottom", horizontalalignment="right", color=field_color, fontsize=field_name_fontsize, zorder=base_zorder+1)
     ax.text(0.35, 0.5, name_disp, verticalalignment="bottom", horizontalalignment="left", color=value_color, fontsize=field_val_fontsize, zorder=base_zorder+1)
