@@ -3589,120 +3589,122 @@ def draw_sidenav_panel (ax, genomebrowser_mode):
     elif genomebrowser_mode == "contigs" \
         or genomebrowser_mode == "homologs":
             
-            contig_label_fontsize = 12
-            contig_label_x_margin = 0.0075
-            contig_label_y_margin = 0.06 / (figure_height_scaling*(total_rows+1))
-            contig_color = "steelblue"
-            contig_disp_margin = 0.10
-            contig_h           = 0.17 / (figure_height_scaling*(total_rows+1))
-            clickable_y_margin = 0.75 * contig_h
+        contig_label_fontsize = 12
+        contig_label_x_margin = 0.0075
+        contig_label_y_margin = 0.06 / (figure_height_scaling*(total_rows+1))
+        contig_color = "steelblue"
+        contig_disp_margin = 0.10
+        contig_h           = 0.17 / (figure_height_scaling*(total_rows+1))
+        clickable_y_margin = 0.75 * contig_h
             
 
-            longest_contig_len = 0
-            for i,contig_len in enumerate(Global_State['Contig_lens']):
-                if i >= max_rows:
-                    break
-                if longest_contig_len < contig_len:
-                    longest_contig_len = contig_len
+        longest_contig_len = 0
+        for i,contig_len in enumerate(Global_State['Contig_lens']):
+            if i >= max_rows:
+                break
+            if longest_contig_len < contig_len:
+                longest_contig_len = contig_len
                     
-            for i,contig_len in enumerate(Global_State['Contig_lens']):
-                if i >= max_rows:
-                    break
-                pivot_pos = Global_State['pivot_pos_list'][i]
+        for i,contig_len in enumerate(Global_State['Contig_lens']):
+            if i >= max_rows:
+                break
+            pivot_pos = Global_State['pivot_pos_list'][i]
 
-                # Contig coords
-                #
-                x0 = contig_disp_margin
-                y0 = bottom_margin + (1.0-bottom_margin-top_margin)*row_delta*(total_rows-(i+1)) - 0.5*contig_h
-                w = (1.0 - 2*contig_disp_margin) * contig_len / longest_contig_len
-                h = contig_h
+            # Contig coords
+            #
+            x0 = contig_disp_margin
+            y0 = bottom_margin + (1.0-bottom_margin-top_margin)*row_delta*(total_rows-(i+1)) - 0.5*contig_h
+            w = (1.0 - 2*contig_disp_margin) * contig_len / longest_contig_len
+            h = contig_h
                 
-                # Add clickable base
-                #
-                x0_click = 0.5*contig_disp_margin
-                y0_click = y0 - 0.75*clickable_y_margin
-                w_click = (1.0 - 2*contig_disp_margin) * contig_len / longest_contig_len + contig_disp_margin
-                h_click = contig_h + 3.0*clickable_y_margin
-                clickable_contig_rect = Rectangle((x0_click,y0_click), w_click, h_click, \
-                                          facecolor="none", edgecolor="none", \
-                                          alpha=0.0, zorder=0, \
-                                          picker=True)         
-                clickable_contig_rect.set_label("linear_contig_nav")
-                clickable_contig_rect.gid = "%d,%f,%f"%(i,x0,w)
-                ax.add_patch(clickable_contig_rect)
-                clickable_contig_rect.figure.canvas.mpl_connect ('pick_event', onpick_contig_nav)
+            # Add clickable base
+            #
+            x0_click = 0.5*contig_disp_margin
+            y0_click = y0 - 0.75*clickable_y_margin
+            w_click = (1.0 - 2*contig_disp_margin) * contig_len / longest_contig_len + contig_disp_margin
+            h_click = contig_h + 3.0*clickable_y_margin
+            clickable_contig_rect = Rectangle((x0_click,y0_click), w_click, h_click, \
+                                                  facecolor="none", edgecolor="none", \
+                                                  alpha=0.0, zorder=0, \
+                                                  picker=True)         
+            clickable_contig_rect.set_label("linear_contig_nav")
+            clickable_contig_rect.gid = "%d,%f,%f"%(i,x0,w)
+            ax.add_patch(clickable_contig_rect)
+            clickable_contig_rect.figure.canvas.mpl_connect ('pick_event', onpick_contig_nav)
         
-                # Show contig
-                #
-                contig_rect = Rectangle((x0,y0), w, h,
-                                          facecolor=contig_color, edgecolor=contig_color, \
-                                          alpha=1.0, zorder=1)                 
-                # drop shadow
-                contig_rect.set_path_effects([path_effects.PathPatchEffect(offset=(2, -2),
-                                                                           facecolor='magenta', edgecolor='none', alpha=0.5),
-                                              path_effects.PathPatchEffect(facecolor=contig_color, edgecolor=contig_color)]) 
-                ax.add_patch (contig_rect)
+            # Show contig
+            #
+            contig_rect = Rectangle((x0,y0), w, h, \
+                                    facecolor=contig_color, edgecolor=contig_color, \
+                                        alpha=1.0, zorder=1)                 
+            # drop shadow
+            contig_rect.set_path_effects([path_effects.PathPatchEffect(offset=(2, -2),
+                                                                       facecolor='magenta', edgecolor='none', alpha=0.5),
+                                          path_effects.PathPatchEffect(facecolor=contig_color, edgecolor=contig_color)]) 
+            ax.add_patch (contig_rect)
 
-                # Add label
-                #
-                disp_name = ContigSet_names[i]
-                if KBase_backend:
-                    full_name_split = ContigSet_names[i].split('/')
-                    [genome_id, scaffold_id] = full_name_split[1].split(genome_contig_id_delim)
-                    disp_name = Species_name_by_genome_id[genome_id]+' - '+scaffold_id
-                ax.text(x0+contig_label_x_margin, y0-contig_label_y_margin,
-                        disp_name, verticalalignment="top", horizontalalignment="left",
-                        color="black", fontsize=contig_label_fontsize, zorder=1)
+            # Add label
+            #
+            print ("CONTIGSET_NAME: '"+ContigSet_names[i]+"'\n")  # DEBUG
+            disp_name = ContigSet_names[i]
+            if KBase_backend:
+                #full_name_split = ContigSet_names[i].split('/')
+                #[genome_id, scaffold_id] = full_name_split[1].split(genome_contig_id_delim)
+                [genome_id, scaffold_id] = ContigSet_names[i].split(genome_contig_id_delim)
+                disp_name = Species_name_by_genome_id[genome_id]+' - '+scaffold_id
+            ax.text(x0+contig_label_x_margin, y0-contig_label_y_margin,
+                    disp_name, verticalalignment="top", horizontalalignment="left",
+                    color="black", fontsize=contig_label_fontsize, zorder=1)
 
-                # Mark pivot
-                #
-                if Global_State['genomebrowser_mode'] == 'homologs':
+            # Mark pivot
+            #
+            if Global_State['genomebrowser_mode'] == 'homologs':
+                mark_h = 1.25 * contig_h
+                mark_w = 0.01
+                mark_margin = 0.02 * mark_h
+                disp_mark_x0 = x0 + w * (1-(contig_len-pivot_pos)/contig_len) - 0.5*mark_w
+                disp_mark_y0 = y0 + contig_h + mark_margin
+                pivot_feature_rect = Rectangle((disp_mark_x0,disp_mark_y0), mark_w, mark_h,
+                                               facecolor="black", edgecolor="none", alpha=1.0, zorder=2) 
+                ax.add_patch (pivot_feature_rect)
+
+            # Mark search results
+            #
+            try:
+                contig_search_results = search_results[i]
+            except:
+                contig_search_results = []
+            for j,result_list in enumerate(contig_search_results):
+                mark_color = search_color_names[j % len(search_color_names)]
+                for result in contig_search_results[j]:
+                    mid_pos = 0.5 * (result['beg_pos'] + result['end_pos'])
                     mark_h = 1.25 * contig_h
                     mark_w = 0.01
                     mark_margin = 0.02 * mark_h
-                    disp_mark_x0 = x0 + w * (1-(contig_len-pivot_pos)/contig_len) - 0.5*mark_w
+                    disp_mark_x0 = x0 + w * (1-(contig_len-mid_pos)/contig_len) - 0.5*mark_w
                     disp_mark_y0 = y0 + contig_h + mark_margin
-                    pivot_feature_rect = Rectangle((disp_mark_x0,disp_mark_y0), mark_w, mark_h,
-                                                    facecolor="black", edgecolor="none", alpha=1.0, zorder=2) 
-                    ax.add_patch (pivot_feature_rect)
-
-                # Mark search results
-                #
-                try:
-                    contig_search_results = search_results[i]
-                except:
-                    contig_search_results = []
-                for j,result_list in enumerate(contig_search_results):
-                    mark_color = search_color_names[j % len(search_color_names)]
-                    for result in contig_search_results[j]:
-                        mid_pos = 0.5 * (result['beg_pos'] + result['end_pos'])
-                        mark_h = 1.25 * contig_h
-                        mark_w = 0.01
-                        mark_margin = 0.02 * mark_h
-                        disp_mark_x0 = x0 + w * (1-(contig_len-mid_pos)/contig_len) - 0.5*mark_w
-                        disp_mark_y0 = y0 + contig_h + mark_margin
-                        search_feature_rect = Rectangle((disp_mark_x0,disp_mark_y0), mark_w, mark_h,
-                                                            facecolor=mark_color, edgecolor="none", alpha=1.0, zorder=3) 
-                        ax.add_patch (search_feature_rect)
+                    search_feature_rect = Rectangle((disp_mark_x0,disp_mark_y0), mark_w, mark_h,
+                                                    facecolor=mark_color, edgecolor="none", alpha=1.0, zorder=3) 
+                    ax.add_patch (search_feature_rect)
                     
-                # Indicate window viewed by track panel
-                #
-                contig_mode_xshift = 0.0
-                if Global_State['genomebrowser_mode'] == 'contigs':
+            # Indicate window viewed by track panel
+            #
+            contig_mode_xshift = 0.0
+            if Global_State['genomebrowser_mode'] == 'contigs':
                     #contig_mode_xshift = 0.5*Global_State['genomebrowser_window_bp_width'] - 0.5*(Feature_slices[i][0]['end_pos']-Feature_slices[i][0]['beg_pos'])
-                    contig_mode_xshift = 0.5*Global_State['genomebrowser_window_bp_width']
+                contig_mode_xshift = 0.5*Global_State['genomebrowser_window_bp_width']
                     
-                #if (pivot_pos+Global_State['genomebrowser_xshift']) >= -.0000001 \
-                #    and (pivot_pos+Global_State['genomebrowser_xshift']) <= (contig_len + .0000001):
-                track_window_h = 1.6 * contig_h
-                track_window_w = w * Global_State['genomebrowser_window_bp_width'] / contig_len
-                track_window_x0 = x0 - 0.5*track_window_w + w * ((pivot_pos+Global_State['genomebrowser_xshift']+contig_mode_xshift) / contig_len)
-                track_window_y0 = y0 + 0.5*h - 0.5*track_window_h
-                if track_window_x0 > x0+w or track_window_x0 + track_window_w < x0:
-                    continue                            
-                track_window_rect = Rectangle((track_window_x0,track_window_y0), track_window_w, track_window_h, \
-                                                    facecolor="red", edgecolor="red", alpha=0.4, zorder=4) 
-                ax.add_patch (track_window_rect)
+            #if (pivot_pos+Global_State['genomebrowser_xshift']) >= -.0000001 \
+            #    and (pivot_pos+Global_State['genomebrowser_xshift']) <= (contig_len + .0000001):
+            track_window_h = 1.6 * contig_h
+            track_window_w = w * Global_State['genomebrowser_window_bp_width'] / contig_len
+            track_window_x0 = x0 - 0.5*track_window_w + w * ((pivot_pos+Global_State['genomebrowser_xshift']+contig_mode_xshift) / contig_len)
+            track_window_y0 = y0 + 0.5*h - 0.5*track_window_h
+            if track_window_x0 > x0+w or track_window_x0 + track_window_w < x0:
+                continue                            
+            track_window_rect = Rectangle((track_window_x0,track_window_y0), track_window_w, track_window_h, \
+                                              facecolor="red", edgecolor="red", alpha=0.4, zorder=4) 
+            ax.add_patch (track_window_rect)
 
                 
     # Circle representation
@@ -3758,8 +3760,9 @@ def draw_sidenav_panel (ax, genomebrowser_mode):
         #
         disp_name = ContigSet_names[0]
         if KBase_backend:
-            full_name_split = ContigSet_names[0].split('/')
-            [genome_id, scaffold_id] = full_name_split[1].split(genome_contig_id_delim)
+            #full_name_split = ContigSet_names[0].split('/')
+            #[genome_id, scaffold_id] = full_name_split[1].split(genome_contig_id_delim)
+            [genome_id, scaffold_id] = ContigSet_names[i].split(genome_contig_id_delim)
             disp_name = Species_name_by_genome_id[genome_id]
         ax.text(ellipse_center_x, ellipse_center_y - 0.5*y_diameter - contig_label_y_margin,
                 disp_name, verticalalignment="top", horizontalalignment="center",
