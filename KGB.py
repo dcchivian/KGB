@@ -1142,7 +1142,10 @@ def getFeatureSlicesKBase (ContigSet_names, \
                             continue
                         for strand in feature_slice_ids['by_region'][ctg_id].keys():
                             for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():
-                                print ("%s\t%s\t%s"%(ctg_id, strand, range))  # A
+                                print ("%s\t%s\t%s"%(ctg_id, strand, f_range))  # A
+                                [beg,end] = f_range.split('-')
+                                if beg > slice_end or end < slice_beg:
+                                    continue
                                 feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                     features = ga.get_features(feature_id_list=feature_slice_ids_list)
                     
