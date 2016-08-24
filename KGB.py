@@ -4144,7 +4144,7 @@ update_genomebrowser_panel (ax_center)
     
 # Draw sidenav (tree, circles, etc.)
 #
-#update_sidenav_panel (ax_left)
+update_sidenav_panel (ax_left)
     
 
 # Draw mode panel
