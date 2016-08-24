@@ -1132,7 +1132,6 @@ def getFeatureSlicesKBase (ContigSet_names, \
 
 # RESTORE
 #                    feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
-# DEBUG
                     feature_slice_ids = ga.get_feature_ids(group_by='region')
 
 
@@ -1142,8 +1141,8 @@ def getFeatureSlicesKBase (ContigSet_names, \
                             continue
                         for strand in feature_slice_ids['by_region'][ctg_id].keys():
                             for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():
-                                print ("%s\t%s\t%s"%(ctg_id, strand, f_range))  # A
-                                [beg,end] = f_range.split('-')
+                                #print ("%s\t%s\t%s"%(ctg_id, strand, f_range))  # A
+                                [beg,end] = f_range.split('-')  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
                                 if beg > slice_end or end < slice_beg:
                                     continue
                                 feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
@@ -1204,14 +1203,20 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     slice_beg = 1
                 features = []
                 feature_slice_ids_list = []
-                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+# RESTORE
+#                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+                feature_slice_ids = ga.get_feature_ids(group_by='region')
+
                 #"by_region": dict<str contig_id, dict<str strand, dict<string range, list<string feature_id>>>>
                 for ctg_id in feature_slice_ids['by_region'].keys():
                     if ctg_id != scaffold_id:  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
                         continue
                     for strand in feature_slice_ids['by_region'][ctg_id].keys():
                         for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
-                            #print ("%s\t%s\t%s"%(ctg_id, strand, range)) # B
+                            #print ("%s\t%s\t%s"%(ctg_id, strand, f_range)) # B
+                            [beg,end] = f_range.split('-')  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
+                            if beg > slice_end or end < slice_beg:
+                                continue
                             feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                 if len(feature_slice_ids_list) == 0:
                     Feature_slices.append([Feature_slice[0]])
@@ -1231,13 +1236,19 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 slice_end = 10000000000
                 features = []
                 feature_slice_ids_list = []
-                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+# RESTORE
+#                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+                feature_slice_ids = ga.get_feature_ids(group_by='region')
+
                 for ctg_id in feature_slice_ids['by_region'].keys():
                     if ctg_id != scaffold_id:  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
                         continue
                     for strand in feature_slice_ids['by_region'][ctg_id].keys():
                         for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
-                            #print ("%s\t%s\t%s"%(ctg_id, strand, range)) # C
+                            #print ("%s\t%s\t%s"%(ctg_id, strand, f_range)) # C
+                            [beg,end] = f_range.split('-')  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
+                            if beg > slice_end or end < slice_beg:
+                                continue
                             feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                 if len(feature_slice_ids_list) == 0:
                     Feature_slices.append([Feature_slice[0]])
@@ -1344,14 +1355,20 @@ def getFeatureSlicesKBase (ContigSet_names, \
                         slice_end = 100000
                         features = []
                         feature_slice_ids_list = []
-                        feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+# RESTORE
+#                        feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+                        feature_slice_ids = ga.get_feature_ids(group_by='region')
+
                         #"by_region": dict<str contig_id, dict<str strand, dict<string range, list<string feature_id>>>>
                         for ctg_id in feature_slice_ids['by_region'].keys():
                             if ctg_id != scaffold_id:  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
                                 continue
                             for strand in feature_slice_ids['by_region'][ctg_id].keys():
                                 for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
-                                    #print ("%s\t%s\t%s"%(ctg_id, strand, range)) # D
+                                    #print ("%s\t%s\t%s"%(ctg_id, strand, f_range)) # D
+                                    [beg,end] = f_range.split('-')  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
+                                    if beg > slice_end or end < slice_beg:
+                                        continue
                                     feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                         features = ga.get_features(feature_id_list=feature_slice_ids_list)
 
@@ -1407,7 +1424,10 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 #print ("%s\t%s\t%s\t%s"%(pivot_pos, genomebrowser_xshift, track_xshift, 0.5*window_size))
                 features = []
                 feature_slice_ids_list = []
-                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+# RESTORE
+#                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+                feature_slice_ids = ga.get_feature_ids(group_by='region')
+
                 #"by_region": dict<str contig_id, dict<str strand, dict<string range, list<string feature_id>>>>
                 for ctg_id in feature_slice_ids['by_region'].keys():
                     if ctg_id != scaffold_id:  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
@@ -1415,6 +1435,9 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     for strand in feature_slice_ids['by_region'][ctg_id].keys():
                         for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
                             #print ("%s\t%s\t%s"%(ctg_id, strand, f_range)) # E
+                            [beg,end] = f_range.split('-')  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
+                            if beg > slice_end or end < slice_beg:
+                                continue
                             feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                 if len(feature_slice_ids_list) == 0:
                     Feature_slices.append([Feature_slice[0]])
@@ -1434,13 +1457,19 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 slice_end = 100000000000
                 features = []
                 feature_slice_ids_list = []
-                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+# RESTORE
+#                feature_slice_ids = ga.get_feature_ids(group_by='region', filters={ "region_list": [{'contig_id':scaffold_id, 'strand':'?', 'start':slice_beg, 'length':slice_end-slice_beg+1}]})
+                feature_slice_ids = ga.get_feature_ids(group_by='region')
+
                 for ctg_id in feature_slice_ids['by_region'].keys():
                     if ctg_id != scaffold_id:  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
                         continue
                     for strand in feature_slice_ids['by_region'][ctg_id].keys():
                         for f_range in feature_slice_ids['by_region'][ctg_id][strand].keys():                    
-                            #print ("%s\t%s\t%s"%(ctg_id, strand, range)) # F
+                            #print ("%s\t%s\t%s"%(ctg_id, strand, f_range)) # F
+                            [beg,end] = f_range.split('-')  # SHOULDN'T BE NECESSARY IF get_feature_ids() WORKING
+                            if beg > slice_end or end < slice_beg:
+                                continue
                             feature_slice_ids_list.extend(feature_slice_ids['by_region'][ctg_id][strand][f_range])
                 if len(feature_slice_ids_list) == 0:
                     Feature_slices.append([Feature_slice[0]])
