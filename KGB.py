@@ -3647,13 +3647,14 @@ def draw_sidenav_panel (ax, genomebrowser_mode):
 
             # Add label
             #
-            print ("CONTIGSET_NAME: '"+ContigSet_names[i]+"'\n")  # DEBUG
+            #print ("CONTIGSET_NAME: '"+ContigSet_names[i]+"'\n")  # DEBUG
             disp_name = ContigSet_names[i]
             if KBase_backend:
                 #full_name_split = ContigSet_names[i].split('/')
                 #[genome_id, scaffold_id] = full_name_split[1].split(genome_contig_id_delim)
                 [genome_id, scaffold_id] = ContigSet_names[i].split(genome_contig_id_delim)
-                disp_name = Species_name_by_genome_id[genome_id]+' - '+scaffold_id
+                scaffold_id_disp = scaffold_id.split('.')[-1]
+                disp_name = Species_name_by_genome_id[genome_id]+' c:'+scaffold_id_disp
             ax.text(x0+contig_label_x_margin, y0-contig_label_y_margin,
                     disp_name, verticalalignment="top", horizontalalignment="left",
                     color="black", fontsize=contig_label_fontsize, zorder=1)
@@ -3765,7 +3766,8 @@ def draw_sidenav_panel (ax, genomebrowser_mode):
             #full_name_split = ContigSet_names[0].split('/')
             #[genome_id, scaffold_id] = full_name_split[1].split(genome_contig_id_delim)
             [genome_id, scaffold_id] = ContigSet_names[i].split(genome_contig_id_delim)
-            disp_name = Species_name_by_genome_id[genome_id]
+            scaffold_id_disp = scaffold_id.split('.')[-1]
+            disp_name = Species_name_by_genome_id[genome_id] + ' c:'+scaffold_id_disp
         ax.text(ellipse_center_x, ellipse_center_y - 0.5*y_diameter - contig_label_y_margin,
                 disp_name, verticalalignment="top", horizontalalignment="center",
                 color="black", fontsize=contig_label_fontsize)
