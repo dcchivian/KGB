@@ -1050,7 +1050,7 @@ def getDomainHits (ContigSet_names, \
                    domain_data_format=domain_data_format):
 
     for i,genome_name in enumerate(ContigSet_names):
-        (genome_id,scaffold_id) = genome_name.split(".")
+        (genome_id,scaffold_id) = genome_name.split(genome_contig_id_delim)
             
         if Global_State['genomebrowser_mode'] == "genome" and i > 0:
             break
@@ -1060,7 +1060,55 @@ def getDomainHits (ContigSet_names, \
         except:
             Global_Domains.append({})
 
-            if domain_data_format == "KBase_domains" and domain_data_base_path != None:
+
+            if KBase_backend:
+                try:
+                    (base_genome_id) = genome_id.split('.')
+                    # this should be a scan of the workspace for object with pointer to genome object
+                    domain_data = ws.get_objects([{'ref':'ws_id'+'/'+base_genome_id+'.Domains'}])[0]['data']  
+                except:
+                    continue
+                    
+                for CDS_domain_list in domain_data[scaffold_id]:
+                    gene_ID        = CDS_domain_list[KBASE_DOMAINHIT_GENE_ID_I]
+                    (genome_name, gene_name) = (gene_ID[0:gene_ID.index(".")], gene_ID[gene_ID.index(".")+1:])
+                    #gene_beg       = CDS_domain_list[KBASE_DOMAINHIT_GENE_BEG_I]
+                    #gene_end       = CDS_domain_list[KBASE_DOMAINHIT_GENE_END_I]
+                    #gene_strand    = CDS_domain_list[KBASE_DOMAINHIT_GENE_STRAND_I]
+                    gene_hits_dict = CDS_domain_list[KBASE_DOMAINHIT_GENE_HITS_DICT_I]
+                    gene_hits_list = []
+                    for domfam in gene_hits_dict.keys():
+                        # skip CD hits for now
+                        if domfam[0:2] != 'PF' and domfam[0:3] != 'COG' and domfam[0:4] != 'TIGR':
+                            continue
+                        #Global_Domains[i][gene_name] = gene_hits_dict
+                        for hit in gene_hits_dict[domfam]:
+                            list_format_hit = hit
+                            list_format_hit.append (domfam)
+                            #list_format_hit[DOMHIT_BEG_I]      = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_BEG_J]
+                            #list_format_hit[DOMHIT_END_I]      = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_END_J]
+                            #list_format_hit[DOMHIT_EVALUE_I]   = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_EVALUE_J]
+                            #list_format_hit[DOMHIT_BITSCORE_I] = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_BITSCORE_J]
+                            #list_format_hit[DOMHIT_ALNPERC_I]  = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_ALNPERC_J]
+                            gene_hits_list.append(list_format_hit)
+                            #print ("%s\t%s\t%s\t%s\t%d\t%d\t%f"%(genome_id, scaffold_id, gene_name, domfam, hit_beg, hit_end, hit_evalue))
+
+                    Global_Domains[i][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
+                    for hit in Global_Domains[i][gene_name]:
+                        print ("%s\t%s\t%s\t%s\t%d\t%d\t%16.14f\t%f"%(genome_id, \
+                                                             scaffold_id, \
+                                                             gene_name, \
+                                                             hit[DOMHIT_DOMFAM_I], \
+                                                             hit[DOMHIT_BEG_I], \
+                                                             hit[DOMHIT_END_I], \
+                                                             hit[DOMHIT_EVALUE_I], \
+                                                             hit[DOMHIT_BITSCORE_I] \
+                                                             ))
+
+
+            # Or running outside KBase
+            #
+            elif domain_data_format == "KBase_domains" and domain_data_base_path != None:
                 
                 domain_data_path = domain_data_base_path+'/'+genome_id+domain_data_extra_subpath+'/'+genome_id+"_Domain_annot"+'.json'
                 print ("reading "+domain_data_path+" ...")
