@@ -345,18 +345,13 @@ if KBase_backend != None and KBase_backend and GenomeSet_ref != None:
         #to get the full stack trace: traceback.format_exc()
 
     for genome_id in genomeSet_data['elements'].keys():
-        print ("F "+genome_id)
         if 'ref' not in genomeSet_data['elements'][genome_id] or \
                 genomeSet_data['elements'][genome_id]['ref'] == None:
             raise ValueError("missing reference for genome "+genome_id+" in GenomeSet "+GenomeSet_ref)
-        print ("G "+genome_id)
         genome_ref = genomeSet_data['elements'][genome_id]['ref']
         if genome_ref not in GenomeSet_names:
             GenomeSet_names.append(genome_ref)
-            print (genome_id+" "+genome_ref)
-
-# DEBUG
-exit
+            #print (genome_id+" "+genome_ref)
 
 
 # Build ContigSet_names fro files or from KBase object
