@@ -10,8 +10,8 @@ from __future__ import division
 #KBase_backend = True
 #genome_data_format = "KBase"
 #GenomeSet_ref = '16750/58/1'
-#GenomeSet_names = []
-#GenomeSet_names = ['16750/7/1',
+#GenomeSet_refs = []
+#GenomeSet_refs = ['16750/7/1',
 #                   '16750/8/2',
 #                   '16750/9/1',
 #                   '16750/10/1',
@@ -322,7 +322,9 @@ Global_Domains = []
 
 # Build or append to GenomeSet_names
 #
-if KBase_backend != None and KBase_backend and GenomeSet_ref != None:
+if KBase_backend and GenomeSet_ref != None:
+    GenomeSet_refs = []
+    GenomeSet_names = dict()
     try:
         genomeSet_obj = ws.get_objects([{'ref':GenomeSet_ref}])
         genomeSet_data = genomeSet_obj[0]['data']
@@ -349,8 +351,9 @@ if KBase_backend != None and KBase_backend and GenomeSet_ref != None:
                 genomeSet_data['elements'][genome_id]['ref'] == None:
             raise ValueError("missing reference for genome "+genome_id+" in GenomeSet "+GenomeSet_ref)
         genome_ref = genomeSet_data['elements'][genome_id]['ref']
-        if genome_ref not in GenomeSet_names:
-            GenomeSet_names.append(genome_ref)
+        if genome_ref not in GenomeSet_refs:
+            GenomeSet_refs.append(genome_ref)
+            GenomeSet_names[genome_ref] = genome_id
             #print (genome_id+" "+genome_ref)
 
 
@@ -358,11 +361,11 @@ if KBase_backend != None and KBase_backend and GenomeSet_ref != None:
 #
 ContigSet_names = []
 genome_contig_id_delim = '/c:'
-if KBase_backend != None and KBase_backend:
+if KBase_backend:
     genome_contig_id_delim = '/c:'
-    for ws_genome_id in GenomeSet_names:
-        Global_KBase_Genomes[ws_genome_id] = ga = GenomeAnnotationAPI(services, token=session_token, ref=ws_genome_id)
-        Global_KBase_Assemblies[ws_genome_id] = ass = ga.get_assembly()
+    for genome_ref in GenomeSet_refs:
+        Global_KBase_Genomes[genome_ref] = ga = GenomeAnnotationAPI(services, token=session_token, ref=genome_ref)
+        Global_KBase_Assemblies[genome_ref] = ass = ga.get_assembly()
         tax = ga.get_taxon()
 #        if ws_genome_id.count('/') == 2:
 #            [ws_id, genome_id, ver] = ws_genome_id.split('/')
@@ -373,11 +376,11 @@ if KBase_backend != None and KBase_backend:
 #            print ("badly formatted ws_genome_id")
 #            system.exit(-1)
 #        Species_name_by_genome_id[genome_id] = tax.get_scientific_name()
-        Species_name_by_genome_id[ws_genome_id] = tax.get_scientific_name()
+        Species_name_by_genome_ref[genome_ref] = tax.get_scientific_name()
         #print ("Getting Contig IDs for Genome: "+ws_genome_id+": "+Species_name_by_genome_id[genome_id])  # DEBUG
         
         for scaffold_id in ass.get_contig_ids():
-            contig_id = ws_genome_id+genome_contig_id_delim+scaffold_id
+            contig_id = genome_ref+genome_contig_id_delim+scaffold_id
             ContigSet_names.append(contig_id)
             
 elif genome_data_format == "Genbank":
@@ -1063,9 +1066,16 @@ def getDomainHits (ContigSet_names, \
 
             if KBase_backend:
                 try:
-                    (base_genome_id) = genome_id.split('.')
+                    genome_ref = genome_id
+                    genome_object_name = GenomeSet_names[genome_ref]
+                    (base_genome_id) = genome_object_name.split('.')
+                    if genome_ref.count('/') == 2:
+                        [ws_id, genome_id, ver] = genome_ref.split('/')
+                    elif genome_ref.count('/') == 1:
+                        [ws_id, genome_id] = genome_ref.split('/')
+                        ver = 'auto'
                     # this should be a scan of the workspace for object with pointer to genome object
-                    domain_data = ws.get_objects([{'ref':'ws_id'+'/'+base_genome_id+'.Domains'}])[0]['data']  
+                    domain_data = ws.get_objects([{'ref':ws_id+'/'+base_genome_id+'.Domains'}])[0]['data']  
                 except:
                     continue
                     
