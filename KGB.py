@@ -1082,7 +1082,12 @@ def getDomainHits (ContigSet_names, \
                     domain_data = ws.get_objects([{'ref':str(ws_id)+'/'+str(base_genome_id)+'.Domains'}])[0]['data']  
                 except:
                     continue
-                    
+
+                # DEBUG
+                for ctg_id in domain_data.keys():
+                    print ("CTG: '"+ctg_id+"'")
+                continue
+
                 for CDS_domain_list in domain_data[scaffold_id]:
                     gene_ID        = CDS_domain_list[KBASE_DOMAINHIT_GENE_ID_I]
                     (genome_name, gene_name) = (gene_ID[0:gene_ID.index(".")], gene_ID[gene_ID.index(".")+1:])
