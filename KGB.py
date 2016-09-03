@@ -1052,11 +1052,11 @@ def getDomainHits (ContigSet_names, \
                    genomebrowser_mode=def_genomebrowser_mode,
                    domain_data_format=domain_data_format):
 
-    print ("GETTING DOMAINHITS")  # DEBUG
+    #print ("GETTING DOMAINHITS")  # DEBUG
 
     for i,genome_name in enumerate(ContigSet_names):
         (genome_id,scaffold_id) = genome_name.split(genome_contig_id_delim)
-        print("GETTING DOMAINHITS FOR "+genome_name+" "+genome_id+" c:"+scaffold_id)  # DEBUG
+        #print("GETTING DOMAINHITS FOR "+genome_name+" "+genome_id+" c:"+scaffold_id)  # DEBUG
             
         if Global_State['genomebrowser_mode'] == "genome" and i > 0:
             break
@@ -1077,7 +1077,7 @@ def getDomainHits (ContigSet_names, \
                         (ws_id, ws_genome_id) = genome_ref.split('/')
                         ver = 'auto'
                         
-                    print ("WS,GENOME_ID,BASE_NAME: "+str(ws_id)+" "+str(genome_id)+" "+str(base_genome_id))  # DEBUG
+                    #print ("WS,GENOME_ID,BASE_NAME: "+str(ws_id)+" "+str(genome_id)+" "+str(base_genome_id))  # DEBUG
                     # FIX: this should be a scan of the workspace for object with pointer to genome object (domain_data['genome_ref'] field)
                     domain_data = ws.get_objects([{'ref':str(ws_id)+'/'+str(base_genome_id)+'.Domains'}])[0]['data']  
                 except:
