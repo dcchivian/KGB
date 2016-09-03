@@ -349,13 +349,13 @@ if KBase_backend != None and KBase_backend and GenomeSet_ref != None:
         raise ValueError('Unable to fetch GenomeSet object from workspace: ' + str(e))
         #to get the full stack trace: traceback.format_exc()
 
-    for genome_id in genomeSet_obj['elements'].keys():
+    for genome_id in genomeSet_data['elements'].keys():
         print ("F "+genome_id)
-        if 'ref' not in genomeSet_object['elements'][genome_id] or \
-                genomeSet_object['elements'][genome_id]['ref'] == None:
+        if 'ref' not in genomeSet_data['elements'][genome_id] or \
+                genomeSet_data['elements'][genome_id]['ref'] == None:
             raise ValueError("missing reference for genome "+genome_id+" in GenomeSet "+GenomeSet_ref)
         print ("G "+genome_id)
-        genome_ref = genomeSet_obj['elements'][genome_id]['ref']
+        genome_ref = genomeSet_data['elements'][genome_id]['ref']
         if genome_ref not in GenomeSet_names:
             GenomeSet_names.append(genome_ref)
             print (genome_id+" "+genome_ref)
