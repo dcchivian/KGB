@@ -1054,6 +1054,7 @@ def getDomainHits (ContigSet_names, \
 
     for i,genome_name in enumerate(ContigSet_names):
         (genome_id,scaffold_id) = genome_name.split(genome_contig_id_delim)
+        print("GETTING DOMAINHITS FOR "+genome_name+" "+genome_id+" c:"+scaffold_id)  # DEBUG
             
         if Global_State['genomebrowser_mode'] == "genome" and i > 0:
             break
@@ -1063,16 +1064,15 @@ def getDomainHits (ContigSet_names, \
         except:
             Global_Domains.append({})
 
-
             if KBase_backend:
                 try:
                     genome_ref = genome_id
                     genome_object_name = GenomeSet_names[genome_ref]
                     (base_genome_id) = genome_object_name.split('.')
                     if genome_ref.count('/') == 2:
-                        [ws_id, genome_id, ver] = genome_ref.split('/')
+                        (ws_id, genome_id, ver) = genome_ref.split('/')
                     elif genome_ref.count('/') == 1:
-                        [ws_id, genome_id] = genome_ref.split('/')
+                        (ws_id, genome_id) = genome_ref.split('/')
                         ver = 'auto'
                     # this should be a scan of the workspace for object with pointer to genome object
                     domain_data = ws.get_objects([{'ref':ws_id+'/'+base_genome_id+'.Domains'}])[0]['data']  
@@ -1104,16 +1104,16 @@ def getDomainHits (ContigSet_names, \
                             #print ("%s\t%s\t%s\t%s\t%d\t%d\t%f"%(genome_id, scaffold_id, gene_name, domfam, hit_beg, hit_end, hit_evalue))
 
                     Global_Domains[i][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
-                    for hit in Global_Domains[i][gene_name]:
-                        print ("%s\t%s\t%s\t%s\t%d\t%d\t%16.14f\t%f"%(genome_id, \
-                                                             scaffold_id, \
-                                                             gene_name, \
-                                                             hit[DOMHIT_DOMFAM_I], \
-                                                             hit[DOMHIT_BEG_I], \
-                                                             hit[DOMHIT_END_I], \
-                                                             hit[DOMHIT_EVALUE_I], \
-                                                             hit[DOMHIT_BITSCORE_I] \
-                                                             ))
+#                    for hit in Global_Domains[i][gene_name]:
+#                        print ("%s\t%s\t%s\t%s\t%d\t%d\t%16.14f\t%f"%(genome_id, \
+#                                                             scaffold_id, \
+#                                                             gene_name, \
+#                                                             hit[DOMHIT_DOMFAM_I], \
+#                                                             hit[DOMHIT_BEG_I], \
+#                                                             hit[DOMHIT_END_I], \
+#                                                             hit[DOMHIT_EVALUE_I], \
+#                                                             hit[DOMHIT_BITSCORE_I] \
+#                                                             ))
 
 
             # Or running outside KBase
