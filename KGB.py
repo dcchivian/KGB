@@ -1086,6 +1086,7 @@ def getDomainHits (ContigSet_names, \
                 for CDS_domain_list in domain_data['data'][scaffold_id]:
                     gene_ID        = CDS_domain_list[KBASE_DOMAINHIT_GENE_ID_I]
                     (genome_name, gene_name) = (gene_ID[0:gene_ID.index(".")], gene_ID[gene_ID.index(".")+1:])
+                    print ("DOMAIN_HIT: "+genome_name+" "+gene_name)  # DEBUG
                     #gene_beg       = CDS_domain_list[KBASE_DOMAINHIT_GENE_BEG_I]
                     #gene_end       = CDS_domain_list[KBASE_DOMAINHIT_GENE_END_I]
                     #gene_strand    = CDS_domain_list[KBASE_DOMAINHIT_GENE_STRAND_I]
@@ -1105,6 +1106,7 @@ def getDomainHits (ContigSet_names, \
                             #list_format_hit[DOMHIT_BITSCORE_I] = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_BITSCORE_J]
                             #list_format_hit[DOMHIT_ALNPERC_I]  = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_ALNPERC_J]
                             gene_hits_list.append(list_format_hit)
+                            print ("   DOMAIN_HIT: "+domfam)  # DEBUG
                             #print ("%s\t%s\t%s\t%s\t%d\t%d\t%f"%(genome_id, scaffold_id, gene_name, domfam, hit_beg, hit_end, hit_evalue))
 
                     Global_Domains[i][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
