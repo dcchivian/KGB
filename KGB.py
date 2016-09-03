@@ -1070,7 +1070,7 @@ def getDomainHits (ContigSet_names, \
                 try:
                     genome_ref = genome_id
                     genome_object_name = GenomeSet_names[genome_ref]
-                    (base_genome_id) = genome_object_name.split('.')
+                    (base_genome_id, rest) = genome_object_name.split('.')
                     if genome_ref.count('/') == 2:
                         (ws_id, ws_genome_id, ver) = genome_ref.split('/')
                     elif genome_ref.count('/') == 1:
