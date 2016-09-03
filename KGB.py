@@ -9,7 +9,8 @@ from __future__ import division
 #
 #KBase_backend = True
 #genome_data_format = "KBase"
-#GenomeSet_ref = None
+#GenomeSet_ref = '16750/58/1'
+#GenomeSet_names = []
 #GenomeSet_names = ['16750/7/1',
 #                   '16750/8/2',
 #                   '16750/9/1',
@@ -319,17 +320,18 @@ Global_Domains = []
 
 
 
-# Build GenomeSet_names
+# Build or append to GenomeSet_names
 #
-if GenomeSet_names == None:
-    GenomeSet_names = []
 print ("A")
-sys.exit(0)
-if GenomeSet_ref != None:
+if KBase_backend != None and KBase_backend and GenomeSet_ref != None:
     try:
+        print ("B")
         genomeSet_obj = ws.get_objects([{'ref':GenomeSet_ref}])
+        print ("C")
         genomeSet_data = genomeSet_obj[0]['data']
+        print ("D")
         genomeSet_info = genomeSet_obj[0]['info']
+        print ("E")
         # Object Info Contents
         # absolute ref = info[6] + '/' + info[0] + '/' + info[4]
         # 0 - obj_id objid
@@ -348,19 +350,21 @@ if GenomeSet_ref != None:
         #to get the full stack trace: traceback.format_exc()
 
     for genome_id in genomeSet_obj['elements'].keys():
+        print ("F "+genome_id)
         if 'ref' not in genomeSet_object['elements'][genome_id] or \
                 genomeSet_object['elements'][genome_id]['ref'] == None:
             raise ValueError("missing reference for genome "+genome_id+" in GenomeSet "+GenomeSet_ref)
+        print ("G "+genome_id)
         genome_ref = genomeSet_obj['elements'][genome_id]['ref']
         if genome_ref not in GenomeSet_names:
             GenomeSet_names.append(genome_ref)
             print (genome_id+" "+genome_ref)
 
 # DEBUG
-sys.exit(0)
+exit
 
 
-# Build ContigSet_names from files or from KBase object
+# Build ContigSet_names fro files or from KBase object
 #
 ContigSet_names = []
 genome_contig_id_delim = '/c:'
