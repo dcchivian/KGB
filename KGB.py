@@ -310,7 +310,7 @@ search_results = []
 search_done = []
 Contig_order = []
 Contig_order_lookup = {}
-Species_name_by_genome_id = {}
+Species_name_by_genome_ref = {}
 Global_KBase_Genomes = {}
 Global_KBase_Assemblies = {}
 Global_Genbank_Genomes = []
@@ -3405,8 +3405,8 @@ def draw_mode_panel (ax, genome_name, genomebrowser_mode, data_set_name):
     if KBase_backend:
         #[ws_id, genome_contig_id] = genome_name.split('/')
         #[genome_id, contig_id] = genome_contig_id.split(genome_contig_id_delim)
-        [genome_id, contig_id] = genome_name.split(genome_contig_id_delim)
-        name_disp = Species_name_by_genome_id[genome_id]
+        [genome_ref, contig_id] = genome_name.split(genome_contig_id_delim)
+        name_disp = Species_name_by_genome_ref[genome_ref]
     ax.text(0.30, 0.5, "Genome", verticalalignment="bottom", horizontalalignment="right", color=field_color, fontsize=field_name_fontsize, zorder=base_zorder+1)
     ax.text(0.35, 0.5, name_disp, verticalalignment="bottom", horizontalalignment="left", color=value_color, fontsize=field_val_fontsize, zorder=base_zorder+1)
         
@@ -3758,7 +3758,7 @@ def draw_sidenav_panel (ax, genomebrowser_mode):
                 #[genome_id, scaffold_id] = full_name_split[1].split(genome_contig_id_delim)
                 [genome_id, scaffold_id] = ContigSet_names[i].split(genome_contig_id_delim)
                 scaffold_id_disp = scaffold_id.split('.')[-1]
-                disp_name = Species_name_by_genome_id[genome_id]+' c:'+scaffold_id_disp
+                disp_name = Species_name_by_genome_ref[genome_id]+' c:'+scaffold_id_disp
             ax.text(x0+contig_label_x_margin, y0-contig_label_y_margin,
                     disp_name, verticalalignment="top", horizontalalignment="left",
                     color="black", fontsize=contig_label_fontsize, zorder=1)
@@ -3871,7 +3871,7 @@ def draw_sidenav_panel (ax, genomebrowser_mode):
             #[genome_id, scaffold_id] = full_name_split[1].split(genome_contig_id_delim)
             [genome_id, scaffold_id] = ContigSet_names[i].split(genome_contig_id_delim)
             scaffold_id_disp = scaffold_id.split('.')[-1]
-            disp_name = Species_name_by_genome_id[genome_id] + ' c:'+scaffold_id_disp
+            disp_name = Species_name_by_genome_ref[genome_id] + ' c:'+scaffold_id_disp
         ax.text(ellipse_center_x, ellipse_center_y - 0.5*y_diameter - contig_label_y_margin,
                 disp_name, verticalalignment="top", horizontalalignment="center",
                 color="black", fontsize=contig_label_fontsize)
