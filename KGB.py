@@ -423,8 +423,8 @@ def_genomebrowser_mode = "contigs"
 #def_genomebrowser_mode = "genome"
 #def_genomebrowser_mode = "homologs"
 #def_genomebrowser_mode = "tree"
-def_genomebrowser_color_namespace = "annot"
-#def_genomebrowser_color_namespace = "domains"
+#def_genomebrowser_color_namespace = "annot"
+def_genomebrowser_color_namespace = "domains"
 genomebrowser_mode = def_genomebrowser_mode
 
 genomebrowser_color_namespace = def_genomebrowser_color_namespace
