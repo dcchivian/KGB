@@ -4,32 +4,29 @@
 from __future__ import print_function
 from __future__ import division
 
-# silence whining
-import requests
-requests.packages.urllib3.disable_warnings()
 
-
-# KBase user and reference genomes
+# KBase genomes in KBase context
 #
-KBase_backend = True
-genome_data_format = "KBase"
-GenomeSet_ref = None
-GenomeSet_names = ['16750/7/1',
-                   '16750/8/2',
-                   '16750/9/1',
-                   '16750/10/1',
-                   '16750/11/1'
-                   ]
-OrthologSet_locusTags = []
-Search_Terms = []
-domain_data_format = "KBase_domains"
-domain_data_base_path = None
-domain_family_desc_base_path = None
-tree_data_format = 'newick'
-tree_data_base_path = None
-tree_data_file = None
-PrimaryAnchor_leafId = None
-PrimaryAnchor_locusTag = None
+#KBase_backend = True
+#genome_data_format = "KBase"
+#GenomeSet_ref = None
+#GenomeSet_names = ['16750/7/1',
+#                   '16750/8/2',
+#                   '16750/9/1',
+#                   '16750/10/1',
+#                   '16750/11/1'
+#                   ]
+#GenomeSet_names = []
+#OrthologSet_locusTags = []
+#Search_Terms = []
+#domain_data_format = "KBase_domains"
+#domain_data_base_path = None
+#domain_family_desc_base_path = None
+#tree_data_format = 'newick'
+#tree_data_base_path = None
+#tree_data_file = None
+#PrimaryAnchor_leafId = None
+#PrimaryAnchor_locusTag = None
 
 
 # KBase genomes
@@ -222,17 +219,30 @@ if KBase_backend != None and KBase_backend:
 #    matplotlib.use('Agg')  # which agg to use?  getting DISPLAY error
 #    import matplotlib.pyplot as pyplot  # use this instead
 
-    import os
+
+    # silence whining
+    import requests
+    requests.packages.urllib3.disable_warnings()
+
+    # Standard setup for accessing Data API
     import doekbase.data_api
+    #from doekbase.data_api.core import ObjectAPI
     from doekbase.data_api.annotation.genome_annotation.api import GenomeAnnotationAPI
     from doekbase.data_api.sequence.assembly.api import AssemblyAPI
     from doekbase.data_api.taxonomy.taxon.api import TaxonAPI
-    #from doekbase.data_api.core import ObjectAPI
-    
-    # Standard setup for accessing Data API
+    from biokbase.workspace.client import Workspace as workspaceService
+    import os
+
     services = {"workspace_service_url": "https://kbase.us/services/ws/",
                 "shock_service_url": "https://kbase.us/services/shock-api/"}
-    token = os.environ["KB_AUTH_TOKEN"]
+    session_token = os.environ["KB_AUTH_TOKEN"]
+
+    try:
+        ws = workspaceService(services['workspace_service_url'], token=session_token)
+    except Exception as e:
+        raise ValueError('Unable to establish workspace connection: ' + str(e))
+        #to get the full stack trace: traceback.format_exc()
+
     
 # Init for just non-KBase use
 #
@@ -308,6 +318,46 @@ domain_family_desc = {}
 Global_Domains = []
 
 
+
+# Build GenomeSet_names
+#
+if GenomeSet_names == None:
+    GenomeSet_names = []
+if GenomeSet_ref != None:
+    try:
+        genomeSet_obj = ws.get_objects([{'ref':GenomeSet_ref}])
+        genomeSet_data = genomeSet_obj[0]['data']
+        genomeSet_info = genomeSet_obj[0]['info']
+        # Object Info Contents
+        # absolute ref = info[6] + '/' + info[0] + '/' + info[4]
+        # 0 - obj_id objid
+        # 1 - obj_name name
+        # 2 - type_string type
+        # 3 - timestamp save_date
+        # 4 - int version
+        # 5 - username saved_by
+        # 6 - ws_id wsid
+        # 7 - ws_name workspace
+        # 8 - string chsum
+        # 9 - int size 
+        # 10 - usermeta meta
+    except Exception as e:
+        raise ValueError('Unable to fetch GenomeSet object from workspace: ' + str(e))
+        #to get the full stack trace: traceback.format_exc()
+
+    for genome_id in genomeSet_obj['elements'].keys():
+        if 'ref' not in genomeSet_object['elements'][genome_id] or \
+                genomeSet_object['elements'][genome_id]['ref'] == None:
+            raise ValueError("missing reference for genome "+genome_id+" in GenomeSet "+GenomeSet_ref)
+        genome_ref = genomeSet_obj['elements'][genome_id]['ref']
+        if genome_ref not in GenomeSet_names:
+            GenomeSet_names.append(genome_ref)
+            print (genome_id+" "+genome_ref)
+
+# DEBUG
+sys.exit(0)
+
+
 # Build ContigSet_names from files or from KBase object
 #
 ContigSet_names = []
@@ -315,7 +365,7 @@ genome_contig_id_delim = '/c:'
 if KBase_backend != None and KBase_backend:
     genome_contig_id_delim = '/c:'
     for ws_genome_id in GenomeSet_names:
-        Global_KBase_Genomes[ws_genome_id] = ga = GenomeAnnotationAPI(services, token=token, ref=ws_genome_id)
+        Global_KBase_Genomes[ws_genome_id] = ga = GenomeAnnotationAPI(services, token=session_token, ref=ws_genome_id)
         Global_KBase_Assemblies[ws_genome_id] = ass = ga.get_assembly()
         tax = ga.get_taxon()
 #        if ws_genome_id.count('/') == 2:
