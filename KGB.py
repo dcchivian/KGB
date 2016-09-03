@@ -1070,12 +1070,14 @@ def getDomainHits (ContigSet_names, \
                     genome_object_name = GenomeSet_names[genome_ref]
                     (base_genome_id) = genome_object_name.split('.')
                     if genome_ref.count('/') == 2:
-                        (ws_id, genome_id, ver) = genome_ref.split('/')
+                        (ws_id, ws_genome_id, ver) = genome_ref.split('/')
                     elif genome_ref.count('/') == 1:
-                        (ws_id, genome_id) = genome_ref.split('/')
+                        (ws_id, ws_genome_id) = genome_ref.split('/')
                         ver = 'auto'
+                        
+                    print (str(ws_id)+" "+str(genome_id)+" "+str(base_genome_id))
                     # this should be a scan of the workspace for object with pointer to genome object
-                    domain_data = ws.get_objects([{'ref':ws_id+'/'+base_genome_id+'.Domains'}])[0]['data']  
+                    domain_data = ws.get_objects([{'ref':str(ws_id)+'/'+str(base_genome_id)+'.Domains'}])[0]['data']  
                 except:
                     continue
                     
