@@ -323,6 +323,8 @@ Global_Domains = []
 #
 if GenomeSet_names == None:
     GenomeSet_names = []
+print ("A")
+sys.exit(0)
 if GenomeSet_ref != None:
     try:
         genomeSet_obj = ws.get_objects([{'ref':GenomeSet_ref}])
