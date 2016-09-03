@@ -1077,7 +1077,7 @@ def getDomainHits (ContigSet_names, \
                         (ws_id, ws_genome_id) = genome_ref.split('/')
                         ver = 'auto'
                         
-                    print (str(ws_id)+" "+str(genome_id)+" "+str(base_genome_id))  # DEBUG
+                    print ("WS,GENOME_ID,BASE_NAME: "+str(ws_id)+" "+str(genome_id)+" "+str(base_genome_id))  # DEBUG
                     # FIX: this should be a scan of the workspace for object with pointer to genome object
                     domain_data = ws.get_objects([{'ref':str(ws_id)+'/'+str(base_genome_id)+'.Domains'}])[0]['data']  
                 except:
