@@ -322,16 +322,11 @@ Global_Domains = []
 
 # Build or append to GenomeSet_names
 #
-print ("A")
 if KBase_backend != None and KBase_backend and GenomeSet_ref != None:
     try:
-        print ("B")
         genomeSet_obj = ws.get_objects([{'ref':GenomeSet_ref}])
-        print ("C")
         genomeSet_data = genomeSet_obj[0]['data']
-        print ("D")
         genomeSet_info = genomeSet_obj[0]['info']
-        print ("E")
         # Object Info Contents
         # absolute ref = info[6] + '/' + info[0] + '/' + info[4]
         # 0 - obj_id objid
