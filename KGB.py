@@ -1086,11 +1086,11 @@ def getDomainHits (ContigSet_names, \
                    genomebrowser_mode=def_genomebrowser_mode,
                    domain_data_format=domain_data_format):
 
-    print ("GETTING DOMAINHITS")  # DEBUG
+    #print ("GETTING DOMAINHITS")  # DEBUG
 
     for i,contig_name in enumerate(ContigSet_names):
         (genome_id,scaffold_id) = contig_name.split(genome_contig_id_delim)
-        print("GETTING DOMAINHITS FOR "+contig_name+" "+genome_id+" c:"+scaffold_id)  # DEBUG
+        #print("GETTING DOMAINHITS FOR "+contig_name+" "+genome_id+" c:"+scaffold_id)  # DEBUG
             
         if Global_State['genomebrowser_mode'] == "genome" and i > 0:
             break
@@ -1103,7 +1103,7 @@ def getDomainHits (ContigSet_names, \
             if KBase_backend:
                 genome_ref = Genome_ref_by_Contig_id[contig_name]
 
-                print ("CONTIG_NAME: '"+contig_name+"' GENOME_REF: '"+genome_ref+"'")  # DEBUG
+                #print ("CONTIG_NAME: '"+contig_name+"' GENOME_REF: '"+genome_ref+"'")  # DEBUG
 
                 if genome_ref.count('/') == 2:
                     (ws_id, ws_genome_id, ver) = genome_ref.split('/')
@@ -1131,9 +1131,6 @@ def getDomainHits (ContigSet_names, \
                     # 10 - usermeta meta
                     # absolute ref = str(info[6]) + '/' + str(info[0]) + '/' + str(info[4])
                     domain_annotation_ref = str(info[6])+'/'+str(info[0])+'/'+str(info[4])
-                    print ("DomainAnnotation_ref: '"+str(domain_annotation_ref)+"'")  # DEBUG
-                    continue  # DEBUG
-
                     try:
                         domain_data = ws.get_objects([{'ref':domain_annotation_ref}])[0]['data']  
                     except Exception as e:
