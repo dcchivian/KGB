@@ -324,42 +324,55 @@ Global_Domains = []
 
 # Build or append to GenomeSet_names
 #
-if KBase_backend and GenomeSet_ref != None:
+if KBase_backend:
     GenomeSet_refs = []
     GenomeSet_names = dict()
-    try:
-        genomeSet_obj = ws.get_objects([{'ref':GenomeSet_ref}])
-        genomeSet_data = genomeSet_obj[0]['data']
-        genomeSet_info = genomeSet_obj[0]['info']
-        # Object Info Contents
-        # absolute ref = info[6] + '/' + info[0] + '/' + info[4]
-        # 0 - obj_id objid
-        # 1 - obj_name name
-        # 2 - type_string type
-        # 3 - timestamp save_date
-        # 4 - int version
-        # 5 - username saved_by
-        # 6 - ws_id wsid
-        # 7 - ws_name workspace
-        # 8 - string chsum
-        # 9 - int size 
-        # 10 - usermeta meta
-    except Exception as e:
-        raise ValueError('Unable to fetch GenomeSet object from workspace: ' + str(e))
-        #to get the full stack trace: traceback.format_exc()
 
-    for genome_id in genomeSet_data['elements'].keys():
-        if 'ref' not in genomeSet_data['elements'][genome_id] or \
-                genomeSet_data['elements'][genome_id]['ref'] == None:
-            raise ValueError("missing reference for genome "+genome_id+" in GenomeSet "+GenomeSet_ref)
-        genome_ref = genomeSet_data['elements'][genome_id]['ref']
-        if genome_ref not in GenomeSet_refs:
-            GenomeSet_refs.append(genome_ref)
-            GenomeSet_names[genome_ref] = genome_id
-            #print (genome_id+" "+genome_ref)
+    # Use FeatureSet to build GenomeSet
+    #
+    if Related_FeatureSet_ref != None:
+        try:
+            related_featureSet_obj = ws.get_objects([{'ref':Related_FeatureSet_ref}])
+            related_featureSet_data = related_featureSet_obj[0]['data']
+            related_featureSet_info = related_featureSet_obj[0]['info']
+
+        except Exception as e:
+            raise ValueError('Unable to fetch featureSet object from workspace: ' + str(e))
+            #to get the full stack trace: traceback.format_exc()
+
+        for f_id in related_featureSet_data['elements'].keys():
+            if len(related_featureSet_data['elements'][f_id]) == 0:
+                raise ValueError("missing genome reference for feature "+f_id+" in FeatureSet "+Related_FeatureSet_ref)
+            for genome_ref in related_featureSet_data['elements'][f_id]:
+                if genome_ref not in GenomeSet_refs:
+                    GenomeSet_refs.append(genome_ref)
+                    GenomeSet_names[genome_ref] = genome_ref  # FIX
+                    #print (genome_id+" "+genome_ref)
+
+    # or use GenomeSet
+    #
+    elif GenomeSet_ref != None:
+        try:
+            genomeSet_obj = ws.get_objects([{'ref':GenomeSet_ref}])
+            genomeSet_data = genomeSet_obj[0]['data']
+            genomeSet_info = genomeSet_obj[0]['info']
+
+        except Exception as e:
+            raise ValueError('Unable to fetch GenomeSet object from workspace: ' + str(e))
+            #to get the full stack trace: traceback.format_exc()
+
+        for genome_id in genomeSet_data['elements'].keys():
+            if 'ref' not in genomeSet_data['elements'][genome_id] or \
+                    genomeSet_data['elements'][genome_id]['ref'] == None:
+                raise ValueError("missing reference for genome "+genome_id+" in GenomeSet "+GenomeSet_ref)
+            genome_ref = genomeSet_data['elements'][genome_id]['ref']
+            if genome_ref not in GenomeSet_refs:
+                GenomeSet_refs.append(genome_ref)
+                GenomeSet_names[genome_ref] = genome_id
+                #print (genome_id+" "+genome_ref)
 
 
-# Build ContigSet_names fro files or from KBase object
+# Build ContigSet_names from files or from KBase object
 #
 ContigSet_names = []
 genome_contig_id_delim = '/c:'
@@ -1072,6 +1085,9 @@ def getDomainHits (ContigSet_names, \
 
             if KBase_backend:
                 try:
+                    for domain_annotation_ref in ws.list_objects([{'type':"KBaseGeneFamilies.DomainAnnotation"}])
+                        print ("DomainAnnotation_ref: '"+domain_anotation_ref+"'")  # DEBUG
+
                     genome_ref = genome_id
                     genome_object_name = GenomeSet_names[genome_ref]
                     (base_genome_id, rest) = genome_object_name.split('.')
