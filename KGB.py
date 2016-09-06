@@ -1086,11 +1086,11 @@ def getDomainHits (ContigSet_names, \
                    genomebrowser_mode=def_genomebrowser_mode,
                    domain_data_format=domain_data_format):
 
-    #print ("GETTING DOMAINHITS")  # DEBUG
+    print ("GETTING DOMAINHITS")  # DEBUG
 
     for i,contig_name in enumerate(ContigSet_names):
         (genome_id,scaffold_id) = contig_name.split(genome_contig_id_delim)
-        #print("GETTING DOMAINHITS FOR "+contig_name+" "+genome_id+" c:"+scaffold_id)  # DEBUG
+        print("GETTING DOMAINHITS FOR "+contig_name+" "+genome_id+" c:"+scaffold_id)  # DEBUG
             
         if Global_State['genomebrowser_mode'] == "genome" and i > 0:
             break
@@ -3476,7 +3476,7 @@ def draw_mode_panel (ax, contig_name, genomebrowser_mode, data_set_name):
     if KBase_backend:
         #[ws_id, genome_contig_id] = contig_name.split('/')
         #[genome_id, contig_id] = genome_contig_id.split(genome_contig_id_delim)
-        [genome_ref, contig_id] = contig_name.split(genome_contig_id_delim)
+        [genome_ref, scaffold_id] = contig_name.split(genome_contig_id_delim)
         name_disp = Species_name_by_genome_ref[genome_ref]
     ax.text(0.30, 0.5, "Genome", verticalalignment="bottom", horizontalalignment="right", color=field_color, fontsize=field_name_fontsize, zorder=base_zorder+1)
     ax.text(0.35, 0.5, name_disp, verticalalignment="bottom", horizontalalignment="left", color=value_color, fontsize=field_val_fontsize, zorder=base_zorder+1)
