@@ -372,6 +372,35 @@ if KBase_backend:
                 #print (genome_id+" "+genome_ref)
 
 
+# Instantiate GenomeAnnotationAPI and Build GenomeSet_names
+#
+try:
+    are_there_genome_set_names = GenomeSet_names
+except:
+    GenomeSet_names = dict()
+if KBase_backend:
+    for genome_ref in GenomeSet_refs:
+        Global_KBase_Genomes[genome_ref] = ga = GenomeAnnotationAPI(services, token=session_token, ref=genome_ref)
+        Global_KBase_Assemblies[genome_ref] = ass = ga.get_assembly()
+        tax = ga.get_taxon()
+        #        if ws_genome_id.count('/') == 2:
+        #            [ws_id, genome_id, ver] = ws_genome_id.split('/')
+        #        elif ws_genome_id.count('/') == 1:
+        #            [ws_id, genome_id] = ws_genome_id.split('/')
+        #            ver = 'auto'
+        #        else:
+        #            print ("badly formatted ws_genome_id")
+        #            system.exit(-1)
+        #        Species_name_by_genome_id[genome_id] = tax.get_scientific_name()
+        Species_name_by_genome_ref[genome_ref] = tax.get_scientific_name()
+        #print ("Getting Contig IDs for Genome: "+ws_genome_id+": "+Species_name_by_genome_id[genome_id])  # DEBUG
+
+        try:
+            is_there_a_genome_set_name = GenomeSet_names[genome_ref]
+        except:
+            GenomeSet_names[genome_ref] = Species_name_by_genome_ref[genome_ref]
+
+
 # Build ContigSet_names from files or from KBase object
 #
 ContigSet_names = []
@@ -379,21 +408,7 @@ genome_contig_id_delim = '/c:'
 if KBase_backend:
     genome_contig_id_delim = '/c:'
     for genome_ref in GenomeSet_refs:
-        Global_KBase_Genomes[genome_ref] = ga = GenomeAnnotationAPI(services, token=session_token, ref=genome_ref)
-        Global_KBase_Assemblies[genome_ref] = ass = ga.get_assembly()
-        tax = ga.get_taxon()
-#        if ws_genome_id.count('/') == 2:
-#            [ws_id, genome_id, ver] = ws_genome_id.split('/')
-#        elif ws_genome_id.count('/') == 1:
-#            [ws_id, genome_id] = ws_genome_id.split('/')
-#            ver = 'auto'
-#        else:
-#            print ("badly formatted ws_genome_id")
-#            system.exit(-1)
-#        Species_name_by_genome_id[genome_id] = tax.get_scientific_name()
-        Species_name_by_genome_ref[genome_ref] = tax.get_scientific_name()
-        #print ("Getting Contig IDs for Genome: "+ws_genome_id+": "+Species_name_by_genome_id[genome_id])  # DEBUG
-        
+        ass = Global_KBase_Assemblies[genome_ref]
         for scaffold_id in ass.get_contig_ids():
             contig_id = genome_ref+genome_contig_id_delim+scaffold_id
             ContigSet_names.append(contig_id)
