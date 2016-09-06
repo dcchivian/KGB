@@ -695,6 +695,7 @@ def build_feature_rec_kbase (f, f_type='CDS', source_species='', contig_i=0, dna
         aliases.append(alias)
 
     feature_ID = f['feature_id']
+    print ("FEATURE_ID: '"+feature_ID+"'")  # DEBUG
     
     # coords
     strand = f['feature_locations'][0][KB_LOC_STR_I]
