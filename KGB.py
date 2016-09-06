@@ -1113,16 +1113,16 @@ def getDomainHits (ContigSet_names, \
                     raise ValueError('Unable to fetch featureSet object from workspace: ' + str(e))
                     #to get the full stack trace: traceback.format_exc()
                 for domain_annotation_ref in domain_annotation_ref_list:
-                    print ("DomainAnnotation_ref: '"+domain_annotation_ref+"'")  # DEBUG
+                    print ("DomainAnnotation_ref: '"+str(domain_annotation_ref)+"'")  # DEBUG
                     try:
-                        domain_data = ws.get_objects([{'ref':domain_annotation_ref}])[0]['data']  
+                        domain_data = ws.get_objects([{'ref':str(ws_id)+'/'+str(domain_annotation_ref)}])[0]['data']  
                     except Exception as e:
                         raise ValueError('Unable to fetch featureSet object from workspace: ' + str(e))
                     #to get the full stack trace: traceback.format_exc()
 
                     # we found the correct DomainAnnotation object
                     if domain_data['genome_ref'] == genome_ref:
-                        print ("FOUND DOM ANNOT "+domain_annotation_ref+" FOR GENOME "+genome_ref)  # DEBUG
+                        print ("FOUND DOM ANNOT "+str(domain_annotation_ref)+" FOR GENOME "+str(genome_ref))  # DEBUG
                         break
 
                 for CDS_domain_list in domain_data['data'][scaffold_id]:
