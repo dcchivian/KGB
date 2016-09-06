@@ -1093,12 +1093,12 @@ def getDomainHits (ContigSet_names, \
                     ver = 'auto'
 
                 try:
-                    domain_objects_ref_list = ws.list_objects({'ids':[ws_id],'type':"KBaseGeneFamilies.DomainAnnotation"})
+                    domain_annotation_ref_list = ws.list_objects({'ids':[ws_id],'type':"KBaseGeneFamilies.DomainAnnotation"})
                 except Exception as e:
                     raise ValueError('Unable to fetch featureSet object from workspace: ' + str(e))
                     #to get the full stack trace: traceback.format_exc()
-                for domain_annotation_ref in domain_objects_ref_list:
-                    print ("DomainAnnotation_ref: '"+domain_anotation_ref+"'")  # DEBUG
+                for domain_annotation_ref in domain_annotation_ref_list:
+                    print ("DomainAnnotation_ref: '"+domain_annotation_ref+"'")  # DEBUG
                     try:
                         domain_data = ws.get_objects([{'ref':domain_annotation_ref}])[0]['data']  
                     except Exception as e:
