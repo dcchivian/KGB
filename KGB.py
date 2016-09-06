@@ -20,6 +20,7 @@ from __future__ import division
 #GenomeSet_names = []
 #OrthologSet_locusTags = []
 #Search_Terms = []
+#domain_data_exists = True
 #domain_data_format = "KBase_domains"
 #domain_data_base_path = None
 #domain_family_desc_base_path = None
@@ -289,7 +290,7 @@ tool_title = "KGB Genome Browser"
 #color_namespace_names = ['annot', 'ec', 'cog', 'pfam', 'domains', 'local']
 color_namespace_names_disp = ['Annot', 'EC']
 color_namespace_names = ['annot', 'ec']
-if domain_data_base_path != None:
+if domain_data_exists:
     color_namespace_names_disp.extend(['COG', 'Pfam', 'Domains'])
     color_namespace_names.extend(['cog', 'pfam', 'domains'])
     
@@ -1089,6 +1090,7 @@ def getDomainHits (ContigSet_names, \
                     gene_name = re.sub ('^'+genome_object_name+'.', '', gene_ID) 
                     #(genome_name, gene_name) = (gene_ID[0:gene_ID.index(".")], gene_ID[gene_ID.index(".")+1:])
                     #print ("DOMAIN_HIT: "+genome_name+" "+gene_name)  # DEBUG
+                    print ("DOMAIN_HIT for gene: "+gene_name)  # DEBUG
                     #gene_beg       = CDS_domain_list[KBASE_DOMAINHIT_GENE_BEG_I]
                     #gene_end       = CDS_domain_list[KBASE_DOMAINHIT_GENE_END_I]
                     #gene_strand    = CDS_domain_list[KBASE_DOMAINHIT_GENE_STRAND_I]
@@ -1126,7 +1128,7 @@ def getDomainHits (ContigSet_names, \
 
             # Or running outside KBase
             #
-            elif domain_data_format == "KBase_domains" and domain_data_base_path != None:
+            elif domain_data_format == "KBase_domains" and domain_data_exists:
                 
                 domain_data_path = domain_data_base_path+'/'+genome_id+domain_data_extra_subpath+'/'+genome_id+"_Domain_annot"+'.json'
                 print ("reading "+domain_data_path+" ...")
