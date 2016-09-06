@@ -1088,9 +1088,9 @@ def getDomainHits (ContigSet_names, \
 
     #print ("GETTING DOMAINHITS")  # DEBUG
 
-    for i,genome_name in enumerate(ContigSet_names):
-        (genome_id,scaffold_id) = genome_name.split(genome_contig_id_delim)
-        #print("GETTING DOMAINHITS FOR "+genome_name+" "+genome_id+" c:"+scaffold_id)  # DEBUG
+    for i,contig_name in enumerate(ContigSet_names):
+        (genome_id,scaffold_id) = contig_name.split(genome_contig_id_delim)
+        #print("GETTING DOMAINHITS FOR "+contig_name+" "+genome_id+" c:"+scaffold_id)  # DEBUG
             
         if Global_State['genomebrowser_mode'] == "genome" and i > 0:
             break
@@ -1101,7 +1101,7 @@ def getDomainHits (ContigSet_names, \
             Global_Domains.append({})
 
             if KBase_backend:
-                genome_ref = Genome_ref_by_Contig_id[genome_name]
+                genome_ref = Genome_ref_by_Contig_id[contig_name]
 
                 if genome_ref.count('/') == 2:
                     (ws_id, ws_genome_id, ver) = genome_ref.split('/')
@@ -1110,13 +1110,12 @@ def getDomainHits (ContigSet_names, \
                     ver = 'auto'
 
                 try:
-                    domain_annotation_ref_list = ws.list_objects({'ids':[ws_id],'type':"KBaseGeneFamilies.DomainAnnotation"})
+                    domain_annotation_obj_list = ws.list_objects({'ids':[ws_id],'type':"KBaseGeneFamilies.DomainAnnotation"})
                 except Exception as e:
                     raise ValueError('Unable to list DomainAnnotation objects from workspace: ' + str(e))
                     #to get the full stack trace: traceback.format_exc()
-                for domain_annotation_obj_info in domain_annotation_ref_list:
+                for domain_annotation_obj_info in domain_annotation_obj_list:
                     # Object Info Contents
-                    # absolute ref = str(info[6]) + '/' + str(info[0]) + '/' + str(info[4])
                     # 0 - obj_id objid
                     # 1 - obj_name name
                     # 2 - type_string type
@@ -1128,6 +1127,7 @@ def getDomainHits (ContigSet_names, \
                     # 8 - string chsum
                     # 9 - int size 
                     # 10 - usermeta meta
+                    # absolute ref = str(info[6]) + '/' + str(info[0]) + '/' + str(info[4])
                     domain_annotation_ref = str(info[6])+'/'+str(info[0])+'/'+str(info[4])
                     print ("DomainAnnotation_ref: '"+str(domain_annotation_ref)+"'")  # DEBUG
                     try:
@@ -1145,8 +1145,8 @@ def getDomainHits (ContigSet_names, \
                     gene_ID   = CDS_domain_list[KBASE_DOMAINHIT_GENE_ID_I]
                     #gene_name = re.sub ('^'+genome_object_name+'.', '', gene_ID) 
                     gene_name = gene_ID
-                    #(genome_name, gene_name) = (gene_ID[0:gene_ID.index(".")], gene_ID[gene_ID.index(".")+1:])
-                    #print ("DOMAIN_HIT: "+genome_name+" "+gene_name)  # DEBUG
+                    #(contig_name, gene_name) = (gene_ID[0:gene_ID.index(".")], gene_ID[gene_ID.index(".")+1:])
+                    #print ("DOMAIN_HIT: "+contig_name+" "+gene_name)  # DEBUG
                     #print ("DOMAIN_HIT for gene: "+gene_name)  # DEBUG
                     #gene_beg       = CDS_domain_list[KBASE_DOMAINHIT_GENE_BEG_I]
                     #gene_end       = CDS_domain_list[KBASE_DOMAINHIT_GENE_END_I]
@@ -1194,7 +1194,7 @@ def getDomainHits (ContigSet_names, \
 
                     for CDS_domain_list in kbase_domains['data'][scaffold_id]:
                         gene_ID        = CDS_domain_list[KBASE_DOMAINHIT_GENE_ID_I]
-                        (genome_name, gene_name) = (gene_ID[0:gene_ID.index(".")], gene_ID[gene_ID.index(".")+1:])
+                        (contig_name, gene_name) = (gene_ID[0:gene_ID.index(".")], gene_ID[gene_ID.index(".")+1:])
                         #gene_beg       = CDS_domain_list[KBASE_DOMAINHIT_GENE_BEG_I]
                         #gene_end       = CDS_domain_list[KBASE_DOMAINHIT_GENE_END_I]
                         #gene_strand    = CDS_domain_list[KBASE_DOMAINHIT_GENE_STRAND_I]
@@ -1246,11 +1246,11 @@ def getFeatureSlicesKBase (ContigSet_names, \
 
         if KBase_backend:  
             
-            for i,genome_name in enumerate(ContigSet_names):
+            for i,contig_name in enumerate(ContigSet_names):
                 if i >= max_rows:
                     break
 
-                (genome_id,scaffold_id) = genome_name.split(genome_contig_id_delim)
+                (genome_id,scaffold_id) = contig_name.split(genome_contig_id_delim)
 
                 ga = Global_KBase_Genomes[genome_id]
                 ass = Global_KBase_Assemblies[genome_id]
@@ -1473,8 +1473,8 @@ def getFeatureSlicesKBase (ContigSet_names, \
         if KBase_backend:  
 
             for i in range (0,Global_State['genome_mode_n_rows']):
-                genome_name = ContigSet_names[0]
-                (genome_id,scaffold_id) = genome_name.split(genome_contig_id_delim)
+                contig_name = ContigSet_names[0]
+                (genome_id,scaffold_id) = contig_name.split(genome_contig_id_delim)
 
                 ga = Global_KBase_Genomes[genome_id]
                 ass = Global_KBase_Assemblies[genome_id]
@@ -1708,16 +1708,16 @@ def getFeatureSlicesGenbank (ContigSet_names, \
     if genomebrowser_mode != "genome":
     
         if genome_data_format == "Genbank":
-            for i,genome_name in enumerate(ContigSet_names):
+            for i,contig_name in enumerate(ContigSet_names):
                 if i >= max_rows:
                     break
                     
                 try:
                     t = Global_Genbank_Genomes[i]
                 except:
-                    (genome_id,scaffold_id) = genome_name.split(".")
-                    #print ("reading " + genome_name + " ...")
-                    #genome_data_path = 'data/'+genome_name+'.gbk'
+                    (genome_id,scaffold_id) = contig_name.split(".")
+                    #print ("reading " + contig_name + " ...")
+                    #genome_data_path = 'data/'+contig_name+'.gbk'
                     genome_data_path = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/'+scaffold_id+'.gbk'
                     print ("%d "%i+'reading '+genome_data_path)
                     Global_Genbank_Genomes.append (SeqIO.read(genome_data_path, 'genbank'))
@@ -2003,13 +2003,13 @@ def getFeatureSlicesGenbank (ContigSet_names, \
         if genome_data_format == "Genbank":
             #for i in range (0,total_rows):
             for i in range (0,Global_State['genome_mode_n_rows']):
-                genome_name = ContigSet_names[0]
+                contig_name = ContigSet_names[0]
                 try:
                     t=Global_Genbank_Genomes[0]
                 except:
-                    (genome_id,scaffold_id) = genome_name.split(".")
-                    #print ("reading " + genome_name + " ...")
-                    #genome_data_path = 'data/'+genome_name+'.gbk'
+                    (genome_id,scaffold_id) = contig_name.split(".")
+                    #print ("reading " + contig_name + " ...")
+                    #genome_data_path = 'data/'+contig_name+'.gbk'
                     genome_data_path = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/'+scaffold_id+'.gbk'
                     print ("%d "%i+'reading '+genome_data_path)
                     Global_Genbank_Genomes.append (SeqIO.read(genome_data_path, 'genbank'))
@@ -3407,7 +3407,7 @@ def draw_feature_element (ax, \
 
 # Paint methods
 #
-def draw_mode_panel (ax, genome_name, genomebrowser_mode, data_set_name):
+def draw_mode_panel (ax, contig_name, genomebrowser_mode, data_set_name):
     
     # Config
     field_name_fontsize=12
@@ -3468,11 +3468,11 @@ def draw_mode_panel (ax, genome_name, genomebrowser_mode, data_set_name):
             zorder=base_zorder+1)
     
     # Genome
-    name_disp = genome_name
+    name_disp = contig_name
     if KBase_backend:
-        #[ws_id, genome_contig_id] = genome_name.split('/')
+        #[ws_id, genome_contig_id] = contig_name.split('/')
         #[genome_id, contig_id] = genome_contig_id.split(genome_contig_id_delim)
-        [genome_ref, contig_id] = genome_name.split(genome_contig_id_delim)
+        [genome_ref, contig_id] = contig_name.split(genome_contig_id_delim)
         name_disp = Species_name_by_genome_ref[genome_ref]
     ax.text(0.30, 0.5, "Genome", verticalalignment="bottom", horizontalalignment="right", color=field_color, fontsize=field_name_fontsize, zorder=base_zorder+1)
     ax.text(0.35, 0.5, name_disp, verticalalignment="bottom", horizontalalignment="left", color=value_color, fontsize=field_val_fontsize, zorder=base_zorder+1)
@@ -4241,14 +4241,14 @@ def update_genomebrowser_panel (ax):
     #
     Contig_order = []
     Contig_order_lookup = {}
-    for i,genome_name in enumerate(ContigSet_names):
-        (genome_id,scaffold_id) = genome_name.split(genome_contig_id_delim)        
+    for i,contig_name in enumerate(ContigSet_names):
+        (genome_id,scaffold_id) = contig_name.split(genome_contig_id_delim)        
         try:
             col = Contig_order_lookup['genome_id']
         except:
             Contig_order_lookup['genome_id'] = {}
         Contig_order_lookup['genome_id']['scaffold_id'] = i
-        Contig_order.append(genome_name)
+        Contig_order.append(contig_name)
         
     # Reset feature and popup_box storage
     #
