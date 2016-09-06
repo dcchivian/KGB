@@ -346,7 +346,7 @@ if KBase_backend:
             for genome_ref in related_featureSet_data['elements'][f_id]:
                 if genome_ref not in GenomeSet_refs:
                     GenomeSet_refs.append(genome_ref)
-                    GenomeSet_names[genome_ref] = genome_ref  # FIX
+                    #GenomeSet_names[genome_ref] = genome_ref  # FIX
                     #print (genome_id+" "+genome_ref)
 
     # or use GenomeSet
@@ -368,7 +368,7 @@ if KBase_backend:
             genome_ref = genomeSet_data['elements'][genome_id]['ref']
             if genome_ref not in GenomeSet_refs:
                 GenomeSet_refs.append(genome_ref)
-                GenomeSet_names[genome_ref] = genome_id
+                #GenomeSet_names[genome_ref] = genome_id
                 #print (genome_id+" "+genome_ref)
 
 
@@ -406,12 +406,14 @@ if KBase_backend:
 ContigSet_names = []
 genome_contig_id_delim = '/c:'
 if KBase_backend:
+    Genome_ref_by_Contig_id = dict()
     genome_contig_id_delim = '/c:'
     for genome_ref in GenomeSet_refs:
         ass = Global_KBase_Assemblies[genome_ref]
         for scaffold_id in ass.get_contig_ids():
             contig_id = genome_ref+genome_contig_id_delim+scaffold_id
             ContigSet_names.append(contig_id)
+            Genome_ref_by_Contig_id[contig_id] = genome_ref
             
 elif genome_data_format == "Genbank":
     for genome_id in GenomeSet_names:
@@ -1099,7 +1101,7 @@ def getDomainHits (ContigSet_names, \
             Global_Domains.append({})
 
             if KBase_backend:
-                genome_ref = genome_id
+                genome_ref = Genome_ref_by_Contig_id[genome_name]
 
                 if genome_ref.count('/') == 2:
                     (ws_id, ws_genome_id, ver) = genome_ref.split('/')
