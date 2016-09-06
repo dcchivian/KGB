@@ -695,7 +695,7 @@ def build_feature_rec_kbase (f, f_type='CDS', source_species='', contig_i=0, dna
         aliases.append(alias)
 
     feature_ID = f['feature_id']
-    print ("FEATURE_ID: '"+feature_ID+"'")  # DEBUG
+    #print ("FEATURE_ID: '"+feature_ID+"'")  # DEBUG
     
     # coords
     strand = f['feature_locations'][0][KB_LOC_STR_I]
@@ -1089,7 +1089,8 @@ def getDomainHits (ContigSet_names, \
 
                 for CDS_domain_list in domain_data['data'][scaffold_id]:
                     gene_ID   = CDS_domain_list[KBASE_DOMAINHIT_GENE_ID_I]
-                    gene_name = re.sub ('^'+genome_object_name+'.', '', gene_ID) 
+                    #gene_name = re.sub ('^'+genome_object_name+'.', '', gene_ID) 
+                    gene_name = gene_ID
                     #(genome_name, gene_name) = (gene_ID[0:gene_ID.index(".")], gene_ID[gene_ID.index(".")+1:])
                     #print ("DOMAIN_HIT: "+genome_name+" "+gene_name)  # DEBUG
                     #print ("DOMAIN_HIT for gene: "+gene_name)  # DEBUG
