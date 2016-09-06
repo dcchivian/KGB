@@ -1116,7 +1116,7 @@ def getDomainHits (ContigSet_names, \
                 except Exception as e:
                     raise ValueError('Unable to list DomainAnnotation objects from workspace: ' + str(e))
                     #to get the full stack trace: traceback.format_exc()
-                for domain_annotation_obj_info in domain_annotation_obj_list:
+                for info in domain_annotation_obj_list:
                     # Object Info Contents
                     # 0 - obj_id objid
                     # 1 - obj_name name
