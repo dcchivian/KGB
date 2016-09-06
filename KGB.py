@@ -1102,6 +1102,8 @@ def getDomainHits (ContigSet_names, \
 
             if KBase_backend:
                 genome_ref = Genome_ref_by_Contig_id[contig_name]
+                domain_data = None
+                found_domain_data = False
 
                 #print ("CONTIG_NAME: '"+contig_name+"' GENOME_REF: '"+genome_ref+"'")  # DEBUG
 
@@ -1140,7 +1142,11 @@ def getDomainHits (ContigSet_names, \
                     # we found the correct DomainAnnotation object
                     if domain_data['genome_ref'] == genome_ref:
                         print ("FOUND DOM ANNOT "+str(domain_annotation_ref)+" FOR GENOME "+str(genome_ref))  # DEBUG
+                        found_domain_data = True
                         break
+
+                if ! found_domain_data:
+                    continue
 
                 for CDS_domain_list in domain_data['data'][scaffold_id]:
                     gene_ID   = CDS_domain_list[KBASE_DOMAINHIT_GENE_ID_I]
