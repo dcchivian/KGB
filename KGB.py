@@ -1084,6 +1084,10 @@ def getDomainHits (ContigSet_names, \
             Global_Domains.append({})
 
             if KBase_backend:
+                genome_ref = genome_id
+                #genome_object_name = GenomeSet_names[genome_ref]
+                #(base_genome_id, rest) = genome_object_name.split('.')
+                #print ("WS,GENOME_ID,BASE_NAME: "+str(ws_id)+" "+str(genome_id)+" "+str(base_genome_id))  # DEBUG
                 if genome_ref.count('/') == 2:
                     (ws_id, ws_genome_id, ver) = genome_ref.split('/')
                 elif genome_ref.count('/') == 1:
@@ -1093,15 +1097,14 @@ def getDomainHits (ContigSet_names, \
                 try:
                     for domain_annotation_ref in ws.list_objects({'ids':[ws_id],'type':"KBaseGeneFamilies.DomainAnnotation"}):
                         print ("DomainAnnotation_ref: '"+domain_anotation_ref+"'")  # DEBUG
-
-                    genome_ref = genome_id
-                    genome_object_name = GenomeSet_names[genome_ref]
-                    (base_genome_id, rest) = genome_object_name.split('.')
-                    #print ("WS,GENOME_ID,BASE_NAME: "+str(ws_id)+" "+str(genome_id)+" "+str(base_genome_id))  # DEBUG
-                    # FIX: this should be a scan of the workspace for object with pointer to genome object (domain_data['genome_ref'] field)
-                    domain_data = ws.get_objects([{'ref':str(ws_id)+'/'+str(base_genome_id)+'.Domains'}])[0]['data']  
-                except:
-                    continue
+                        try:
+                            domain_data = ws.get_objects([{'ref':domain_annotation_ref}])[0]['data']  
+                        except Exception as e:
+                            raise ValueError('Unable to fetch featureSet object from workspace: ' + str(e))
+                            #to get the full stack trace: traceback.format_exc()
+                        # we found the correct DomainAnnotation object
+                        if domain_data['genome_ref'] == genome_ref:
+                            break
 
                 for CDS_domain_list in domain_data['data'][scaffold_id]:
                     gene_ID   = CDS_domain_list[KBASE_DOMAINHIT_GENE_ID_I]
