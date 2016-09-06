@@ -770,7 +770,7 @@ def build_feature_rec_kbase (f, f_type='CDS', source_species='', contig_i=0, dna
 
     # add domain hits to annotation
     try:
-        domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][feature_ID]
+        domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][ContigSet_names[contig_i]][feature_ID]
         domfam_seen = {}
         if annotation != "":
             annotation += "\n"
@@ -1149,36 +1149,39 @@ def getDomainHits (ContigSet_names, \
                 if not found_domain_data:
                     continue
 
-                for CDS_domain_list in domain_data['data'][scaffold_id]:
-                    gene_ID   = CDS_domain_list[KBASE_DOMAINHIT_GENE_ID_I]
-                    #gene_name = re.sub ('^'+genome_object_name+'.', '', gene_ID) 
-                    gene_name = gene_ID
-                    #(contig_name, gene_name) = (gene_ID[0:gene_ID.index(".")], gene_ID[gene_ID.index(".")+1:])
-                    #print ("DOMAIN_HIT: "+contig_name+" "+gene_name)  # DEBUG
-                    #print ("DOMAIN_HIT for gene: "+gene_name)  # DEBUG
-                    #gene_beg       = CDS_domain_list[KBASE_DOMAINHIT_GENE_BEG_I]
-                    #gene_end       = CDS_domain_list[KBASE_DOMAINHIT_GENE_END_I]
-                    #gene_strand    = CDS_domain_list[KBASE_DOMAINHIT_GENE_STRAND_I]
-                    gene_hits_dict = CDS_domain_list[KBASE_DOMAINHIT_GENE_HITS_DICT_I]
-                    gene_hits_list = []
-                    for domfam in gene_hits_dict.keys():
-                        # skip CD hits for now
-                        if domfam[0:2] != 'PF' and domfam[0:3] != 'COG' and domfam[0:4] != 'TIGR':
-                            continue
-                        #Global_Domains[i][gene_name] = gene_hits_dict
-                        for hit in gene_hits_dict[domfam]:
-                            list_format_hit = hit
-                            list_format_hit.append (domfam)
-                            #list_format_hit[DOMHIT_BEG_I]      = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_BEG_J]
-                            #list_format_hit[DOMHIT_END_I]      = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_END_J]
-                            #list_format_hit[DOMHIT_EVALUE_I]   = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_EVALUE_J]
-                            #list_format_hit[DOMHIT_BITSCORE_I] = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_BITSCORE_J]
-                            #list_format_hit[DOMHIT_ALNPERC_I]  = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_ALNPERC_J]
-                            gene_hits_list.append(list_format_hit)
-                            #print ("   DOMAIN_HIT: "+domfam)  # DEBUG
-                            #print ("%s\t%s\t%s\t%s\t%d\t%d\t%f"%(genome_id, scaffold_id, gene_name, domfam, hit_beg, hit_end, hit_evalue))
+                for scaffold_id_iter in domain_data['data'].keys():
+                    Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[i]]][scaffold_id_iter] = dict()
 
-                    Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[i]]][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
+                    for CDS_domain_list in domain_data['data'][scaffold_id_iter]:
+                        gene_ID   = CDS_domain_list[KBASE_DOMAINHIT_GENE_ID_I]
+                        #gene_name = re.sub ('^'+genome_object_name+'.', '', gene_ID) 
+                        gene_name = gene_ID
+                        #(contig_name, gene_name) = (gene_ID[0:gene_ID.index(".")], gene_ID[gene_ID.index(".")+1:])
+                        #print ("DOMAIN_HIT: "+contig_name+" "+gene_name)  # DEBUG
+                        #print ("DOMAIN_HIT for gene: "+gene_name)  # DEBUG
+                        #gene_beg       = CDS_domain_list[KBASE_DOMAINHIT_GENE_BEG_I]
+                        #gene_end       = CDS_domain_list[KBASE_DOMAINHIT_GENE_END_I]
+                        #gene_strand    = CDS_domain_list[KBASE_DOMAINHIT_GENE_STRAND_I]
+                        gene_hits_dict = CDS_domain_list[KBASE_DOMAINHIT_GENE_HITS_DICT_I]
+                        gene_hits_list = []
+                        for domfam in gene_hits_dict.keys():
+                            # skip CD hits for now
+                            if domfam[0:2] != 'PF' and domfam[0:3] != 'COG' and domfam[0:4] != 'TIGR':
+                                continue
+                            #Global_Domains[i][gene_name] = gene_hits_dict
+                            for hit in gene_hits_dict[domfam]:
+                                list_format_hit = hit
+                                list_format_hit.append (domfam)
+                                #list_format_hit[DOMHIT_BEG_I]      = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_BEG_J]
+                                #list_format_hit[DOMHIT_END_I]      = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_END_J]
+                                #list_format_hit[DOMHIT_EVALUE_I]   = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_EVALUE_J]
+                                #list_format_hit[DOMHIT_BITSCORE_I] = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_BITSCORE_J]
+                                #list_format_hit[DOMHIT_ALNPERC_I]  = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_ALNPERC_J]
+                                gene_hits_list.append(list_format_hit)
+                                #print ("   DOMAIN_HIT: "+domfam)  # DEBUG
+                                #print ("%s\t%s\t%s\t%s\t%d\t%d\t%f"%(genome_id, scaffold_id, gene_name, domfam, hit_beg, hit_end, hit_evalue))
+
+                    Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[i]]][scaffold_id_iter][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
 #                    for hit in Global_Domains[i][gene_name]:
 #                        print ("%s\t%s\t%s\t%s\t%d\t%d\t%16.14f\t%f"%(genome_id, \
 #                                                             scaffold_id, \
@@ -1200,42 +1203,33 @@ def getDomainHits (ContigSet_names, \
                 with open(domain_data_path, 'r') as domain_file_handle:
                     kbase_domains = json.load(domain_file_handle)
 
-                    for CDS_domain_list in kbase_domains['data'][scaffold_id]:
-                        gene_ID        = CDS_domain_list[KBASE_DOMAINHIT_GENE_ID_I]
-                        (contig_name, gene_name) = (gene_ID[0:gene_ID.index(".")], gene_ID[gene_ID.index(".")+1:])
-                        #gene_beg       = CDS_domain_list[KBASE_DOMAINHIT_GENE_BEG_I]
-                        #gene_end       = CDS_domain_list[KBASE_DOMAINHIT_GENE_END_I]
-                        #gene_strand    = CDS_domain_list[KBASE_DOMAINHIT_GENE_STRAND_I]
-                        gene_hits_dict = CDS_domain_list[KBASE_DOMAINHIT_GENE_HITS_DICT_I]
-                        gene_hits_list = []
-                        for domfam in gene_hits_dict.keys():
-                            # skip CD hits for now
-                            if domfam[0:2] != 'PF' and domfam[0:3] != 'COG' and domfam[0:4] != 'TIGR':
-                                continue
-                            #Global_Domains[i][gene_name] = gene_hits_dict
-                            for hit in gene_hits_dict[domfam]:
-                                list_format_hit = hit
-                                list_format_hit.append (domfam)
-                                #list_format_hit[DOMHIT_BEG_I]      = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_BEG_J]
-                                #list_format_hit[DOMHIT_END_I]      = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_END_J]
-                                #list_format_hit[DOMHIT_EVALUE_I]   = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_EVALUE_J]
-                                #list_format_hit[DOMHIT_BITSCORE_I] = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_BITSCORE_J]
-                                #list_format_hit[DOMHIT_ALNPERC_I]  = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_ALNPERC_J]
-                                gene_hits_list.append(list_format_hit)
-                                #print ("%s\t%s\t%s\t%s\t%d\t%d\t%f"%(genome_id, scaffold_id, gene_name, domfam, hit_beg, hit_end, hit_evalue))
+                    for scaffold_id_iter in kbase_domains['data'].keys(): 
+                        Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[i]]][scaffold_id_iter] = dict()
+                        for CDS_domain_list in kbase_domains['data'][scaffold_id]:
+                            gene_ID        = CDS_domain_list[KBASE_DOMAINHIT_GENE_ID_I]
+                            (contig_name, gene_name) = (gene_ID[0:gene_ID.index(".")], gene_ID[gene_ID.index(".")+1:])
+                            #gene_beg       = CDS_domain_list[KBASE_DOMAINHIT_GENE_BEG_I]
+                            #gene_end       = CDS_domain_list[KBASE_DOMAINHIT_GENE_END_I]
+                            #gene_strand    = CDS_domain_list[KBASE_DOMAINHIT_GENE_STRAND_I]
+                            gene_hits_dict = CDS_domain_list[KBASE_DOMAINHIT_GENE_HITS_DICT_I]
+                            gene_hits_list = []
+                            for domfam in gene_hits_dict.keys():
+                                # skip CD hits for now
+                                if domfam[0:2] != 'PF' and domfam[0:3] != 'COG' and domfam[0:4] != 'TIGR':
+                                    continue
+                                #Global_Domains[i][gene_name] = gene_hits_dict
+                                for hit in gene_hits_dict[domfam]:
+                                    list_format_hit = hit
+                                    list_format_hit.append (domfam)
+                                    #list_format_hit[DOMHIT_BEG_I]      = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_BEG_J]
+                                    #list_format_hit[DOMHIT_END_I]      = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_END_J]
+                                    #list_format_hit[DOMHIT_EVALUE_I]   = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_EVALUE_J]
+                                    #list_format_hit[DOMHIT_BITSCORE_I] = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_BITSCORE_J]
+                                    #list_format_hit[DOMHIT_ALNPERC_I]  = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_ALNPERC_J]
+                                    gene_hits_list.append(list_format_hit)
+                                    #print ("%s\t%s\t%s\t%s\t%d\t%d\t%f"%(genome_id, scaffold_id, gene_name, domfam, hit_beg, hit_end, hit_evalue))
 
-                        Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[i]]][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
-                        #for hit in Global_Domains[i][gene_name]:
-                            #print ("%s\t%s\t%s\t%s\t%d\t%d\t%16.14f\t%f"%(genome_id, \
-                            #                                     scaffold_id, \
-                            #                                     gene_name, \
-                            #                                     hit[DOMHIT_DOMFAM_I], \
-                            #                                     hit[DOMHIT_BEG_I], \
-                            #                                     hit[DOMHIT_END_I], \
-                            #                                     hit[DOMHIT_EVALUE_I], \
-                            #                                     hit[DOMHIT_BITSCORE_I] \
-                            #                                     ))
-
+                        Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[i]]][scaffold_id_iter][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
                         
                             
 # Workhorse for feature retrieval (KBase flavor)
@@ -2944,7 +2938,7 @@ def draw_feature_element (ax, \
             else:
                 contig_i = feature_i
             try:
-                domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][feature['ID']]
+                domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][ContigSet_names[contig_i]][feature['ID']]
             except:
                 domain_hits = []
                 
@@ -3085,7 +3079,7 @@ def draw_feature_element (ax, \
         else:
             contig_i = feature_i
         try:
-            domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][feature['ID']]
+            domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][ContigSet_names[contig_i]][feature['ID']]
         except:
             domain_hits = []
 
@@ -4125,7 +4119,7 @@ def draw_genomebrowser_panel (ax, \
                         else:
                             contig_i = i
                         try:
-                            domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][Feature_slices[i][j]['ID']]
+                            domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][ContigSet_names[contig_i]][Feature_slices[i][j]['ID']]
                         except:
                             domain_hits = []
                         for domhit in domain_hits:
