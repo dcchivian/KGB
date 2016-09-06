@@ -1085,7 +1085,7 @@ def getDomainHits (ContigSet_names, \
 
             if KBase_backend:
                 try:
-                    for domain_annotation_ref in ws.list_objects([{'type':"KBaseGeneFamilies.DomainAnnotation"}])
+                    for domain_annotation_ref in ws.list_objects([{'type':"KBaseGeneFamilies.DomainAnnotation"}]):
                         print ("DomainAnnotation_ref: '"+domain_anotation_ref+"'")  # DEBUG
 
                     genome_ref = genome_id
