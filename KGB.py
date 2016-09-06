@@ -1145,7 +1145,7 @@ def getDomainHits (ContigSet_names, \
                         found_domain_data = True
                         break
 
-                if ! found_domain_data:
+                if not found_domain_data:
                     continue
 
                 for CDS_domain_list in domain_data['data'][scaffold_id]:
