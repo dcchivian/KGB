@@ -406,14 +406,14 @@ if KBase_backend:
 ContigSet_names = []
 genome_contig_id_delim = '/c:'
 if KBase_backend:
-    Genome_ref_by_Contig_id = dict()
+    Genome_ref_by_Contig_name = dict()
     genome_contig_id_delim = '/c:'
     for genome_ref in GenomeSet_refs:
         ass = Global_KBase_Assemblies[genome_ref]
         for scaffold_id in ass.get_contig_ids():
-            contig_id = genome_ref+genome_contig_id_delim+scaffold_id
-            ContigSet_names.append(contig_id)
-            Genome_ref_by_Contig_id[contig_id] = genome_ref
+            contig_name = genome_ref+genome_contig_id_delim+scaffold_id
+            ContigSet_names.append(contig_name)
+            Genome_ref_by_Contig_name[contig_name] = genome_ref
             
 elif genome_data_format == "Genbank":
     for genome_id in GenomeSet_names:
@@ -428,9 +428,9 @@ elif genome_data_format == "Genbank":
         for file in files:
             if ".gbk" in file:
                 scaffold_id = file[0:file.index(".gbk")]
-                contig_id = genome_id+genome_contig_id_delim+scaffold_id
-                ContigSet_names.append(contig_id)
-                print("reading "+contig_id+" ...")
+                contig_name = genome_id+genome_contig_id_delim+scaffold_id
+                ContigSet_names.append(contig_name)
+                print("reading "+contig_name+" ...")
 else:
     print ("unknown genome_data_format: '"+genome_data_format+"'")
     sys.exit(0)
@@ -1102,6 +1102,8 @@ def getDomainHits (ContigSet_names, \
 
             if KBase_backend:
                 genome_ref = Genome_ref_by_Contig_id[contig_name]
+
+                print ("CONTIG_NAME: '"+contig_name+"' GENOME_REF: '"+genome_ref+"'")  # DEBUG
 
                 if genome_ref.count('/') == 2:
                     (ws_id, ws_genome_id, ver) = genome_ref.split('/')
