@@ -1117,7 +1117,8 @@ def getDomainHits (ContigSet_names, \
                 for domain_annotation_ref in domain_annotation_ref_list:
                     print ("DomainAnnotation_ref: '"+str(domain_annotation_ref)+"'")  # DEBUG
                     try:
-                        domain_data = ws.get_objects([{'ref':str(ws_id)+'/'+str(domain_annotation_ref)}])[0]['data']  
+                        #domain_data = ws.get_objects([{'ref':str(ws_id)+'/'+str(domain_annotation_ref)}])[0]['data']  
+                        domain_data = ws.get_objects([{'ref':str(domain_annotation_ref)}])[0]['data']  
                     except Exception as e:
                         raise ValueError('Unable to fetch DomainAnnotation object from workspace: ' + str(e))
                     #to get the full stack trace: traceback.format_exc()
