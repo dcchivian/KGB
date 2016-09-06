@@ -1130,6 +1130,8 @@ def getDomainHits (ContigSet_names, \
                     # absolute ref = str(info[6]) + '/' + str(info[0]) + '/' + str(info[4])
                     domain_annotation_ref = str(info[6])+'/'+str(info[0])+'/'+str(info[4])
                     print ("DomainAnnotation_ref: '"+str(domain_annotation_ref)+"'")  # DEBUG
+                    continue  # DEBUG
+
                     try:
                         domain_data = ws.get_objects([{'ref':domain_annotation_ref}])[0]['data']  
                     except Exception as e:
