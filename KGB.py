@@ -1142,7 +1142,7 @@ def getDomainHits (ContigSet_names, \
 
                     # we found the correct DomainAnnotation object
                     if domain_data['genome_ref'] == genome_ref:
-                        print ("FOUND DOM ANNOT "+str(domain_annotation_ref)+" FOR GENOME "+str(genome_ref))  # DEBUG
+                        #print ("FOUND DOM ANNOT "+str(domain_annotation_ref)+" FOR GENOME "+str(genome_ref))  # DEBUG
                         found_domain_data = True
                         break
 
