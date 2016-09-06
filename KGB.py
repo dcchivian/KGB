@@ -1068,28 +1068,26 @@ def getDomainHits (ContigSet_names, \
 
             if KBase_backend:
                 try:
-                    print ("GENOME_ID: "+genome_id)  # DEBUG
                     genome_ref = genome_id
                     genome_object_name = GenomeSet_names[genome_ref]
-                    print ("GENOME_OBJ_NAME: "+genome_object_name)  # DEBUG
                     (base_genome_id, rest) = genome_object_name.split('.')
-                    print ("BASE_GENOME_ID: "+base_genome_id)  # DEBUG
                     if genome_ref.count('/') == 2:
                         (ws_id, ws_genome_id, ver) = genome_ref.split('/')
                     elif genome_ref.count('/') == 1:
                         (ws_id, ws_genome_id) = genome_ref.split('/')
                         ver = 'auto'
 
-                    print ("WS,GENOME_ID,BASE_NAME: "+str(ws_id)+" "+str(genome_id)+" "+str(base_genome_id))  # DEBUG
+                    #print ("WS,GENOME_ID,BASE_NAME: "+str(ws_id)+" "+str(genome_id)+" "+str(base_genome_id))  # DEBUG
                     # FIX: this should be a scan of the workspace for object with pointer to genome object (domain_data['genome_ref'] field)
                     domain_data = ws.get_objects([{'ref':str(ws_id)+'/'+str(base_genome_id)+'.Domains'}])[0]['data']  
                 except:
                     continue
 
                 for CDS_domain_list in domain_data['data'][scaffold_id]:
-                    gene_ID        = CDS_domain_list[KBASE_DOMAINHIT_GENE_ID_I]
-                    (genome_name, gene_name) = (gene_ID[0:gene_ID.index(".")], gene_ID[gene_ID.index(".")+1:])
-                    print ("DOMAIN_HIT: "+genome_name+" "+gene_name)  # DEBUG
+                    gene_ID   = CDS_domain_list[KBASE_DOMAINHIT_GENE_ID_I]
+                    gene_name = re.sub ('^'+genome_object_name+'.', '', gene_ID) 
+                    #(genome_name, gene_name) = (gene_ID[0:gene_ID.index(".")], gene_ID[gene_ID.index(".")+1:])
+                    #print ("DOMAIN_HIT: "+genome_name+" "+gene_name)  # DEBUG
                     #gene_beg       = CDS_domain_list[KBASE_DOMAINHIT_GENE_BEG_I]
                     #gene_end       = CDS_domain_list[KBASE_DOMAINHIT_GENE_END_I]
                     #gene_strand    = CDS_domain_list[KBASE_DOMAINHIT_GENE_STRAND_I]
