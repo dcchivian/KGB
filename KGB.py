@@ -318,7 +318,7 @@ Global_KBase_Assemblies = {}
 Global_Genbank_Genomes = []
 #Global_Features = []
 domain_family_desc = {}
-Global_Domains = []
+Global_Domains = dict()
 
 
 
@@ -405,8 +405,8 @@ if KBase_backend:
 #
 ContigSet_names = []
 genome_contig_id_delim = '/c:'
+Genome_ref_by_Contig_name = dict()
 if KBase_backend:
-    Genome_ref_by_Contig_name = dict()
     genome_contig_id_delim = '/c:'
     for genome_ref in GenomeSet_refs:
         ass = Global_KBase_Assemblies[genome_ref]
@@ -430,6 +430,7 @@ elif genome_data_format == "Genbank":
                 scaffold_id = file[0:file.index(".gbk")]
                 contig_name = genome_id+genome_contig_id_delim+scaffold_id
                 ContigSet_names.append(contig_name)
+                Genome_ref_by_Contig_name[contig_name] = genome_id
                 print("reading "+contig_name+" ...")
 else:
     print ("unknown genome_data_format: '"+genome_data_format+"'")
@@ -769,7 +770,7 @@ def build_feature_rec_kbase (f, f_type='CDS', source_species='', contig_i=0, dna
 
     # add domain hits to annotation
     try:
-        domain_hits = Global_Domains[contig_i][feature_ID]
+        domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][feature_ID]
         domfam_seen = {}
         if annotation != "":
             annotation += "\n"
@@ -910,7 +911,7 @@ def build_feature_rec_genbank (f, f_type='CDS', source_species='', contig_i=0, d
 
     # add domain hits to annotation
     try:
-        domain_hits = Global_Domains[contig_i][feature_ID]
+        domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][feature_ID]
         domfam_seen = {}
         if annotation != "":
             annotation += "\n"
@@ -1096,9 +1097,9 @@ def getDomainHits (ContigSet_names, \
             break
             
         try:
-            Domain_Hits = Global_Domains[i]
+            Domain_Hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[i]]]
         except:
-            Global_Domains.append({})
+            Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[i]]] = dict()
 
             if KBase_backend:
                 genome_ref = Genome_ref_by_Contig_id[contig_name]
@@ -1177,7 +1178,7 @@ def getDomainHits (ContigSet_names, \
                             #print ("   DOMAIN_HIT: "+domfam)  # DEBUG
                             #print ("%s\t%s\t%s\t%s\t%d\t%d\t%f"%(genome_id, scaffold_id, gene_name, domfam, hit_beg, hit_end, hit_evalue))
 
-                    Global_Domains[i][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
+                    Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[i]]][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
 #                    for hit in Global_Domains[i][gene_name]:
 #                        print ("%s\t%s\t%s\t%s\t%d\t%d\t%16.14f\t%f"%(genome_id, \
 #                                                             scaffold_id, \
@@ -1223,7 +1224,7 @@ def getDomainHits (ContigSet_names, \
                                 gene_hits_list.append(list_format_hit)
                                 #print ("%s\t%s\t%s\t%s\t%d\t%d\t%f"%(genome_id, scaffold_id, gene_name, domfam, hit_beg, hit_end, hit_evalue))
 
-                        Global_Domains[i][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
+                        Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[i]]][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
                         #for hit in Global_Domains[i][gene_name]:
                             #print ("%s\t%s\t%s\t%s\t%d\t%d\t%16.14f\t%f"%(genome_id, \
                             #                                     scaffold_id, \
@@ -2943,7 +2944,7 @@ def draw_feature_element (ax, \
             else:
                 contig_i = feature_i
             try:
-                domain_hits = Global_Domains[contig_i][feature['ID']]
+                domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][feature['ID']]
             except:
                 domain_hits = []
                 
@@ -3084,7 +3085,7 @@ def draw_feature_element (ax, \
         else:
             contig_i = feature_i
         try:
-            domain_hits = Global_Domains[contig_i][feature['ID']]
+            domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][feature['ID']]
         except:
             domain_hits = []
 
@@ -4124,7 +4125,7 @@ def draw_genomebrowser_panel (ax, \
                         else:
                             contig_i = i
                         try:
-                            domain_hits = Global_Domains[contig_i][Feature_slices[i][j]['ID']]
+                            domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][Feature_slices[i][j]['ID']]
                         except:
                             domain_hits = []
                         for domhit in domain_hits:
