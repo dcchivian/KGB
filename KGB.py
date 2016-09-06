@@ -1095,16 +1095,21 @@ def getDomainHits (ContigSet_names, \
                     ver = 'auto'
 
                 try:
-                    for domain_annotation_ref in ws.list_objects({'ids':[ws_id],'type':"KBaseGeneFamilies.DomainAnnotation"}):
-                        print ("DomainAnnotation_ref: '"+domain_anotation_ref+"'")  # DEBUG
-                        try:
-                            domain_data = ws.get_objects([{'ref':domain_annotation_ref}])[0]['data']  
-                        except Exception as e:
-                            raise ValueError('Unable to fetch featureSet object from workspace: ' + str(e))
-                            #to get the full stack trace: traceback.format_exc()
-                        # we found the correct DomainAnnotation object
-                        if domain_data['genome_ref'] == genome_ref:
-                            break
+                    domain_objects_ref_list = ws.list_objects({'ids':[ws_id],'type':"KBaseGeneFamilies.DomainAnnotation"})
+                except Exception as e:
+                    raise ValueError('Unable to fetch featureSet object from workspace: ' + str(e))
+                    #to get the full stack trace: traceback.format_exc()
+                for domain_annotation_ref in domain_objects_ref_list:
+                    print ("DomainAnnotation_ref: '"+domain_anotation_ref+"'")  # DEBUG
+                    try:
+                        domain_data = ws.get_objects([{'ref':domain_annotation_ref}])[0]['data']  
+                    except Exception as e:
+                        raise ValueError('Unable to fetch featureSet object from workspace: ' + str(e))
+                    #to get the full stack trace: traceback.format_exc()
+
+                    # we found the correct DomainAnnotation object
+                    if domain_data['genome_ref'] == genome_ref:
+                        break
 
                 for CDS_domain_list in domain_data['data'][scaffold_id]:
                     gene_ID   = CDS_domain_list[KBASE_DOMAINHIT_GENE_ID_I]
