@@ -1107,6 +1107,7 @@ def getDomainHits (ContigSet_names, \
 
                     # we found the correct DomainAnnotation object
                     if domain_data['genome_ref'] == genome_ref:
+                        print ("FOUND DOM ANNOT "+domain_annotation_ref+" FOR GENOME "+genome_ref)  # DEBUG
                         break
 
                 for CDS_domain_list in domain_data['data'][scaffold_id]:
