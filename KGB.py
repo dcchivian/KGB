@@ -233,6 +233,7 @@ if KBase_backend != None and KBase_backend:
     from doekbase.data_api.taxonomy.taxon.api import TaxonAPI
     from biokbase.workspace.client import Workspace as workspaceService
     import os
+    import re
 
     services = {"workspace_service_url": "https://kbase.us/services/ws/",
                 "shock_service_url": "https://kbase.us/services/shock-api/"}
