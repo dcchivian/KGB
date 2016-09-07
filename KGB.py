@@ -1102,7 +1102,7 @@ def getDomainHits (ContigSet_names, \
             Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[i]]] = dict()
 
             if KBase_backend:
-                genome_ref = Genome_ref_by_Contig_id[contig_name]
+                genome_ref = Genome_ref_by_Contig_name[contig_name]
                 domain_data = None
                 found_domain_data = False
 
