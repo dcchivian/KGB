@@ -320,7 +320,7 @@ if KBase_backend:
         if 'element_order' in featureSet_data:
             featureSet_id_list = featureSet_data['element_order']
         else:
-            featureSet_id_list = featureSet_data['elements'].keys():
+            featureSet_id_list = featureSet_data['elements'].keys()
 
         for f_id in featureSet_id_list:
             PivotFeature_IDs.append(f_id)
