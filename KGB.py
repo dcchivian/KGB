@@ -770,7 +770,6 @@ def build_feature_rec_kbase (f, f_type='CDS', source_species='', contig_i=0, dna
 
     # add domain hits to annotation
     try:
-        print ("A ContigSet_names[contig_i]: '"+str(ContigSet_names[contig_i])+"' contig_i: '"+str(contig_i)+"'")  # DEBUG
         domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][ContigSet_names[contig_i]][feature_ID]
         domfam_seen = {}
         if annotation != "":
@@ -912,7 +911,6 @@ def build_feature_rec_genbank (f, f_type='CDS', source_species='', contig_i=0, d
 
     # add domain hits to annotation
     try:
-        print ("B ContigSet_names[contig_i]: '"+str(ContigSet_names[contig_i])+"' contig_i: '"+str(contig_i)+"'")  # DEBUG
         domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][feature_ID]
         domfam_seen = {}
         if annotation != "":
@@ -1152,7 +1150,6 @@ def getDomainHits (ContigSet_names, \
                     continue
 
                 for scaffold_id_iter in domain_data['data'].keys():
-                    print ("A scaffold_id_iter: '"+str(scaffold_id_iter)+"'")  # DEBUG
                     contig_id_iter = genome_ref+genome_contig_id_delim+scaffold_id_iter
                     Global_Domains[genome_ref][contig_id_iter] = dict()
 
@@ -1184,19 +1181,7 @@ def getDomainHits (ContigSet_names, \
                                 gene_hits_list.append(list_format_hit)
                                 #print ("   DOMAIN_HIT: "+domfam)  # DEBUG
                                 #print ("%s\t%s\t%s\t%s\t%d\t%d\t%f"%(genome_id, scaffold_id, gene_name, domfam, hit_beg, hit_end, hit_evalue))
-
-                    print ("A.1 Genome_ref: '"+Genome_ref_by_Contig_name[ContigSet_names[i]]+"' scaffold_id_iter: '"+str(scaffold_id_iter)+"' gene_name: '"+gene_name+"'")  # DEBUG
-                    Global_Domains[genome_ref][contig_id_iter][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
-#                    for hit in Global_Domains[i][gene_name]:
-#                        print ("%s\t%s\t%s\t%s\t%d\t%d\t%16.14f\t%f"%(genome_id, \
-#                                                             scaffold_id, \
-#                                                             gene_name, \
-#                                                             hit[DOMHIT_DOMFAM_I], \
-#                                                             hit[DOMHIT_BEG_I], \
-#                                                             hit[DOMHIT_END_I], \
-#                                                             hit[DOMHIT_EVALUE_I], \
-#                                                             hit[DOMHIT_BITSCORE_I] \
-#                                                             ))
+                        Global_Domains[genome_ref][contig_id_iter][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
 
 
             # Or running outside KBase
@@ -1209,7 +1194,6 @@ def getDomainHits (ContigSet_names, \
                     kbase_domains = json.load(domain_file_handle)
 
                     for scaffold_id_iter in kbase_domains['data'].keys(): 
-                        print ("B scaffold_id_iter: '"+str(scaffold_id_iter)+"'")  # DEBUG
                         contig_id_iter = Genome_ref_by_Contig_name[ContigSet_names[i]]+genome_contig_id_delim+scaffold_id_iter
                         Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[i]]][contig_id_iter] = dict()
                         for CDS_domain_list in kbase_domains['data'][scaffold_id]:
@@ -1235,9 +1219,7 @@ def getDomainHits (ContigSet_names, \
                                     #list_format_hit[DOMHIT_ALNPERC_I]  = hit[KBASE_DOMAINHIT_GENE_HITS_DICT_ALNPERC_J]
                                     gene_hits_list.append(list_format_hit)
                                     #print ("%s\t%s\t%s\t%s\t%d\t%d\t%f"%(genome_id, scaffold_id, gene_name, domfam, hit_beg, hit_end, hit_evalue))
-
-                        print ("C scaffold_id_iter: '"+str(scaffold_id_iter)+"'")  # DEBUG
-                        Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[i]]][contig_id_iter][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
+                            Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[i]]][contig_id_iter][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
                         
                             
 # Workhorse for feature retrieval (KBase flavor)
@@ -2946,7 +2928,6 @@ def draw_feature_element (ax, \
             else:
                 contig_i = feature_i
             try:
-                print ("E ContigSet_names[contig_i]: '"+str(ContigSet_names[contig_i])+"' contig_i: '"+str(contig_i)+"'")  # DEBUG
                 domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][ContigSet_names[contig_i]][feature['ID']]
             except:
                 domain_hits = []
@@ -3088,7 +3069,6 @@ def draw_feature_element (ax, \
         else:
             contig_i = feature_i
         try:
-            print ("F ContigSet_names[contig_i]: '"+str(ContigSet_names[contig_i])+"' contig_i: '"+str(contig_i)+"'")  # DEBUG
             domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][ContigSet_names[contig_i]][feature['ID']]
         except:
             domain_hits = []
@@ -4129,7 +4109,6 @@ def draw_genomebrowser_panel (ax, \
                         else:
                             contig_i = i
                         try:
-                            print ("G ContigSet_names[contig_i]: '"+str(ContigSet_names[contig_i])+"' contig_i: '"+str(contig_i)+"'")  # DEBUG
                             domain_hits = Global_Domains[Genome_ref_by_Contig_name[ContigSet_names[contig_i]]][ContigSet_names[contig_i]][Feature_slices[i][j]['ID']]
                         except:
                             domain_hits = []
