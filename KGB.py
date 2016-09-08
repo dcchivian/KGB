@@ -282,30 +282,6 @@ from matplotlib.patches import FancyBboxPatch
 #import ipywidgets as widgets
 
            
-# Init variables / objects
-#
-tool_title = "KGB Genome Browser"
-
-#color_namespace_names_disp = ['Annot', 'EC', 'COG', 'Pfam', 'Domains', 'Local']
-#color_namespace_names = ['annot', 'ec', 'cog', 'pfam', 'domains', 'local']
-color_namespace_names_disp = ['Annot', 'EC']
-color_namespace_names = ['annot', 'ec']
-if domain_data_exists:
-    color_namespace_names_disp.extend(['COG', 'Pfam', 'Domains'])
-    color_namespace_names.extend(['cog', 'pfam', 'domains'])
-    
-#mode_names_disp = ['Contigs', 'Genome', 'Homologs', 'Tree', 'Strains']
-#mode_names = ['contigs', 'genome', 'homologs', 'tree', strains']
-mode_names_disp = ['Contigs', 'Genome']
-mode_names = ['contigs', 'genome']    
-if len(PivotFeatures_IDs) != 0:
-    mode_names_disp.append('Homologs')
-    mode_names.append('homologs')
-if tree_data_file != None and tree_data_file != '':
-    mode_names_disp.append('Tree')
-    mode_names.append('tree')
-
-    
 # Caches
 #
 search_results = []
@@ -321,10 +297,10 @@ domain_family_desc = {}
 Global_Domains = dict()
 
 
-
 # Build or append to GenomeSet_names
 #
 if KBase_backend:
+    PivotFeatures_IDs = []
     GenomeSet_refs = []
     GenomeSet_names = dict()
 
@@ -340,7 +316,14 @@ if KBase_backend:
             raise ValueError('Unable to fetch featureSet object from workspace: ' + str(e))
             #to get the full stack trace: traceback.format_exc()
 
-        for f_id in featureSet_data['elements'].keys():
+        featureSet_id_list = []
+        if 'element_order' in featureSet_data:
+            featureSet_id_list = featureSet_data['element_order']
+        else:
+            featureSet_id_list = featureSet_data['elements'].keys():
+
+        for f_id in featureSet_id_list:
+            PivotFeature_IDs.append(f_id)
             if len(featureSet_data['elements'][f_id]) == 0:
                 raise ValueError("missing genome reference for feature "+f_id+" in FeatureSet "+FeatureSet_ref)
             for genome_ref in featureSet_data['elements'][f_id]:
@@ -442,6 +425,30 @@ else:
     sys.exit(0)
 
 
+# Init variables / objects
+#
+tool_title = "KGB Genome Browser"
+
+#color_namespace_names_disp = ['Annot', 'EC', 'COG', 'Pfam', 'Domains', 'Local']
+#color_namespace_names = ['annot', 'ec', 'cog', 'pfam', 'domains', 'local']
+color_namespace_names_disp = ['Annot', 'EC']
+color_namespace_names = ['annot', 'ec']
+if domain_data_exists:
+    color_namespace_names_disp.extend(['COG', 'Pfam', 'Domains'])
+    color_namespace_names.extend(['cog', 'pfam', 'domains'])
+    
+#mode_names_disp = ['Contigs', 'Genome', 'Homologs', 'Tree', 'Strains']
+#mode_names = ['contigs', 'genome', 'homologs', 'tree', strains']
+mode_names_disp = ['Contigs', 'Genome']
+mode_names = ['contigs', 'genome']    
+if len(PivotFeatures_IDs) != 0:
+    mode_names_disp.append('Homologs')
+    mode_names.append('homologs')
+if tree_data_file != None and tree_data_file != '':
+    mode_names_disp.append('Tree')
+    mode_names.append('tree')
+
+    
 # Configuration
 #
 num_genomes = len(ContigSet_names)
