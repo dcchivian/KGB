@@ -1186,7 +1186,7 @@ def getDomainHits (ContigSet_names, \
                                 #print ("%s\t%s\t%s\t%s\t%d\t%d\t%f"%(genome_id, scaffold_id, gene_name, domfam, hit_beg, hit_end, hit_evalue))
 
                     print ("A.1 Genome_ref: '"+Genome_ref_by_Contig_name[ContigSet_names[i]]+"' scaffold_id_iter: '"+str(scaffold_id_iter)+"' gene_name: '"+gene_name+"'")  # DEBUG
-                    Global_Domains[Genome_ref_by_Contig_name[genome_ref][contig_id_iter][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
+                    Global_Domains[genome_ref][contig_id_iter][gene_name] = sorted (gene_hits_list, key=sort_by_bitscore_key, reverse=True)
 #                    for hit in Global_Domains[i][gene_name]:
 #                        print ("%s\t%s\t%s\t%s\t%d\t%d\t%16.14f\t%f"%(genome_id, \
 #                                                             scaffold_id, \
