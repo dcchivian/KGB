@@ -467,9 +467,9 @@ def_genomebrowser_zoom = 4  # zoom values are [0..zoom_tics] -> window width = i
 def_genomebrowser_xshift = 0
 genomebrowser_window_bp_width = def_genomebrowser_window_bp_width * 2**def_genomebrowser_zoom
 
-def_genomebrowser_mode = "contigs"
+#def_genomebrowser_mode = "contigs"
 #def_genomebrowser_mode = "genome"
-#def_genomebrowser_mode = "homologs"
+def_genomebrowser_mode = "homologs"
 #def_genomebrowser_mode = "tree"
 #def_genomebrowser_color_namespace = "annot"
 def_genomebrowser_color_namespace = "domains"
