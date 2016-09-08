@@ -18,7 +18,7 @@ from __future__ import division
 #                   '16750/11/1'
 #                   ]
 #GenomeSet_names = []
-#OrthologSet_locusTags = []
+#PivotFeatures_IDs = []
 #Search_Terms = []
 #domain_data_exists = True
 #domain_data_format = "KBase_domains"
@@ -43,7 +43,7 @@ from __future__ import division
 #
 #GenomeSet_names = ["GW456", "GW460"]
 #ContigSet_names = []
-#OrthologSet_locusTags = []
+#PivotFeatures_IDs = []
 #PrimaryAnchor_leafId = "GW456.scaffold_130"
 #PrimaryAnchor_locusTag = "GW456_SEED_annot.CDS.1"
 
@@ -87,7 +87,7 @@ from __future__ import division
 #                   #"Thermoanaerobacter_tengcongensis",
 #
 #ContigSet_names = []
-#OrthologSet_locusTags = ["kb|g.1713.peg.340",
+#PivotFeatures_IDs = ["kb|g.1713.peg.340",
 #                         "kb|g.1713.peg.368",
 #                         "kb|g.1106.peg.1477",
 #                         "kb|g.996.peg.3228",
@@ -133,7 +133,7 @@ from __future__ import division
 #
 #GenomeSet_names = ["Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C"]
 #ContigSet_names = []
-#OrthologSet_locusTags = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
+#PivotFeatures_IDs = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
 #PrimaryAnchor_leafId = "Gsulf rpoB"
 #PrimaryAnchor_locusTag = "GSU2863"
 #
@@ -165,15 +165,15 @@ from __future__ import division
 
 # OLD
 #ContigSet_names = ["GW456.scaffold_130", "GW456.scaffold_437", "GW456.scaffold_206", "GW456.scaffold_1786", "GW460.scaffold_49", "GW460.scaffold_575"]
-#OrthologSet_locusTags = ["GW456_SEED_annot.CDS.1", "GW456_SEED_annot.CDS.233", "GW456_SEED_annot.CDS.128", "GW456_SEED_annot.CDS.112", "GW460_SEED_annot.CDS.186", "GW460_SEED_annot.CDS.299"]
+#PivotFeatures_IDs = ["GW456_SEED_annot.CDS.1", "GW456_SEED_annot.CDS.233", "GW456_SEED_annot.CDS.128", "GW456_SEED_annot.CDS.112", "GW460_SEED_annot.CDS.186", "GW460_SEED_annot.CDS.299"]
 
 #ContigSet_names = ["Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C"]
-#OrthologSet_locusTags = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
+#PivotFeatures_IDs = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
 #ContigSet_names = ["Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C", "Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C"]
-#OrthologSet_locusTags = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216", "GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
+#PivotFeatures_IDs = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216", "GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
 #ContigSet_names = ["Gsulf", "DvulH"]
 #ContigSet_names = ["Gsulf", "DvulH"]
-#OrthologSet_locusTags = ["GSU2863", "DVU2928"]
+#PivotFeatures_IDs = ["GSU2863", "DVU2928"]
 
 
 ###############################################################################
@@ -298,7 +298,7 @@ if domain_data_exists:
 #mode_names = ['contigs', 'genome', 'homologs', 'tree', strains']
 mode_names_disp = ['Contigs', 'Genome']
 mode_names = ['contigs', 'genome']    
-if len(OrthologSet_locusTags) != 0:
+if len(PivotFeatures_IDs) != 0:
     mode_names_disp.append('Homologs')
     mode_names.append('homologs')
 if tree_data_file != None and tree_data_file != '':
@@ -330,20 +330,20 @@ if KBase_backend:
 
     # Use FeatureSet to build GenomeSet
     #
-    if Related_FeatureSet_ref != None:
+    if FeatureSet_ref != None:
         try:
-            related_featureSet_obj = ws.get_objects([{'ref':Related_FeatureSet_ref}])
-            related_featureSet_data = related_featureSet_obj[0]['data']
-            related_featureSet_info = related_featureSet_obj[0]['info']
+            featureSet_obj = ws.get_objects([{'ref':FeatureSet_ref}])
+            featureSet_data = featureSet_obj[0]['data']
+            featureSet_info = featureSet_obj[0]['info']
 
         except Exception as e:
             raise ValueError('Unable to fetch featureSet object from workspace: ' + str(e))
             #to get the full stack trace: traceback.format_exc()
 
-        for f_id in related_featureSet_data['elements'].keys():
-            if len(related_featureSet_data['elements'][f_id]) == 0:
-                raise ValueError("missing genome reference for feature "+f_id+" in FeatureSet "+Related_FeatureSet_ref)
-            for genome_ref in related_featureSet_data['elements'][f_id]:
+        for f_id in featureSet_data['elements'].keys():
+            if len(featureSet_data['elements'][f_id]) == 0:
+                raise ValueError("missing genome reference for feature "+f_id+" in FeatureSet "+FeatureSet_ref)
+            for genome_ref in featureSet_data['elements'][f_id]:
                 if genome_ref not in GenomeSet_refs:
                     GenomeSet_refs.append(genome_ref)
                     #GenomeSet_names[genome_ref] = genome_ref  # FIX
@@ -370,6 +370,11 @@ if KBase_backend:
                 GenomeSet_refs.append(genome_ref)
                 #GenomeSet_names[genome_ref] = genome_id
                 #print (genome_id+" "+genome_ref)
+
+    # Need either FeatureSet_ref or GenomeSet_ref
+    #
+    else:
+        raise ValueError ("KGB: FeatureSet_ref or GenomeSet_ref is required")
 
 
 # Instantiate GenomeAnnotationAPI and Build GenomeSet_names
@@ -491,7 +496,7 @@ KB_LOC_LEN_I = 'length'
 #
 Global_State = { \
                 "ContigSet_names":                   ContigSet_names, \
-                "OrthologSet_locusTags":             OrthologSet_locusTags, \
+                "PivotFeatures_IDs":             PivotFeatures_IDs, \
                 "Dataset_names_list":                ["none"], \
                 "Dataset_species_list":              [], \
                 "PrimaryContig_GCavg":               0.0, \
@@ -1226,7 +1231,7 @@ def getDomainHits (ContigSet_names, \
 #   does more than window slice, so perhaps should split up functionality
 #
 def getFeatureSlicesKBase (ContigSet_names, \
-                      OrthologSet_locusTags, \
+                      PivotFeatures_IDs, \
                       genomebrowser_mode="contigs", \
                       genome_data_format="KBase", \
                       window_size=10000, \
@@ -1275,19 +1280,19 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 Global_State['Contig_lens'].append(contig_lens[scaffold_id])
                 
 
-                # Find ortholog feature and put in first position
+                # Find pivot feature and put in first position
                 #
                 contig_mode_xshift = 0
                 source = 'Is missingii'  # FIX THIS
                         
                 try:
-                    this_ortholog_locustag = OrthologSet_locusTags[i]
+                    this_pivotfeature_id = PivotFeatures_IDs[i]
                 except:
-                    OrthologSet_locusTags.append('')
-                    Global_State['OrthologSet_locusTags'].append('')
+                    PivotFeatures_IDs.append('')
+                    Global_State['PivotFeatures_IDs'].append('')
                     
                 if Global_State['genomebrowser_mode'] == 'contigs' \
-                    or OrthologSet_locusTags[i] == '':
+                    or PivotFeatures_IDs[i] == '':
                         
                     slice_beg = 1
                     slice_end = 100000
@@ -1342,8 +1347,8 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     if Global_State['genomebrowser_mode'] == 'contigs':                    
                         contig_mode_xshift = 0.5*window_size - 0.5*(pivot_feature_rec['end_pos']-pivot_feature_rec['beg_pos'])
                             
-                else:  # genomebrowser_mode != 'contigs' and != 'genome', so use OrthologSet_locusTags
-                    fid = OrthologSet_locusTags[i]
+                else:  # genomebrowser_mode != 'contigs' and != 'genome', so use PivotFeatures_IDs
+                    fid = PivotFeatures_IDs[i]
                     features = ga.get_features(feature_id_list=[fid])
                     f = features[fid]
                     f_type = f['feature_type']
@@ -1356,7 +1361,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                         Global_State['PrimaryAnchor_pivot_pos'] = pivot_pos
 
                         
-                # Add in additional features within window.  Note: we want the duplicate ortholog feature
+                # Add in additional features within window.  Note: we want the duplicate pivot feature
                 #
                 slice_beg = pivot_pos + genomebrowser_xshift + contig_mode_xshift - 0.5*window_size
                 slice_end = pivot_pos + genomebrowser_xshift + contig_mode_xshift + 0.5*window_size
@@ -1498,14 +1503,14 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     Global_State['Contig_lens'].append(contig_lens[scaffold_id])
                 
 
-                # Find ortholog feature and put in first position
+                # Find pivot feature and put in first position
                 #
                 if i == 0:
                     try:
-                        this_ortholog_locustag = OrthologSet_locusTags[0]
+                        this_pivotfeature_id = PivotFeatures_IDs[0]
                     except:
-                        OrthologSet_locusTags.append('')
-                        Global_State['OrthologSet_locusTags'].append('')
+                        PivotFeatures_IDs.append('')
+                        Global_State['PivotFeatures_IDs'].append('')
 
                 if i > 0:
                     pivot_feature_rec = Feature_slices[0][0]  # use homolog feature from first contig only
@@ -1514,7 +1519,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                 else:
                     source = 'E. missingii'  # FIX THIS
                     
-                    if OrthologSet_locusTags[0] == '':
+                    if PivotFeatures_IDs[0] == '':
                         slice_beg = 1
                         slice_end = 100000
                         features = []
@@ -1561,8 +1566,8 @@ def getFeatureSlicesKBase (ContigSet_names, \
                         if i == 0:
                             Global_State['PrimaryAnchor_pivot_pos'] = pivot_pos
    
-                    else:  # OrthologSet_locusTags available
-                        fid = OrthologSet_locusTags[0]
+                    else:  # PivotFeatures_IDs available
+                        fid = PivotFeatures_IDs[0]
                         features = ga.get_features(feature_id_list=[fid])
                         f = features[fid]
                         f_type = f['feature_type']
@@ -1575,11 +1580,11 @@ def getFeatureSlicesKBase (ContigSet_names, \
                             Global_State['PrimaryAnchor_pivot_pos'] = pivot_pos
 
                         
-                # Add in additional features within window.  Note: we want the duplicate ortholog feature
+                # Add in additional features within window.  Note: we want the duplicate pivot feature
                 #
                 slice_beg = int(round(pivot_pos + genomebrowser_xshift + track_xshift - 0.5*window_size))
                 slice_end = int(round(pivot_pos + genomebrowser_xshift + track_xshift + 0.5*window_size))
-                # DEBUG: temporary fix, but should make track_xshift correct for empty OrthologSet_locusTag
+                # DEBUG: temporary fix, but should make track_xshift correct for empty PivotFeatures_IDs
                 if slice_end < 1:
                     Feature_slices.append([Feature_slice[0]])
                     continue  
@@ -1689,7 +1694,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
 #   does more than window slice, so perhaps should split up functionality
 #
 def getFeatureSlicesGenbank (ContigSet_names, \
-                      OrthologSet_locusTags, \
+                      PivotFeatures_IDs, \
                       genomebrowser_mode="contigs", \
                       genome_data_format="Genbank", \
                       window_size=10000, \
@@ -1748,7 +1753,7 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                     #print ("%d"%Global_State['PrimaryContig_len'])
                 Global_State['Contig_lens'].append(len(Global_Genbank_Genomes[i].seq))
                 
-                # Find ortholog feature and put in first position
+                # Find pivot feature and put in first position
                 contig_mode_xshift = 0
                 for f in Global_Genbank_Genomes[i].features:                        
                     if f.type == "source":
@@ -1756,13 +1761,13 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                         break
                         
                 try:
-                    this_ortholog_locustag = OrthologSet_locusTags[i]
+                    this_pivotfeature_id = PivotFeatures_IDs[i]
                 except:
-                    OrthologSet_locusTags.append('')
-                    Global_State['OrthologSet_locusTags'].append('')
+                    PivotFeatures_IDs.append('')
+                    Global_State['PivotFeatures_IDs'].append('')
                     
                 if Global_State['genomebrowser_mode'] == 'contigs' \
-                    or OrthologSet_locusTags[i] == '':
+                    or PivotFeatures_IDs[i] == '':
                         
                     for f in Global_Genbank_Genomes[i].features:                        
                         pivot_feature_rec = None
@@ -1797,9 +1802,9 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                         if (genome_annotation_system == 'KBase' and f.type == "CDS" and "gene" in f.qualifiers) \
                             or (genome_annotation_system != 'KBase' and f.type == "CDS" and "locus_tag" in f.qualifiers):  # should it permit non-CDS anchor?             
                             
-                            #elif f.qualifiers['locus_tag'][0] == OrthologSet_locusTags[i]:
-                            if (genome_annotation_system == 'KBase' and f.qualifiers['gene'][0] == OrthologSet_locusTags[i]) \
-                                or (genome_annotation_system != 'KBase' and f.qualifiers['locus_tag'][0] == OrthologSet_locusTags[i]):  
+                            #elif f.qualifiers['locus_tag'][0] == PivotFeatures_IDs[i]:
+                            if (genome_annotation_system == 'KBase' and f.qualifiers['gene'][0] == PivotFeatures_IDs[i]) \
+                                or (genome_annotation_system != 'KBase' and f.qualifiers['locus_tag'][0] == PivotFeatures_IDs[i]):  
                                 pivot_feature_rec = build_feature_rec_genbank(f, f_type='CDS', source_species=source, contig_i=i)
                                 Feature_slice.append(pivot_feature_rec)
                                 pivot_pos = 0.5 * (pivot_feature_rec['beg_pos']+pivot_feature_rec['end_pos'])
@@ -1808,7 +1813,7 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                                     Global_State['PrimaryAnchor_pivot_pos'] = pivot_pos
                                 break
                         
-                # Add in additional features within window.  Note: we want the duplicate ortholog feature
+                # Add in additional features within window.  Note: we want the duplicate pivot feature
                 for f in Global_Genbank_Genomes[i].features:
                     
                     if f.type == "CDS":
@@ -2031,13 +2036,13 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                     #print ("%d"%Global_State['PrimaryContig_len'])
                     Global_State['Contig_lens'].append(len(Global_Genbank_Genomes[i].seq))
 
-                # Find ortholog feature and put in first position
+                # Find pivot feature and put in first position
                 if i == 0:
                     try:
-                        this_ortholog_locustag = OrthologSet_locusTags[0]
+                        this_pivotfeature_id = PivotFeatures_IDs[0]
                     except:
-                        OrthologSet_locusTags.append('')
-                        Global_State['OrthologSet_locusTags'].append('')              
+                        PivotFeatures_IDs.append('')
+                        Global_State['PivotFeatures_IDs'].append('')              
                 
                 if i > 0:
                     pivot_feature_rec = Feature_slices[0][0]  # use homolog feature from first contig only
@@ -2049,7 +2054,7 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                             source = f.qualifiers['organism'][0]
                             break
                             
-                    if OrthologSet_locusTags[0] == '':      
+                    if PivotFeatures_IDs[0] == '':      
                         for f in Global_Genbank_Genomes[0].features:                        
                             pivot_feature_rec = None
                             lowest_beg = 10000000000
@@ -2075,12 +2080,12 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                             
                     else:
                         for f in Global_Genbank_Genomes[0].features:  # should it permit non-CDS anchor?    
-                            #if f.type == "CDS" and "locus_tag" in f.qualifiers and f.qualifiers['locus_tag'][0] == OrthologSet_locusTags[i]:
+                            #if f.type == "CDS" and "locus_tag" in f.qualifiers and f.qualifiers['locus_tag'][0] == PivotFeatures_IDs[i]:
                             if (genome_annotation_system == 'KBase' and f.type == "CDS" and "gene" in f.qualifiers) \
                                 or (genome_annotation_system == 'KBase' and f.type == "CDS" and "locus_tag" in f.qualifiers):  
-                                #if f.qualifiers['gene'][0] == OrthologSet_locusTags[i]:
-                                if (genome_annotation_system == 'KBase' and f.qualifiers['gene'][0] == OrthologSet_locusTags[0]) \
-                                    or (genome_annotation_system == 'KBase' and f.qualifiers['locus_tag'][0] == OrthologSet_locusTags[0]):
+                                #if f.qualifiers['gene'][0] == PivotFeatures_IDs[i]:
+                                if (genome_annotation_system == 'KBase' and f.qualifiers['gene'][0] == PivotFeatures_IDs[0]) \
+                                    or (genome_annotation_system == 'KBase' and f.qualifiers['locus_tag'][0] == PivotFeatures_IDs[0]):
                                     pivot_feature_rec = build_feature_rec_genbank(f, f_type='CDS', source_species=source, contig_i=0)
                                     Feature_slice.append(pivot_feature_rec)
                                     pivot_pos = 0.5 * (pivot_feature_rec['beg_pos']+pivot_feature_rec['end_pos'])
@@ -2088,7 +2093,7 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                                         Global_State['PrimaryAnchor_pivot_pos'] = pivot_pos
                                     break
                         
-                # Add in additional features within window.  Note: we want the duplicate ortholog feature
+                # Add in additional features within window.  Note: we want the duplicate pivot feature
                 for f in Global_Genbank_Genomes[0].features:
                     if f.type == "CDS":  # we'll add other types later when we have icons for them
                         pos_key = "%d,%d,%d"%(f.location.strand,f.location.start+1,f.location.end)
@@ -4030,7 +4035,7 @@ def draw_sidenav_panel (ax, genomebrowser_mode):
                 
 def draw_genomebrowser_panel (ax, \
                                ContigSet_names, \
-                               OrthologSet_locusTags, \
+                               PivotFeatures_IDs, \
                                genomebrowser_window_bp_width, \
                                genomebrowser_xshift, \
                                genomebrowser_mode):                  
@@ -4051,14 +4056,14 @@ def draw_genomebrowser_panel (ax, \
     #
     if KBase_backend:
         Feature_slices = getFeatureSlicesKBase (ContigSet_names, \
-                                                    OrthologSet_locusTags, \
+                                                    PivotFeatures_IDs, \
                                                     genomebrowser_mode=genomebrowser_mode, \
                                                     genome_data_format=genome_data_format, \
                                                     window_size=genomebrowser_window_bp_width, \
                                                     genomebrowser_xshift=genomebrowser_xshift)
     elif genome_data_format == 'Genbank':
         Feature_slices = getFeatureSlicesGenbank (ContigSet_names, \
-                                                    OrthologSet_locusTags, \
+                                                    PivotFeatures_IDs, \
                                                     genomebrowser_mode=genomebrowser_mode, \
                                                     genome_data_format=genome_data_format, \
                                                     window_size=genomebrowser_window_bp_width, \
@@ -4252,7 +4257,7 @@ def update_genomebrowser_panel (ax):
     #
     draw_genomebrowser_panel (ax, \
                               ContigSet_names = Global_State['ContigSet_names'], \
-                              OrthologSet_locusTags = Global_State['OrthologSet_locusTags'], \
+                              PivotFeatures_IDs = Global_State['PivotFeatures_IDs'], \
                               genomebrowser_window_bp_width = Global_State['genomebrowser_window_bp_width'], \
                               genomebrowser_xshift = Global_State['genomebrowser_xshift'], \
                               genomebrowser_mode = Global_State['genomebrowser_mode'])
