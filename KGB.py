@@ -323,7 +323,7 @@ if KBase_backend:
             featureSet_id_list = featureSet_data['elements'].keys()
 
         for f_id in featureSet_id_list:
-            PivotFeature_IDs.append(f_id)
+            PivotFeatures_IDs.append(f_id)
             if len(featureSet_data['elements'][f_id]) == 0:
                 raise ValueError("missing genome reference for feature "+f_id+" in FeatureSet "+FeatureSet_ref)
             for genome_ref in featureSet_data['elements'][f_id]:
@@ -503,7 +503,7 @@ KB_LOC_LEN_I = 'length'
 #
 Global_State = { \
                 "ContigSet_names":                   ContigSet_names, \
-                "PivotFeatures_IDs":             PivotFeatures_IDs, \
+                "PivotFeatures_IDs":                 PivotFeatures_IDs, \
                 "Dataset_names_list":                ["none"], \
                 "Dataset_species_list":              [], \
                 "PrimaryContig_GCavg":               0.0, \
