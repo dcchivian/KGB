@@ -1335,15 +1335,21 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     pivot_feature_rec = None
                     lowest_beg = 10000000000
 
+                    print ("E ")  # DEBUG
                     for fid in features.keys():
+                        print ("F "+fid)  # DEBUG
 
                         strand = features[fid]['feature_locations'][0][KB_LOC_STR_I]
+                        print ("G "+fid)  # DEBUG
 
                         f_len = features[fid]['feature_locations'][0][KB_LOC_LEN_I]
+                        print ("H "+fid)  # DEBUG
                         if strand == '+':
+                            print ("I "+fid)  # DEBUG
                             beg = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
                             end = beg + f_len - 1
                         else:
+                            print ("J "+fid)  # DEBUG
                             end = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
                             beg = end - f_len + 1
                         #print ("%s\t%s\t%s\t%s\t%s\t%s"%(contig_id, ctg_id, fid, beg, end, strand))
