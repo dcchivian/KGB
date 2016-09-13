@@ -1369,10 +1369,15 @@ def getFeatureSlicesKBase (ContigSet_names, \
                         contig_mode_xshift = 0.5*window_size - 0.5*(pivot_feature_rec['end_pos']-pivot_feature_rec['beg_pos'])
                             
                 else:  # genomebrowser_mode != 'contigs' and != 'genome', so use PivotFeatures_IDs
+                    print ("FF "+str(i))  # DEBUG
                     fid = PivotFeatures_IDs[i]
+                    print ("GG "+str(fid))  # DEBUG
                     features = ga.get_features(feature_id_list=[fid])
+                    print ("HH "+str(fid))  # DEBUG
                     f = features[fid]
+                    print ("II "+str(fid))  # DEBUG
                     f_type = f['feature_type']
+                    print ("JJ "+str(fid))  # DEBUG
                     
                     pivot_feature_rec = build_feature_rec_kbase(f, f_type=f_type, source_species=source, contig_i=i)
                     Feature_slice.append(pivot_feature_rec)
