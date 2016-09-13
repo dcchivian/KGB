@@ -1255,6 +1255,7 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     break
 
                 (genome_id,scaffold_id) = contig_name.split(genome_contig_id_delim)
+                print ("GENOME_ID: '"+genome_id+"' SCAFFOLD_ID: '"+scaffold_id+"' CONTIG_NAME: '"+contig_name+"'")  # DEBUG
 
                 ga = Global_KBase_Genomes[genome_id]
                 ass = Global_KBase_Assemblies[genome_id]
