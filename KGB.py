@@ -1246,23 +1246,16 @@ def getFeatureSlicesKBase (ContigSet_names, \
 
     Feature_slices = []
     
-    print ("A")  # DEBUG
-
     if genomebrowser_mode != "genome":
-
-        print ("B")  # DEBUG
 
         if KBase_backend:  
             
-            print ("C")  # DEBUG
-
             for i,contig_name in enumerate(ContigSet_names):
-                print ("D")  # DEBUG
                 if i >= max_rows:
                     break
 
                 (genome_id,scaffold_id) = contig_name.split(genome_contig_id_delim)
-                print ("GENOME_ID: '"+genome_id+"' SCAFFOLD_ID: '"+scaffold_id+"' CONTIG_NAME: '"+contig_name+"'")  # DEBUG
+                #print ("GENOME_ID: '"+genome_id+"' SCAFFOLD_ID: '"+scaffold_id+"' CONTIG_NAME: '"+contig_name+"'")  # DEBUG
 
                 ga = Global_KBase_Genomes[genome_id]
                 ass = Global_KBase_Assemblies[genome_id]
@@ -1335,21 +1328,13 @@ def getFeatureSlicesKBase (ContigSet_names, \
                     pivot_feature_rec = None
                     lowest_beg = 10000000000
 
-                    print ("E ")  # DEBUG
                     for fid in features.keys():
-                        print ("F "+fid)  # DEBUG
-
                         strand = features[fid]['feature_locations'][0][KB_LOC_STR_I]
-                        print ("G "+fid)  # DEBUG
-
                         f_len = features[fid]['feature_locations'][0][KB_LOC_LEN_I]
-                        print ("H "+fid)  # DEBUG
                         if strand == '+':
-                            print ("I "+fid)  # DEBUG
                             beg = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
                             end = beg + f_len - 1
                         else:
-                            print ("J "+fid)  # DEBUG
                             end = features[fid]['feature_locations'][0][KB_LOC_BEG_I]
                             beg = end - f_len + 1
                         #print ("%s\t%s\t%s\t%s\t%s\t%s"%(contig_id, ctg_id, fid, beg, end, strand))
