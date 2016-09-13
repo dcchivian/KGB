@@ -1246,11 +1246,18 @@ def getFeatureSlicesKBase (ContigSet_names, \
 
     Feature_slices = []
     
+    print ("A")  # DEBUG
+
     if genomebrowser_mode != "genome":
+
+        print ("B")  # DEBUG
 
         if KBase_backend:  
             
+            print ("C")  # DEBUG
+
             for i,contig_name in enumerate(ContigSet_names):
+                print ("D")  # DEBUG
                 if i >= max_rows:
                     break
 
