@@ -1,5 +1,5 @@
-#from __future__ import print_function
-#from __future__ import division
+from __future__ import print_function
+from __future__ import division
 
 
 ###############################################################################
@@ -14,7 +14,7 @@
 #            Search Terms: YES                                                                 #
 ################################################################################################
 
-%pylab notebook
+%pylab notebook  # must occur prior to invoking KGB if running KGB as an exec()
 KBase_backend = False
 
 GenomeSet_names = ["Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C"]
@@ -47,6 +47,12 @@ Search_Terms = ['dna-directed polymerase',
                 '1.10.3.-',
                 'fucI',
                 'sulfate adenylyl transferase']
+
+# run KGB
+from urllib.request import urlopen
+import_code = urlopen('https://raw.githubusercontent.com/dcchivian/KGB/master/KGB.py')
+exec(import_code.read())
+
 """
 
 
