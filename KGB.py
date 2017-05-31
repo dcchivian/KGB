@@ -1,179 +1,49 @@
 ###############################################################################
 # KGB user input vars  (Preferably implement as separate upstream cell)
 ###############################################################################        
-from __future__ import print_function
-from __future__ import division
 
+"""
+################################################################################################
+# Config #1: local notebook with NCBI annotated genbank format genomes and gene tree           #
+#            Domain Annotations: NO (KBase domain annotations require KBase genome annotation) #
+#            Gene Tree: YES                                                                    #
+#            Search Terms: YES                                                                 #
+################################################################################################
 
-# KBase genomes in KBase context
-#
-#KBase_backend = True
-#genome_data_format = "KBase"
-#GenomeSet_ref = '16750/58/1'
-#GenomeSet_refs = []
-#GenomeSet_refs = ['16750/7/1',
-#                   '16750/8/2',
-#                   '16750/9/1',
-#                   '16750/10/1',
-#                   '16750/11/1'
-#                   ]
-#GenomeSet_names = []
-#PivotFeatures_IDs = []
-#Search_Terms = []
-#domain_data_exists = True
-#domain_data_format = "KBase_domains"
-#domain_data_base_path = None
-#domain_family_desc_base_path = None
-#tree_data_format = 'newick'
-#tree_data_base_path = None
-#tree_data_file = None
-#PrimaryAnchor_leafId = None
-#PrimaryAnchor_locusTag = None
+%pylab notebook
+KBase_backend = False
 
+GenomeSet_names = ["Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C"]
+ContigSet_names = []
+PivotFeatures_IDs = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
+PrimaryAnchor_leafId = "Gsulf rpoB"
+PrimaryAnchor_locusTag = "GSU2863"
 
-# KBase genomes
-#
-#ref='ReferenceGenomeAnnotations/kb|g.3899'
-#ref='ReferenceGenomeAnnotations/kb|g.2624'
-#ref='ReferenceGenomeAnnotations/kb|g.2424'
-#GenomeSet_names = ['ReferenceGenomeAnnotations/kb|g.2424']
+genome_annotation_system = 'NCBI'
+genome_data_format = "Genbank"
+# if relative path to scaffolds is e.g.: ../data/NCBI_genome_contigs/Gsulf/scaffolds/scaf_1.gbk
+gbk_ext = "gbk"
+genome_data_base_path = "./example_data/NCBI_genome_contigs"
+genome_data_extra_subpath = "/scaffolds"
 
+domain_data_exists = False  # NCBI annotated genome
+domain_data_format = None
+domain_data_base_path = None
+domain_data_extra_subpath = None
+domain_family_desc_base_path = None
 
-# Plasmid Contigs
-#
-#GenomeSet_names = ["GW456", "GW460"]
-#ContigSet_names = []
-#PivotFeatures_IDs = []
-#PrimaryAnchor_leafId = "GW456.scaffold_130"
-#PrimaryAnchor_locusTag = "GW456_SEED_annot.CDS.1"
+tree_data_format = 'newick'
+# if relative path to tree is e.g.: ../data/trees/rpoB_tree-names.newick
+tree_data_base_path = './example_data/trees'
+tree_data_file = 'rpoB_tree-names.newick'
 
-#genome_annotation_system = 'KBase'
-#genome_data_format = "Genbank"
-#genome_data_base_path = "./data/plasmid_contigs"
-#genome_data_extra_subpath = "_old/scaffolds"
-##genome_data_extra_subpath = "_circular_2KbpMIN/scaffolds"
-#
-#domain_data_format = "KBase_domains"
-#domain_data_base_path = None
-#domain_data_base_path = "./data/plasmid_contigs"
-#domain_data_extra_subpath = "_old/domains"
-#domain_family_desc_base_path = "./data/domain_desc"
-
-#tree_data_format = 'newick'
-#tree_data_base_path = None
-#tree_data_file = None
-
-#Search_Terms = []
-#Search_Terms = ['pil or conj or mobil or partition or t-dna or vir or plasmid',
-#                'toxin'
-#                #'tra',
-#                #'rep'
-#               ]
-
-
-# KBase Genbank genomes
-#
-#GenomeSet_names = ["Desulforudis_audaxviator",
-#                   "Pelotomaculum_thermopropionicum",
-#                   "Desulfotomaculum_reducens",
-#                   "Bacillus_subtilis",
-#                   "Desulfovibrio_desulfuricans",
-#                   "Desulfovibrio_vulgaris",
-#                   "Geobacter_sulfurreducens",
-#                   "Escherichia_coli"]
-##                   "Desulforudis_audaxviator",
-##                   "Bacillus_subtilis",
-#                   #"Moorella_thermoacetica",
-#                   #"Thermoanaerobacter_tengcongensis",
-#
-#ContigSet_names = []
-#PivotFeatures_IDs = ["kb|g.1713.peg.340",
-#                         "kb|g.1713.peg.368",
-#                         "kb|g.1106.peg.1477",
-#                         "kb|g.996.peg.3228",
-#                         "kb|g.423.peg.584",
-#                         "kb|g.423.peg.176",
-#                         "kb|g.357.peg.1850",
-#                         "kb|g.3562.peg.757",
-#                         "kb|g.483.peg.109",
-#                         "kb|g.26833.CDS.2562"]
-#PrimaryAnchor_leafId = "Daudaxviator-Sat"
-#PrimaryAnchor_locusTag = "kb|g.1713.peg.340"
-#
-#genome_annotation_system = 'KBase'
-#genome_data_format = "Genbank"
-#genome_data_base_path = "./data/KBase_genome_contigs"
-#genome_data_extra_subpath = ""
-##genome_data_extra_subpath = "/scaffolds"
-#
-#domain_data_format = "KBase_domains"
-#domain_data_base_path = None
-#domain_data_base_path = "./data/KBase_genome_contigs"
-#domain_data_extra_subpath = ""
-##domain_data_extra_subpath = "/domains"
-#domain_family_desc_base_path = "./data/domain_desc"
-#
-#tree_data_format = 'newick'
-#tree_data_base_path = None
-#tree_data_file = None
-##tree_data_base_path = './data/trees'
-##tree_data_file = 'rpoB_tree-names.newick'
-#
-##Search_Terms = []
-#Search_Terms = ['dna-directed polymerase',
-#                '16S',
-#                'DNA and methyltransferase',
-#                '1.10.3.-',
-##                'polymerase or dna-directed',
-#                'fucI',
-#                'sulfate adenylyl transferase']
-
-
-# NCBI Genbank genomes
-#
-#GenomeSet_names = ["Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C"]
-#ContigSet_names = []
-#PivotFeatures_IDs = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
-#PrimaryAnchor_leafId = "Gsulf rpoB"
-#PrimaryAnchor_locusTag = "GSU2863"
-#
-#genome_annotation_system = 'NCBI'
-#genome_data_format = "Genbank"
-#genome_data_base_path = "./data/NCBI_genome_contigs"
-#genome_data_extra_subpath = "/scaffolds"
-#
-#domain_data_format = "KBase_domains"
-#domain_data_base_path = None
-##domain_data_base_path = "./data/genome_contigs"  # domain annotations not available for NCBI genomes
-##domain_data_extra_subpath = "/domains"
-#domain_family_desc_base_path = "./data/domain_desc"
-#
-#tree_data_format = 'newick'
-##tree_data_base_path = None
-##tree_data_file = None
-#tree_data_base_path = './data/trees'
-#tree_data_file = 'rpoB_tree-names.newick'
-#
-##Search_Terms = []
-#Search_Terms = ['dna-directed polymerase',
-#                '16S',
-#                'DNA and methyltransferase',
-#                '1.10.3.-',
-##                'polymerase or dna-directed',
-#                'fucI',
-#                'sulfate adenylyl transferase']
-
-# OLD
-#ContigSet_names = ["GW456.scaffold_130", "GW456.scaffold_437", "GW456.scaffold_206", "GW456.scaffold_1786", "GW460.scaffold_49", "GW460.scaffold_575"]
-#PivotFeatures_IDs = ["GW456_SEED_annot.CDS.1", "GW456_SEED_annot.CDS.233", "GW456_SEED_annot.CDS.128", "GW456_SEED_annot.CDS.112", "GW460_SEED_annot.CDS.186", "GW460_SEED_annot.CDS.299"]
-
-#ContigSet_names = ["Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C"]
-#PivotFeatures_IDs = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
-#ContigSet_names = ["Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C", "Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C"]
-#PivotFeatures_IDs = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216", "GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
-#ContigSet_names = ["Gsulf", "DvulH"]
-#ContigSet_names = ["Gsulf", "DvulH"]
-#PivotFeatures_IDs = ["GSU2863", "DVU2928"]
+Search_Terms = ['dna-directed polymerase',
+                '16S',
+                'DNA and methyltransferase',
+                '1.10.3.-',
+                'fucI',
+                'sulfate adenylyl transferase']
+"""
 
 
 ###############################################################################
@@ -192,11 +62,11 @@ from __future__ import division
 ##
 ## source code available at http://github.com/dcchivian/KGB
 ##                                                                              
-## Copyright 2015,2016 Dylan Chivian  
+## Copyright 2015-2017 Dylan Chivian  
 ##
 ##  Initial Author: Dylan Chivian (DCChivian@lbl.gov)
-##  $Revision: 0.2 $
-##  $Date: 2016/08/22 00:00:00 $
+##  $Revision: 0.3 $
+##  $Date: 2017/05/29 00:00:00 $
 ##  $Author: dylan $
 ##
 """
@@ -204,23 +74,40 @@ from __future__ import division
 # INIT
 ###############################################################################
 
-#KBase_backend = True
-#KBase_backend = False
+# Init independent of KBase_backend
+#
+from __future__ import print_function
+from __future__ import division
+#import numpy as np # comes with pylab
+import sys  # for io and exit
+from os import walk  # for dir reading
+from os import path  # for file and dir existence check
+import re
+import json
+import csv
+#from math import pi  # get with pylab
+#from math import sqrt  # get with pylab
+from math import acos
+#from Bio import Phylo
+#import re
+#matplotlib.use('nbagg')
+import matplotlib.transforms as mtransforms
+import matplotlib.patheffects as path_effects
+from matplotlib.patches import Rectangle
+from matplotlib.patches import Ellipse
+from matplotlib.patches import Arc
+from matplotlib.patches import FancyBboxPatch
+#from matplotlib.lines import Line2D
+
+# interact is cool but outside design.  Implement via event handling on plot elements.
+#from ipywidgets import interact, interactive, fixed
+#from ipywidgets import interact
+#import ipywidgets as widgets
+
 
 # Extra Init for KBase
 #
 if KBase_backend != None and KBase_backend:
-
-# FIX LATER
-# MOVED %pylab notebook to previous, non-sucked, cell
-#
-#    #%pylab notebook  # doesn't work within exec()
-#
-#    import matplotlib as matplotlib  # use this instead
-##    matplotlib.use('nbagg')  # which agg to use?  getting DISPLAY error
-#    matplotlib.use('Agg')  # which agg to use?  getting DISPLAY error
-#    import matplotlib.pyplot as pyplot  # use this instead
-
 
     # silence whining
     import requests
@@ -246,40 +133,10 @@ if KBase_backend != None and KBase_backend:
         #to get the full stack trace: traceback.format_exc()
 
     
-# Init for just non-KBase use
+# Init SeqIO just for non-KBase use
 #
 if KBase_backend == None or not KBase_backend:
-    #%pylab notebook  # doesn't work within exec()
-    import matplotlib.pyplot as pyplot  # use this instead if in exec()
-
     from Bio import SeqIO
-
-# Init for both
-#
-#import numpy as np # comes with pylab
-import sys  # for io and exit
-from os import walk  # for dir reading
-from os import path  # for file and dir existence check
-import re
-import json
-import csv
-#from math import pi  # get with pylab
-#from math import sqrt  # get with pylab
-from math import acos
-from Bio import Phylo
-#import re
-#matplotlib.use('nbagg')
-import matplotlib.transforms as mtransforms
-import matplotlib.patheffects as path_effects
-from matplotlib.patches import Rectangle
-from matplotlib.patches import Ellipse
-from matplotlib.patches import Arc
-from matplotlib.patches import FancyBboxPatch
-#from matplotlib.lines import Line2D
-
-#from ipywidgets import interact, interactive, fixed
-#from ipywidgets import interact
-#import ipywidgets as widgets
 
            
 # Caches
@@ -292,7 +149,7 @@ Species_name_by_genome_ref = {}
 Global_KBase_Genomes = {}
 Global_KBase_Assemblies = {}
 Global_Genbank_Genomes = []
-#Global_Features = []
+#Global_Features = []  # not using yet
 domain_family_desc = {}
 Global_Domains = dict()
 
@@ -395,7 +252,6 @@ ContigSet_names = []
 genome_contig_id_delim = '/c:'
 Genome_ref_by_Contig_name = dict()
 if KBase_backend:
-    genome_contig_id_delim = '/c:'
     for genome_ref in GenomeSet_refs:
         ass = Global_KBase_Assemblies[genome_ref]
         for scaffold_id in ass.get_contig_ids():
@@ -414,12 +270,12 @@ elif genome_data_format == "Genbank":
             files.extend(filenames)
             break
         for file in files:
-            if ".gbk" in file:
-                scaffold_id = file[0:file.index(".gbk")]
+            if file.endswith("."+gbk_ext):
+                scaffold_id = file[0:file.index("."+gbk_ext)]
                 contig_name = genome_id+genome_contig_id_delim+scaffold_id
                 ContigSet_names.append(contig_name)
                 Genome_ref_by_Contig_name[contig_name] = genome_id
-                print("reading "+contig_name+" ...")
+                print("reading "+contig_name+" ...", flush=True)
 else:
     print ("unknown genome_data_format: '"+genome_data_format+"'")
     sys.exit(0)
@@ -428,25 +284,27 @@ else:
 # Init variables / objects
 #
 tool_title = "KGB Genome Browser"
-
-#color_namespace_names_disp = ['Annot', 'EC', 'COG', 'Pfam', 'Domains', 'Local']
-#color_namespace_names = ['annot', 'ec', 'cog', 'pfam', 'domains', 'local']
 color_namespace_names_disp = ['Annot', 'EC']
 color_namespace_names = ['annot', 'ec']
 if domain_data_exists:
     color_namespace_names_disp.extend(['COG', 'Pfam', 'Domains'])
     color_namespace_names.extend(['cog', 'pfam', 'domains'])
-    
+
 #mode_names_disp = ['Contigs', 'Genome', 'Homologs', 'Tree', 'Strains']
 #mode_names = ['contigs', 'genome', 'homologs', 'tree', strains']
 mode_names_disp = ['Contigs', 'Genome']
 mode_names = ['contigs', 'genome']    
+def_genomebrowser_mode = "contigs"
+if len(ContigSet_names) == 1:
+    def_genomebrowser_mode = "genome"
 if len(PivotFeatures_IDs) != 0:
     mode_names_disp.append('Homologs')
     mode_names.append('homologs')
+    def_genomebrowser_mode = "homologs"
 if tree_data_file != None and tree_data_file != '':
     mode_names_disp.append('Tree')
     mode_names.append('tree')
+    def_genomebrowser_mode = "tree"
 
     
 # Configuration
@@ -467,12 +325,8 @@ def_genomebrowser_zoom = 4  # zoom values are [0..zoom_tics] -> window width = i
 def_genomebrowser_xshift = 0
 genomebrowser_window_bp_width = def_genomebrowser_window_bp_width * 2**def_genomebrowser_zoom
 
-def_genomebrowser_mode = "contigs"
-#def_genomebrowser_mode = "genome"
-#def_genomebrowser_mode = "homologs"
-#def_genomebrowser_mode = "tree"
-#def_genomebrowser_color_namespace = "annot"
-def_genomebrowser_color_namespace = "domains"
+def_genomebrowser_color_namespace = "annot"
+#def_genomebrowser_color_namespace = "domains"
 #def_genomebrowser_color_namespace = "cog"
 genomebrowser_mode = def_genomebrowser_mode
 
@@ -853,8 +707,8 @@ def build_feature_rec_genbank (f, f_type='CDS', source_species='', contig_i=0, d
         print ("strangely formatted record.  SKIPPING")
         print (f)
         return {}
-    name_split = name.split(id_delim)
-    name = id_delim.join(name_split[1:])
+#    name_split = name.split(id_delim)
+#    name = id_delim.join(name_split[1:])
     
     if "locus_tag" in f.qualifiers:
         locus_tag = f.qualifiers['locus_tag'][0]
@@ -1723,10 +1577,10 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                 try:
                     t = Global_Genbank_Genomes[i]
                 except:
-                    (genome_id,scaffold_id) = contig_name.split(".")
+                    (genome_id,scaffold_id) = contig_name.split(genome_contig_id_delim)
                     #print ("reading " + contig_name + " ...")
-                    #genome_data_path = 'data/'+contig_name+'.gbk'
-                    genome_data_path = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/'+scaffold_id+'.gbk'
+                    #genome_data_path = 'data/'+contig_name+'.'+gbk_ext
+                    genome_data_path = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/'+scaffold_id+'.'+gbk_ext
                     print ("%d "%i+'reading '+genome_data_path)
                     Global_Genbank_Genomes.append (SeqIO.read(genome_data_path, 'genbank'))
                     #print ("%d"%len(Global_Genbank_Genomes))
@@ -1780,9 +1634,9 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                 if Global_State['genomebrowser_mode'] == 'contigs' \
                     or PivotFeatures_IDs[i] == '':
                         
+                    pivot_feature_rec = None
+                    lowest_beg = 10000000000
                     for f in Global_Genbank_Genomes[i].features:                        
-                        pivot_feature_rec = None
-                        lowest_beg = 10000000000
                         #if f.type == "CDS" and "locus_tag" in f.qualifiers:                    
 #                        if (f.type == "CDS" and "gene" in f.qualifiers):
                         if (genome_annotation_system == 'KBase' and f.type == "CDS" and "gene" in f.qualifiers) \
@@ -1792,6 +1646,9 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                             or (f.type == 'gene' and "comment" in f.qualifiers and f.qualifiers['comment'][0] == "CRISPR") \
                             or (f.type == 'gene' and "comment" in f.qualifiers and f.qualifiers['comment'][0] == "CRISPR spacer") \
                             or (f.type == 'gene' and "pseudo" in f.qualifiers):
+
+                            if f.location.start == None or f.location.start <= 0:
+                                raise ValueError ("Bad Feature.  gene:'"+str(f.qualifiers.gene)+"' locus_tag:'"+str(f.qualifiers.locus_tag)+"'")
 
                             if f.location.start < lowest_beg:
                                 lowest_beg = f.location.start
@@ -2015,10 +1872,10 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                 try:
                     t=Global_Genbank_Genomes[0]
                 except:
-                    (genome_id,scaffold_id) = contig_name.split(".")
+                    (genome_id,scaffold_id) = contig_name.split(genome_contig_id_delim)
                     #print ("reading " + contig_name + " ...")
-                    #genome_data_path = 'data/'+contig_name+'.gbk'
-                    genome_data_path = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/'+scaffold_id+'.gbk'
+                    #genome_data_path = 'data/'+contig_name+'.'+gbk_ext
+                    genome_data_path = genome_data_base_path+'/'+genome_id+genome_data_extra_subpath+'/'+scaffold_id+'.'+gbk_ext
                     print ("%d "%i+'reading '+genome_data_path)
                     Global_Genbank_Genomes.append (SeqIO.read(genome_data_path, 'genbank'))
                     
@@ -2066,9 +1923,9 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                             break
                             
                     if PivotFeatures_IDs[0] == '':      
+                        pivot_feature_rec = None
+                        lowest_beg = 10000000000
                         for f in Global_Genbank_Genomes[0].features:                        
-                            pivot_feature_rec = None
-                            lowest_beg = 10000000000
                             #if f.type == "CDS" and "locus_tag" in f.qualifiers:                    
     #                        if (f.type == "CDS" and "gene" in f.qualifiers):
                             if (genome_annotation_system == 'KBase' and f.type == "CDS" and "gene" in f.qualifiers) \
@@ -2093,10 +1950,10 @@ def getFeatureSlicesGenbank (ContigSet_names, \
                         for f in Global_Genbank_Genomes[0].features:  # should it permit non-CDS anchor?    
                             #if f.type == "CDS" and "locus_tag" in f.qualifiers and f.qualifiers['locus_tag'][0] == PivotFeatures_IDs[i]:
                             if (genome_annotation_system == 'KBase' and f.type == "CDS" and "gene" in f.qualifiers) \
-                                or (genome_annotation_system == 'KBase' and f.type == "CDS" and "locus_tag" in f.qualifiers):  
+                                or (genome_annotation_system != 'KBase' and f.type == "CDS" and "locus_tag" in f.qualifiers):  
                                 #if f.qualifiers['gene'][0] == PivotFeatures_IDs[i]:
                                 if (genome_annotation_system == 'KBase' and f.qualifiers['gene'][0] == PivotFeatures_IDs[0]) \
-                                    or (genome_annotation_system == 'KBase' and f.qualifiers['locus_tag'][0] == PivotFeatures_IDs[0]):
+                                    or (genome_annotation_system != 'KBase' and f.qualifiers['locus_tag'][0] == PivotFeatures_IDs[0]):
                                     pivot_feature_rec = build_feature_rec_genbank(f, f_type='CDS', source_species=source, contig_i=0)
                                     Feature_slice.append(pivot_feature_rec)
                                     pivot_pos = 0.5 * (pivot_feature_rec['beg_pos']+pivot_feature_rec['end_pos'])
@@ -3758,12 +3615,100 @@ def draw_sidenav_panel (ax, genomebrowser_mode):
     # Tree representation
     #
     if genomebrowser_mode == "tree":
-        
-        species_tree = Phylo.read(tree_data_base_path+'/'+tree_data_file, tree_data_format)
-        #print (species_tree)
-        #species_tree.ladderize()   # Flip branches so deeper clades are displayed at top
-        #Phylo.draw(species_tree, axes=ax)  # FIX ax resizing nonsense
 
+        """
+        # BioPython Phylo version screws up height scaling
+        treeObj = Phylo.read(tree_data_base_path+'/'+tree_data_file, tree_data_format)
+        #print (treeObj)
+        treeObj.ladderize()   # Flip branches so deeper clades are displayed at top
+        # TODO: reorder genome tracks following species tree?  Must put primary contig on top.
+        Phylo.draw(treeObj, axes=ax)
+        """
+        
+        # Draw Tree with ETE3
+        import ete3
+        newick_string = ''
+        tree_path = path.join(tree_data_base_path,tree_data_file)
+        tree_img_path = path.join('.','tree.png')
+        #tree_img_path = path.join('.','tree.pdf')  # can't put pdf into plot
+        #with open (tree_path, 'r', 0) as tree_file_handle:   # can't have unbuffered text I/O
+        with open (tree_path, 'r') as tree_file_handle:
+            for tree_line in tree_file_handle:
+                newick_string += tree_line
+
+        # ETE3 customization
+        treeObj = ete3.Tree(newick_string)
+        #treeObj.ladderize()  # read row order from leaves?
+        ts = ete3.TreeStyle()
+        #ts.show_leaf_name = True
+        ts.show_leaf_name = False
+        ts.show_branch_length = False
+        ts.show_branch_support = True
+        #ts.scale = 50 # 50 pixels per branch length unit
+        ts.branch_vertical_margin = 70 # pixels between adjacent branches
+        #ts.title.add_face(ete3.TextFace(params['output_name']+": "+params['desc'], fsize=10), column=0)
+        node_style = ete3.NodeStyle()
+        node_style["fgcolor"] = "#606060"  # for node balls
+        node_style["size"] = 10  # for node balls (gets reset based on support)
+        node_style["vt_line_color"] = "#606060"
+        node_style["hz_line_color"] = "#606060"
+        node_style["vt_line_width"] = 4
+        node_style["hz_line_width"] = 4
+        node_style["vt_line_type"] = 0 # 0 solid, 1 dashed, 2 dotted
+        node_style["hz_line_type"] = 0
+
+        leaf_style = ete3.NodeStyle()
+        leaf_style["fgcolor"] = "#ffffff"  # for node balls
+        leaf_style["size"] = 0  # for node balls (we're not using it to add space)
+        leaf_style["vt_line_color"] = "#606060"  # unecessary
+        leaf_style["hz_line_color"] = "#606060"
+        leaf_style["vt_line_width"] = 4
+        leaf_style["hz_line_width"] = 4
+        leaf_style["vt_line_type"] = 0 # 0 solid, 1 dashed, 2 dotted
+        leaf_style["hz_line_type"] = 0
+        for n in treeObj.traverse():
+            if n.is_leaf():
+                style = leaf_style
+                #n.name = genome_sci_name_by_id[genome_id]
+                #n.name = None
+                #n.add_face(ete3.TextFace(leaf_name_disp, fsize=10), column=0, position="branch-right")
+            else:
+                style = ete3.NodeStyle()
+                for k in node_style.keys():
+                    style[k] = node_style[k]
+
+                if n.support > 0.95:
+                    style["size"] = 12
+                elif n.support > 0.90:
+                    style["size"] = 10
+                elif n.support > 0.80:
+                    style["size"] = 8
+                else:
+                    style["size"] = 4
+
+            n.set_style(style)
+
+        # write tree to image file
+        dpi = 600
+        img_units = "in"
+        img_pix_width = 200
+        img_in_width = round(float(img_pix_width)/float(dpi), 1)
+        #img_in_height = img_in_width * total_rows / 5.0
+        #treeObj.render(tree_img_path, w=img_in_width, h=img_in_height, units=img_units, dpi=dpi, tree_style=ts)
+        treeObj.render(tree_img_path, w=img_in_width, units=img_units, dpi=dpi, tree_style=ts)
+
+        # load and display tree
+        from matplotlib.offsetbox import (OffsetImage, AnnotationBbox)
+        xy = [0.5, 0.51]
+        arr_img = plt.imread(tree_img_path, format='png')
+        #ax.imshow(arr_img)
+        
+        imagebox = OffsetImage(arr_img, zoom=1.0)
+        imagebox.image.axes = ax
+
+        ab = AnnotationBbox(imagebox, xy, frameon=False)
+        ax.add_artist(ab)
+        
         
     # Line representation
     #
@@ -3941,6 +3886,7 @@ def draw_sidenav_panel (ax, genomebrowser_mode):
         # Add label
         #
         disp_name = ContigSet_names[0]
+        scaffold_id = None
         if KBase_backend:
             #full_name_split = ContigSet_names[0].split('/')
             #[genome_id, scaffold_id] = full_name_split[1].split(genome_contig_id_delim)
@@ -3950,7 +3896,7 @@ def draw_sidenav_panel (ax, genomebrowser_mode):
         ax.text(ellipse_center_x, ellipse_center_y - 0.5*y_diameter - contig_label_y_margin,
                 disp_name, verticalalignment="top", horizontalalignment="center",
                 color="black", fontsize=contig_label_fontsize)
-        if scaffold_id:
+        if scaffold_id != None:
             ax.text(ellipse_center_x, ellipse_center_y - 0.5*y_diameter - 1.5*contig_label_y_margin,
                     scaffold_id, verticalalignment="top", horizontalalignment="center",
                     color="black", fontsize=contig_label_fontsize)            
@@ -4018,9 +3964,8 @@ def draw_sidenav_panel (ax, genomebrowser_mode):
         for GC_i in range(1,GC_steps-2):
             arc_end = 90 - 360 * (GC_i*GC_window_bp / Global_State['PrimaryContig_len'])
             arc_beg = 90 - 360 * ((GC_i+1)*GC_window_bp / Global_State['PrimaryContig_len'])
-            #GC_in_window = compute_GC (Global_Genbank_Genomes[0].seq[(GC_i-1)*GC_window_bp:(GC_i+2)*GC_window_bp])
-            # DEBUG
-            GC_in_window = 0.5
+            GC_in_window = compute_GC (Global_Genbank_Genomes[0].seq[(GC_i-1)*GC_window_bp:(GC_i+2)*GC_window_bp])
+            #GC_in_window = 0.5  # DEBUG
             GC_delta = GC_in_window - Global_State['PrimaryContig_GCavg']
             if (GC_delta > 0):
                 GC_color = "blue"
@@ -4278,12 +4223,11 @@ def update_genomebrowser_panel (ax):
 ###############################################################################                
 # Main
 ###############################################################################
-
-# Instantiate fig_FGB
+    
+# Instantiate fig_KGB
 #   
-#fig_FGB.suptitle("Flexible Genome Browser", fontsize=22)
-fig_FGB = pyplot.figure(1, (figure_width, top_nav_height + figure_height_scaling*(total_rows+1)))
-#fig_FGB.suptitle("Flexible Genome Browser", fontsize=22)
+fig_KGB = pyplot.figure(1, (figure_width, top_nav_height + figure_height_scaling*(total_rows+1)))
+#fig_KGB.suptitle(tool_title, fontsize=20)
 
 # want to maintain constant top nav height, so adjust proportion according to number of rows
 # e.g. with 6 tracks, top nav should be 2 units, so top rowspan=2 when bottom rowspan = 6 and grid is 8
@@ -4297,7 +4241,7 @@ ax_center     = pyplot.subplot2grid((1000,4), (top_nav_rows,1), rowspan=(1000-to
 
 
 # Let's turn off visibility of all tick labels and boxes here
-for ax in fig_FGB.axes:
+for ax in fig_KGB.axes:
     ax.xaxis.set_visible(False)  # remove axis labels and ticks
     ax.yaxis.set_visible(False)
     for t in ax.get_xticklabels()+ax.get_yticklabels():  # remove tick labels
@@ -4310,7 +4254,7 @@ for ax in [ax_top_left, ax_top_center, ax_left, ax_center]:
     ax.spines['left'].set_visible(False) #  Get rid of bottom axis line
     ax.spines['right'].set_visible(False) #  Get rid of bottom axis line
 
-fig_FGB.tight_layout()  # left justify and space subplots reasonably.  Must follow axis creation
+fig_KGB.tight_layout()  # left justify and space subplots reasonably.  Must follow axis creation
 
 
 # Load domain family descriptions
@@ -4335,12 +4279,12 @@ update_sidenav_panel (ax_left)
 
 # Draw mode panel
 #
-#update_mode_panel (ax_top_left)
+update_mode_panel (ax_top_left)
 
 
 # Draw control panel (currently, must occur after primary genome read in update_genomebrowser_panel)
 #
-#update_control_panel (ax_top_center)
+update_control_panel (ax_top_center)
 
 ###############################################################################
 # End KGB
