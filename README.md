@@ -11,7 +11,7 @@
   * phylogenetic trees
    
 <br>
-![alt text](/img/KGB_example_1_genome_mode.png "KGB Genome Mode")
+![alt text](/tree/master/img/KGB_example_1_genome_mode.png "KGB Genome Mode")
 
 <br><br><br><br>
 ![alt text](https://avatars2.githubusercontent.com/u/1263946?v=3&s=84 "KBase") Designed to work with the DOE Systems Biology Knowledgebase (KBase)  (or in any Jupyter notebook with Genbank files)
