@@ -1,7 +1,3 @@
-from __future__ import print_function
-from __future__ import division
-
-
 ###############################################################################
 # KGB user input vars  (Preferably implement as separate upstream cell)
 ###############################################################################        
@@ -80,6 +76,9 @@ Search_Terms = ['dna-directed polymerase',
 
 # Init independent of KBase_backend
 #
+from __future__ import print_function
+from __future__ import division
+
 #import numpy as np # comes with pylab
 import sys  # for io and exit
 from os import walk  # for dir reading
