@@ -1,3 +1,4 @@
+<A NAME="top"></A>
 # KGB
 
   The KGB Genome Browser
@@ -10,26 +11,36 @@
   * gene homology
   * phylogenetic trees
    
-<br><br>
+
 ![KBase logo](https://avatars2.githubusercontent.com/u/1263946?v=3&s=84 "KBase") Designed to work with the DOE Systems Biology Knowledgebase (KBase)  (or in any Jupyter notebook with Genbank files)
 
-<br><br>
-Genome Mode
+
+### Contents
+ - [Genome View Mode](#genome_mode)
+ - [Homologs View Mode](#homologs_mode)
+ - [Tree View Mode](#tree_mode)
+ - [Contigs View Mode](#contigs_mode)
+
+
+<A NAME="genome_mode"></A>
+### Genome View Mode
 ![KGB Genome Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_genome_mode.png "KGB Genome Mode")
 
-<br><br>
-Homologs Mode
+
+<A NAME="homologs_mode"></A>
+### Homologs View Mode
 ![KGB Homologs Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_homologs_mode.png "KGB Homologs Mode")
 
-<br><br>
-Tree Mode
+
+<A NAME="tree_mode"></A>
+### Tree View Mode
 ![KGB Tree Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_tree_mode.png "KGB Tree Mode")
 
-<br><br>
-Contigs Mode
+
+<A NAME="contigs_mode"></A>
+### Contigs View Mode
 ![KGB Contigs Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_contigs_mode.png "KGB Contigs Mode")
 
 
 
-<br><br><br>
 Copyright 2015-2017 Dylan Chivian
