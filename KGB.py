@@ -294,6 +294,8 @@ else:
 tool_title = "KGB Genome Browser"
 color_namespace_names_disp = ['Annot', 'EC']
 color_namespace_names = ['annot', 'ec']
+if domain_data_exists == None:
+    domain_data_exists = False
 if domain_data_exists:
     color_namespace_names_disp.extend(['COG', 'Pfam', 'Domains'])
     color_namespace_names.extend(['cog', 'pfam', 'domains'])
