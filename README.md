@@ -18,8 +18,8 @@ Genome Mode
 ![KGB Genome Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_genome_mode.png "KGB Genome Mode")
 
 <br><br>
-Homolog Mode
-![KGB Homolog Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_homolog_mode.png "KGB Homolog Mode")
+Homologs Mode
+![KGB Homologs Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_homologs_mode.png "KGB Homologs Mode")
 
 <br><br>
 Tree Mode
@@ -27,7 +27,7 @@ Tree Mode
 
 <br><br>
 Contigs Mode
-![KGB Contigs Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_Contigs_mode.png "KGB Contigs Mode")
+![KGB Contigs Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_contigs_mode.png "KGB Contigs Mode")
 
 
 
