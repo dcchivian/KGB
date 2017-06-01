@@ -32,7 +32,7 @@
 ### Genome View Mode
 ![KGB Genome Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_genome_mode.png "KGB Genome Mode")
 
-Genome Mode shows only the primary Contig.  Navigation can be accomplished by clicking on the "circle" representation of the Contig.
+Genome Mode shows only the primary Contig.  Navigation can be accomplished by clicking on the "circle" representation of the Contig.  The viewed window is indicated by a red region.
 
 #### Example Configuration
 The bare minimum configuration for KGB is to provide a single contig to browse.
@@ -55,7 +55,7 @@ genome_data_extra_subpath = "/scaffolds"
 ### Homologs View Mode
 ![KGB Homologs Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_homologs_mode.png "KGB Homologs Mode")
 
-Homologs must currently be registered manually (future versions of KGB will allow external large-scale homolog relationships to be loaded).  This are called "Pivot Features" as they are the anchor within each genome for navigation.
+Homologs must currently be registered manually (future versions of KGB will allow external large-scale homolog relationships to be loaded).  This are called "Pivot Features" as they are the anchor within each genome for navigation.  Navigation may be accomplished by clicking on the contig graphic.  The viewed window is indicated by a red region.
 
 #### Example Configuration
 ```
@@ -99,8 +99,7 @@ tree_data_file = 'rpoB_tree-names.newick'
 ### Contigs View Mode
 ![KGB Contigs Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_contigs_mode.png "KGB Contigs Mode")
 
-#### Configuration
-Contigs may be viewed en masse even when there is no gene homolog set.  In this case, the first gene in each contig is used as the anchor gene.
+Contigs may be viewed en masse even when there is no gene homolog set.  In this case, the first gene in each contig is used as the anchor gene.  Navigation may be accomplshed by clicking on the contig graphic.  The viewed window is indicated by a red region.
 
 #### Example Configuration
 Configuration is the same as above, but pivot gene configuration is not required.
