@@ -21,9 +21,10 @@
  - [Homologs View Mode](#homologs_mode)
  - [Tree View Mode](#tree_mode)
  - [Contigs View Mode](#contigs_mode)
+ - [Domain Annotation Mode (example forthcoming)](#domains)
  - [Search](#search)
- - [Local Jupyter Notebook Example with NCBI annotated genomes](#example_1)
- - [KBase Narrative Example with KBase annotated genomes](#example_2)
+ - [Example 1: Local Jupyter Notebook with NCBI annotated genomes](#example_1)
+ - [Example 2: KBase Narrative with KBase annotated genomes (temporarily disabled)](#example_2)
 
 
 <br><br>
@@ -33,8 +34,17 @@
 
 Genome Mode shows only the primary Contig.  Navigation can be accomplished by clicking on the "circle" representation of the Contig.
 
-#### Configuration
-
+#### Example Configuration
+The bare minimum configuration for KGB is to provide a single contig to browse.
+```
+GenomeSet_names = ["DaudaxMP104C"]
+genome_annotation_system = 'NCBI'
+genome_data_format = "Genbank"
+# if relative path to scaffolds is e.g.: ./data_example/NCBI_annot/genomes/Gsulf/scaffolds/scaf_1.gbk
+gbk_ext = "gbk"
+genome_data_base_path = "./data_example/NCBI_annot/genomes"
+genome_data_extra_subpath = "/scaffolds"
+```
 
 [\[back to top\]](#top)
 
@@ -45,6 +55,21 @@ Genome Mode shows only the primary Contig.  Navigation can be accomplished by cl
 ### Homologs View Mode
 ![KGB Homologs Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_homologs_mode.png "KGB Homologs Mode")
 
+Homologs must currently be registered manually (future versions of KGB will allow external large-scale homolog relationships to be loaded).  This are called "Pivot Features" as they are the anchor within each genome for navigation.
+
+#### Example Configuration
+```
+GenomeSet_names = ["Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C"]
+PivotFeatures_IDs = ["GSU2863", "DVU2928", "Dde_2997", "b3987", "BSU01070", "Daud0216"]
+PrimaryAnchor_locusTag = "GSU2863"
+
+genome_annotation_system = 'NCBI'
+genome_data_format = "Genbank"
+# if relative path to scaffolds is e.g.: ./data_example/NCBI_annot/genomes/Gsulf/scaffolds/scaf_1.gbk
+gbk_ext = "gbk"
+genome_data_base_path = "./data_example/NCBI_annot/genomes"
+genome_data_extra_subpath = "/scaffolds"
+```
 
 [\[back to top\]](#top)
 
@@ -55,6 +80,16 @@ Genome Mode shows only the primary Contig.  Navigation can be accomplished by cl
 ### Tree View Mode
 ![KGB Tree Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_tree_mode.png "KGB Tree Mode")
 
+Trees may be displayed alongside genome tracks.  Local notebook invocations require a newick file to be loaded.  KBase narrative invocations require a KBase Tree object to be configured (currently disabled).  Future versions of KGB will offer single configuration for many gene trees to be used in conjunction with homolog relationships.
+
+#### Example Configuration
+```
+tree_data_format = 'newick'
+# if relative path to tree is e.g.: ../data_example/NCBI_annot/trees/rpoB_tree-names.newick
+tree_data_base_path = './data_example/NCBI_annot/trees'
+tree_data_file = 'rpoB_tree-names.newick'
+```
+
 [\[back to top\]](#top)
 
 
@@ -63,6 +98,31 @@ Genome Mode shows only the primary Contig.  Navigation can be accomplished by cl
 <A NAME="contigs_mode"></A>
 ### Contigs View Mode
 ![KGB Contigs Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_contigs_mode.png "KGB Contigs Mode")
+
+#### Configuration
+Contigs may be viewed en masse even when there is no gene homolog set.  In this case, the first gene in each contig is used as the anchor gene.
+
+#### Example Configuration
+Configuration is the same as above, but pivot gene configuration is not required.
+```
+GenomeSet_names = ["Gsulf", "DvulH", "DdesulfG20", "EcoliK12", "Bsub", "DaudaxMP104C"]
+
+genome_annotation_system = 'NCBI'
+genome_data_format = "Genbank"
+# if relative path to scaffolds is e.g.: ./data_example/NCBI_annot/genomes/Gsulf/scaffolds/scaf_1.gbk
+gbk_ext = "gbk"
+genome_data_base_path = "./data_example/NCBI_annot/genomes"
+genome_data_extra_subpath = "/scaffolds"
+
+```
+
+[\[back to top\]](#top)
+
+
+<br><br>
+<A NAME="domain_annotation"></A>
+### Domain Annotation Mode (Example forthcoming)
+Domain Annotations (Pfam, COG, TIGRFAMs) from KBase may be viewed on the gene arrow.  An example is forthcoming.
 
 [\[back to top\]](#top)
 
@@ -89,7 +149,7 @@ Search_Terms = ['dna-directed polymerase',
 
 <br><br>
 <A NAME="example_1"></A>
-### Local Jupyter Notebook Example with NCBI annotated Genomes
+### Example 1: Local Jupyter Notebook with NCBI annotated Genomes
 
 ```
 %pylab notebook  # must occur prior to invoking KGB if running KGB as an exec()
@@ -137,7 +197,7 @@ exec(import_code.read())
 
 <br><br>
 <A NAME="example_2"></A>
-### KBase Narrative Example with KBase annotated genomes
+### Example 2: KBase Narrative with KBase annotated genomes (temporarily disabled)
 
 This functionality is currently disabled.  It will be back shortly.  Feel free to remind me to fix it! :-)
 
