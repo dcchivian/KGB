@@ -37,7 +37,7 @@ Genome Mode shows only the primary Contig.  Navigation can be accomplished by cl
 #### Example Configuration
 The bare minimum configuration for KGB is to provide a single contig to browse.
 ```
-GenomeSet_names = ["DaudaxMP104C"]
+GenomeSet_names = ["Gsulf"]
 genome_annotation_system = 'NCBI'
 genome_data_format = "Genbank"
 # if relative path to scaffolds is e.g.: ./data_example/NCBI_annot/genomes/Gsulf/scaffolds/scaf_1.gbk
