@@ -15,6 +15,21 @@
 
 <br><br>
 Genome Mode
-![KGB Genome Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_genome_mode.png?s=84 "KGB Genome Mode")
+![KGB Genome Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_genome_mode.png "KGB Genome Mode")
 
+<br><br>
+Homolog Mode
+![KGB Homolog Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_homolog_mode.png "KGB Homolog Mode")
+
+<br><br>
+Tree Mode
+![KGB Tree Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_tree_mode.png "KGB Tree Mode")
+
+<br><br>
+Contigs Mode
+![KGB Contigs Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_Contigs_mode.png "KGB Contigs Mode")
+
+
+
+<br><br><br>
 Copyright 2015-2017 Dylan Chivian
