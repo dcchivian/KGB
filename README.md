@@ -134,7 +134,7 @@ Domain Annotations (Pfam, COG, TIGRFAMs) from KBase may be viewed on the gene ar
 ![KGB Search: Genome Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_search_genome_mode.png "KGB Search: Genome Mode")
 ![KGB Search: Contigs Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_search_contigs_mode.png "KGB Search: Contigs Mode")
 
-Search terms that scan functional annotations and gene names may be configured prior to invoking KGB.  Each term is assigned a color and marked on the contig navigation, allowing for jumping to that position in the genome.
+Search terms that scan functional annotations and gene names may be configured prior to invoking KGB.  Each term is assigned a color and marked on the contig navigation, allowing for jumping to that position in the genome by clicking on the contig graphic.
 
 ```
 Search_Terms = ['dna-directed polymerase',
