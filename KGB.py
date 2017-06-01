@@ -25,9 +25,9 @@ PrimaryAnchor_locusTag = "GSU2863"
 
 genome_annotation_system = 'NCBI'
 genome_data_format = "Genbank"
-# if relative path to scaffolds is e.g.: ../data/NCBI_genome_contigs/Gsulf/scaffolds/scaf_1.gbk
+# if relative path to scaffolds is e.g.: ./data_example/NCBI_annot/genomes/Gsulf/scaffolds/scaf_1.gbk
 gbk_ext = "gbk"
-genome_data_base_path = "./example_data/NCBI_genome_contigs"
+genome_data_base_path = "./data_example/NCBI_annot/genomes"
 genome_data_extra_subpath = "/scaffolds"
 
 domain_data_exists = False  # NCBI annotated genome
@@ -37,8 +37,8 @@ domain_data_extra_subpath = None
 domain_family_desc_base_path = None
 
 tree_data_format = 'newick'
-# if relative path to tree is e.g.: ../data/trees/rpoB_tree-names.newick
-tree_data_base_path = './example_data/trees'
+# if relative path to tree is e.g.: ../data_example/NCBI_annot/trees/rpoB_tree-names.newick
+tree_data_base_path = './data_example/NCBI_annot/trees'
 tree_data_file = 'rpoB_tree-names.newick'
 
 Search_Terms = ['dna-directed polymerase',
