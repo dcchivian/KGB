@@ -80,7 +80,7 @@ genome_data_extra_subpath = "/scaffolds"
 ### Tree View Mode
 ![KGB Tree Mode](https://raw.github.com/dcchivian/KGB/master/img/KGB_example_1_tree_mode.png "KGB Tree Mode")
 
-Trees may be displayed alongside genome tracks.  Local notebook invocations require a newick file to be loaded.  KBase narrative invocations require a KBase Tree object to be configured (currently disabled).  Future versions of KGB will offer single configuration for many gene trees to be used in conjunction with homolog relationships.
+Trees may be displayed alongside genome tracks.  Local notebook invocations require a newick file to be loaded.  KBase narrative invocations require a KBase Tree object to be configured (currently disabled).  Future versions of KGB will offer single configuration for many precomputed gene trees and automatically derive homolog relationships from them.
 
 #### Example Configuration
 ```
